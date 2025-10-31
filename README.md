@@ -1,7 +1,7 @@
 # COMP2042 Tetris Game Maintenance and Extension
 
 ## GitHub
-[Link to GitHub repository]
+https://github.com/simoneeejw/CW2025
 
 ## Compilation Instructions
 1. Ensure Java JDK and Maven are installed.
