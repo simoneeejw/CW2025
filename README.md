@@ -11,19 +11,26 @@ https://github.com/simoneeejw/CW2025
 
 ## Implemented and Working Properly
 - Basic Tetris gameplay (maintained and refactored for stability)
+- Hold feature: Players can press 'C' to hold the current falling brick and swap it with a previously held brick, adding strategic depth to the gameplay.
 
 ## Implemented but Not Working Properly
 - None
 
 ## Features Not Implemented
-- New gameplay features (e.g., power-ups, levels, adaptive difficulty) as extensions were not implemented in this submission.
+- Other advanced features (e.g., power-ups, levels, adaptive difficulty) as extensions were limited to the hold mechanic.
 
 ## New Java Classes
 - None
 
 ## Modified Java Classes
-- **SimpleBoard.java**: Refactored to reduce code duplication by introducing a `tryMove(int dx, int dy)` helper method for brick movement logic. Updated `createNewBrick()` to return a success status for clearer game-over handling. This improves maintainability and readability without changing functionality.
-- **GameController.java**: Adjusted the logic in `onDownEvent()` to properly check the return value of `createNewBrick()` for game-over conditions, ensuring consistent behavior.
+- **ViewData.java**: Added `heldBrickData` field and corresponding methods to support displaying the held brick.
+- **Board.java**: Added `holdBrick()` method to the interface.
+- **SimpleBoard.java**: Implemented `holdBrick()` method, added `heldBrick` field, updated `getViewData()` and `newGame()` to handle held bricks.
+- **GameController.java**: Added `onHoldEvent()` method to handle hold input.
+- **InputEventListener.java**: Added `onHoldEvent()` method declaration.
+- **EventType.java**: Added `HOLD` enum value.
+- **GuiController.java**: Added key handling for 'C' key, FXML injection for `heldPanel`, initialization of held rectangles, and updated `refreshBrick()` to display held bricks.
+- **gameLayout.fxml**: Added `heldPanel` GridPane for UI display of held bricks.
 
 ## Unexpected Problems
 - Encountered duplicate class compilation errors due to cached compiled files. Resolved by running `mvn clean` to clear the target directory.
