@@ -1,7 +1,7 @@
 package com.comp2042.tetris.util;
 
-import com.comp2042.NextShapeInfo;
-import com.comp2042.logic.bricks.Brick;
+import com.comp2042.tetris.model.NextShapeInfo;
+import com.comp2042.tetris.logic.bricks.Brick;
 
 public class BrickRotator {
 
@@ -27,5 +27,7 @@ public class BrickRotator {
         currentShape = 0;
     }
 
-
+    public Brick getBrick() {
+        return brick;
+    }
 }

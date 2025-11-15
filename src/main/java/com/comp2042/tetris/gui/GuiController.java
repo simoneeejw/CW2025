@@ -1,11 +1,13 @@
 package com.comp2042.tetris.gui;
 
-import com.comp2042.DownData;
-import com.comp2042.EventSource;
-import com.comp2042.EventType;
-import com.comp2042.MoveEvent;
-import com.comp2042.ViewData;
+import com.comp2042.tetris.model.DownData;
+import com.comp2042.tetris.model.event.EventSource;
+import com.comp2042.tetris.model.event.EventType;
+import com.comp2042.tetris.model.event.MoveEvent;
+import com.comp2042.tetris.model.ViewData;
 import com.comp2042.tetris.game.InputEventListener;
+import com.comp2042.tetris.util.BrickColorMapper;
+import com.comp2042.tetris.util.GameConstants;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -31,7 +33,7 @@ import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
 
-    private static final int BRICK_SIZE = 20;
+    private static final int BRICK_SIZE = GameConstants.BRICK_SIZE_PIXELS;
 
     @FXML
     private GridPane gamePanel;
@@ -140,7 +142,7 @@ public class GuiController implements Initializable {
         }
 
         timeLine = new Timeline(new KeyFrame(
-                Duration.millis(400),
+                Duration.millis(GameConstants.DEFAULT_FALL_SPEED_MS),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);

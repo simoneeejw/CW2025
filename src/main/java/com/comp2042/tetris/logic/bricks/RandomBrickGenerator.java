@@ -1,4 +1,4 @@
-package com.comp2042.logic.bricks;
+package com.comp2042.tetris.logic.bricks;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

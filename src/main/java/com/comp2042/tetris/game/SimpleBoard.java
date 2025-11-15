@@ -1,13 +1,14 @@
 package com.comp2042.tetris.game;
 
-import com.comp2042.ClearRow;
-import com.comp2042.MatrixOperations;
-import com.comp2042.NextShapeInfo;
-import com.comp2042.ViewData;
-import com.comp2042.logic.bricks.Brick;
-import com.comp2042.logic.bricks.BrickGenerator;
-import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.tetris.model.ClearRow;
+import com.comp2042.tetris.util.matrix.MatrixOperations;
+import com.comp2042.tetris.model.NextShapeInfo;
+import com.comp2042.tetris.model.ViewData;
+import com.comp2042.tetris.logic.bricks.Brick;
+import com.comp2042.tetris.logic.bricks.BrickGenerator;
+import com.comp2042.tetris.logic.bricks.RandomBrickGenerator;
 import com.comp2042.tetris.util.BrickRotator;
+import com.comp2042.tetris.util.GameConstants;
 
 import java.awt.*;
 
@@ -117,7 +118,7 @@ public class SimpleBoard implements Board {
             Brick temp = heldBrick;
             heldBrick = currentBrick;
             brickRotator.setBrick(temp);
-            currentOffset = new Point(4, 10);
+            currentOffset = new Point(GameConstants.SPAWN_X, GameConstants.SPAWN_Y);
         }
     }
 

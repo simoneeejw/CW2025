@@ -1,15 +1,16 @@
 package com.comp2042.tetris.game;
 
-import com.comp2042.ClearRow;
-import com.comp2042.DownData;
-import com.comp2042.EventSource;
-import com.comp2042.MoveEvent;
-import com.comp2042.ViewData;
+import com.comp2042.tetris.model.ClearRow;
+import com.comp2042.tetris.model.DownData;
+import com.comp2042.tetris.model.event.EventSource;
+import com.comp2042.tetris.model.event.MoveEvent;
+import com.comp2042.tetris.model.ViewData;
 import com.comp2042.tetris.gui.GuiController;
+import com.comp2042.tetris.util.GameConstants;
 
 public class GameController implements InputEventListener {
 
-    private Board board = new SimpleBoard(25, 10);
+    private final Board board = new SimpleBoard(GameConstants.BOARD_HEIGHT, GameConstants.BOARD_WIDTH);
 
     private final GuiController viewGuiController;
 
@@ -39,7 +40,7 @@ public class GameController implements InputEventListener {
 
         } else {
             if (event.getEventSource() == EventSource.USER) {
-                board.getScore().add(1);
+                board.getScore().add(GameConstants.SCORE_PER_DROP);
             }
         }
         return new DownData(clearRow, board.getViewData());
