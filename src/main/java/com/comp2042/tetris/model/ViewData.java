@@ -1,5 +1,8 @@
-package com.comp2042;
+package com.comp2042.tetris.model;
 
+import com.comp2042.tetris.util.matrix.MatrixOperations;
+
+// View data for rendering current brick and preview info
 public final class ViewData {
 
     private final int[][] brickData;
@@ -36,3 +39,4 @@ public final class ViewData {
         return heldBrickData != null ? MatrixOperations.copy(heldBrickData) : null;
     }
 }
+
