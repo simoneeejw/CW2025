@@ -21,17 +21,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.effect.Reflection;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class GuiController implements Initializable {
 
@@ -76,6 +81,12 @@ public class GuiController implements Initializable {
 
     private long currentFallSpeed = GameConstants.DEFAULT_FALL_SPEED_MS;
     private double speedMultiplier = 1.0;
+
+    // Theme variables
+    private Theme currentTheme;
+    private Rectangle themeBackground;
+    private ParticleEffect particleEffect;
+    private Timeline glowPulseTimeline;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -136,6 +147,17 @@ public class GuiController implements Initializable {
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+
+        // Load and apply saved theme
+        loadSavedTheme();
+        initializeThemeBackground();
+        applyTheme(currentTheme);
+
+        // Initialize particle effect system
+        initializeParticleEffect();
+
+        // Initialize glow pulse animation for active pieces
+        initializeGlowPulse();
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -348,6 +370,9 @@ public class GuiController implements Initializable {
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
                 notificationPanel.showScore(groupNotification.getChildren());
+
+                // Create particle burst effect for line clears
+                createLineClearParticles(downData.getClearRow().getLinesRemoved());
             }
             refreshBrick(downData.getViewData());
         }
@@ -501,5 +526,158 @@ public class GuiController implements Initializable {
             }
         });
         pause.play();
+    }
+
+    /**
+     * Loads the saved theme from preferences.
+     */
+    private void loadSavedTheme() {
+        Preferences prefs = Preferences.userNodeForPackage(GuiController.class);
+        String themeName = prefs.get("theme", Theme.NEON_NIGHT.name());
+        try {
+            currentTheme = Theme.valueOf(themeName);
+        } catch (IllegalArgumentException e) {
+            currentTheme = Theme.NEON_NIGHT; // Default fallback
+        }
+    }
+
+    /**
+     * Saves the current theme to preferences.
+     */
+    private void saveTheme() {
+        Preferences prefs = Preferences.userNodeForPackage(GuiController.class);
+        prefs.put("theme", currentTheme.name());
+    }
+
+    /**
+     * Initializes the theme background rectangle.
+     */
+    private void initializeThemeBackground() {
+        themeBackground = new Rectangle(800, 600); // Full screen size
+        themeBackground.setMouseTransparent(true);
+
+        // Add to root pane as bottom layer
+        if (gamePanel.getScene() != null) {
+            javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
+            rootPane.getChildren().add(0, themeBackground); // Add at index 0 (bottom)
+        }
+    }
+
+    /**
+     * Initializes the particle effect system.
+     */
+    private void initializeParticleEffect() {
+        particleEffect = new ParticleEffect(groupNotification);
+    }
+
+    /**
+     * Initializes the glow pulse animation for active pieces.
+     */
+    private void initializeGlowPulse() {
+        glowPulseTimeline = new Timeline(
+            new KeyFrame(Duration.ZERO, e -> setGlowOpacity(0.5)),
+            new KeyFrame(Duration.millis(250), e -> setGlowOpacity(1.0)),
+            new KeyFrame(Duration.millis(500), e -> setGlowOpacity(0.5))
+        );
+        glowPulseTimeline.setCycleCount(Timeline.INDEFINITE);
+        glowPulseTimeline.play();
+    }
+
+    /**
+     * Sets the glow opacity for active pieces.
+     * @param opacity The opacity value (0.0 to 1.0)
+     */
+    private void setGlowOpacity(double opacity) {
+        if (rectangles != null) {
+            for (Rectangle[] row : rectangles) {
+                for (Rectangle rect : row) {
+                    if (rect != null && rect.getEffect() instanceof DropShadow) {
+                        DropShadow glow = (DropShadow) rect.getEffect();
+                        Color glowColor = (Color) glow.getColor();
+                        glow.setColor(Color.color(glowColor.getRed(), glowColor.getGreen(), glowColor.getBlue(), opacity));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies the specified theme to the UI elements.
+     * @param theme The theme to apply
+     */
+    public void applyTheme(Theme theme) {
+        currentTheme = theme;
+        saveTheme();
+
+        // Apply gradient background
+        if (themeBackground != null) {
+            LinearGradient gradient = new LinearGradient(
+                0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web(theme.getBoardGradientStart())),
+                new Stop(1, Color.web(theme.getBoardGradientEnd()))
+            );
+            themeBackground.setFill(gradient);
+        }
+
+        // Update score label color
+        if (scoreLabel != null) {
+            scoreLabel.setStyle("-fx-text-fill: " + theme.getUiAccentColor() + ";");
+        }
+
+        // Update status panel colors
+        if (statusPanel != null) {
+            statusPanel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        }
+
+        // Apply glow effects to active pieces
+        applyPieceGlow(theme);
+    }
+
+    /**
+     * Applies glow effects to active pieces.
+     * @param theme Current theme
+     */
+    private void applyPieceGlow(Theme theme) {
+        if (rectangles != null) {
+            for (Rectangle[] row : rectangles) {
+                for (Rectangle rect : row) {
+                    if (rect != null && rect.getFill() != Color.TRANSPARENT) {
+                        // Add drop shadow effect
+                        DropShadow glow = new DropShadow();
+                        glow.setColor(Color.web(theme.getPieceGlowColor()));
+                        glow.setRadius(5);
+                        glow.setSpread(0.3);
+                        rect.setEffect(glow);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates particle burst effect for line clears.
+     * @param linesCleared Number of lines cleared
+     */
+    public void createLineClearParticles(int linesCleared) {
+        if (particleEffect == null) {
+            particleEffect = new ParticleEffect(groupNotification);
+        }
+
+        // Create burst at center of game board
+        double centerX = gamePanel.getLayoutX() + gamePanel.getWidth() / 2;
+        double centerY = gamePanel.getLayoutY() + gamePanel.getHeight() / 2;
+
+        particleEffect.createBurst(centerX, centerY, currentTheme);
+    }
+
+    /**
+     * Shows the theme selection dialog.
+     */
+    public void showThemeSelector() {
+        ThemeSelector selector = new ThemeSelector();
+        Theme selected = selector.showAndWait(null); // Pass null for now, can be improved
+        if (selected != null) {
+            applyTheme(selected);
+        }
     }
 }
