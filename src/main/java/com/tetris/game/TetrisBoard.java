@@ -14,6 +14,8 @@ public class TetrisBoard implements Board {
     private final BoardState boardState;
     private final BrickManager brickManager;
     private final Score score;
+    private final LevelManager levelManager;
+    private final PowerUpManager powerUpManager;
 
     public TetrisBoard(int width, int height) {
         this.width = width;
@@ -21,6 +23,8 @@ public class TetrisBoard implements Board {
         this.boardState = new BoardState(width, height);
         this.brickManager = new BrickManager();
         this.score = new Score();
+        this.levelManager = new LevelManager();
+        this.powerUpManager = new PowerUpManager();
     }
 
     @Override
@@ -79,6 +83,16 @@ public class TetrisBoard implements Board {
     public ClearRow clearRows() {
         ClearRow clearRow = MatrixOperations.checkRemoving(boardState.getCurrentGameMatrix());
         boardState.setCurrentGameMatrix(clearRow.getNewMatrix());
+
+        // Trigger power-up if 4 lines cleared (Tetris)
+        if (clearRow.getLinesRemoved() == 4) {
+            PowerUp powerUp = powerUpManager.triggerRandomPowerUp();
+            // Handle CLEAR_BOTTOM power-up immediately
+            if (powerUp == PowerUp.CLEAR_BOTTOM) {
+                clearBottomRow();
+            }
+        }
+
         return clearRow;
     }
 
@@ -97,6 +111,39 @@ public class TetrisBoard implements Board {
         boardState.reset(width, height);
         score.reset();
         brickManager.resetHeldBrick();
+        levelManager.reset();
+        powerUpManager.reset();
         createNewBrick();
+    }
+
+    /**
+     * Clears the bottom row of the board (power-up effect).
+     */
+    private void clearBottomRow() {
+        int[][] matrix = boardState.getCurrentGameMatrix();
+        int bottomRow = matrix.length - 1;
+
+        // Clear the bottom row
+        for (int j = 0; j < matrix[bottomRow].length; j++) {
+            matrix[bottomRow][j] = 0;
+        }
+
+        boardState.setCurrentGameMatrix(matrix);
+    }
+
+    /**
+     * Gets the level manager.
+     * @return LevelManager instance
+     */
+    public LevelManager getLevelManager() {
+        return levelManager;
+    }
+
+    /**
+     * Gets the power-up manager.
+     * @return PowerUpManager instance
+     */
+    public PowerUpManager getPowerUpManager() {
+        return powerUpManager;
     }
 }

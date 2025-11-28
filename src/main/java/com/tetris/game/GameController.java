@@ -20,6 +20,13 @@ public class GameController implements GameEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+
+        // Bind level to GUI
+        TetrisBoard tetrisBoard = (TetrisBoard) board;
+        viewGuiController.bindLevel(tetrisBoard.getLevelManager().currentLevelProperty());
+
+        // Set initial game speed
+        viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
     }
 
     @Override
@@ -30,7 +37,21 @@ public class GameController implements GameEventListener {
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
+                // Apply level and power-up multipliers to score
+                TetrisBoard tetrisBoard = (TetrisBoard) board;
+                int baseScore = clearRow.getScoreBonus();
+                int levelMultiplier = tetrisBoard.getLevelManager().getScoreMultiplier();
+                int powerUpMultiplier = tetrisBoard.getPowerUpManager().getScoreMultiplier();
+                int finalScore = baseScore * levelMultiplier * powerUpMultiplier;
+
+                board.getScore().add(finalScore);
+
+                // Check for level progression
+                boolean leveledUp = tetrisBoard.getLevelManager().updateLevel(board.getScore().scoreProperty().get());
+                if (leveledUp) {
+                    viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
+                                                     tetrisBoard.getPowerUpManager().getSpeedMultiplier());
+                }
             }
             if (!board.createNewBrick()) {
                 viewGuiController.gameOver();
@@ -40,9 +61,17 @@ public class GameController implements GameEventListener {
 
         } else {
             if (event.getEventSource() == EventSource.USER) {
-                board.getScore().add(GameConstants.SCORE_PER_DROP);
+                TetrisBoard tetrisBoard = (TetrisBoard) board;
+                int dropScore = GameConstants.SCORE_PER_DROP;
+                int levelMultiplier = tetrisBoard.getLevelManager().getScoreMultiplier();
+                int powerUpMultiplier = tetrisBoard.getPowerUpManager().getScoreMultiplier();
+                board.getScore().add(dropScore * levelMultiplier * powerUpMultiplier);
             }
         }
+
+        // Update power-up timers
+        ((TetrisBoard) board).getPowerUpManager().update();
+
         return new DownData(clearRow, board.getViewData());
     }
 
@@ -75,5 +104,9 @@ public class GameController implements GameEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        // Reset game speed to level 1
+        TetrisBoard tetrisBoard = (TetrisBoard) board;
+        viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
     }
 }

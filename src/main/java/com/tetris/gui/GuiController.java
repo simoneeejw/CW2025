@@ -64,6 +64,9 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    private long currentFallSpeed = GameConstants.DEFAULT_FALL_SPEED_MS;
+    private double speedMultiplier = 1.0;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -93,6 +96,17 @@ public class GuiController implements Initializable {
                         refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
                     }
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        // Instant hard drop - repeatedly call down until it locks
+                        for (int i = 0; i < 20; i++) {
+                            moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+                        }
+                        keyEvent.consume();
+                    }
+                }
+                if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                    togglePause();
+                    keyEvent.consume();
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
@@ -244,6 +258,34 @@ public class GuiController implements Initializable {
     public void bindScore(IntegerProperty integerProperty) {
     }
 
+    public void bindLevel(IntegerProperty levelProperty) {
+        // Level binding can be added to UI labels if needed
+    }
+
+    /**
+     * Updates the game speed based on level and power-up multipliers.
+     * @param baseFallSpeed Base fall speed from level
+     * @param powerUpMultiplier Speed multiplier from power-ups
+     */
+    public void updateGameSpeed(long baseFallSpeed, double powerUpMultiplier) {
+        this.currentFallSpeed = baseFallSpeed;
+        this.speedMultiplier = powerUpMultiplier;
+
+        // Update timeline with new speed
+        if (timeLine != null) {
+            timeLine.stop();
+            long adjustedSpeed = (long) (baseFallSpeed * powerUpMultiplier);
+            timeLine = new Timeline(new KeyFrame(
+                    Duration.millis(adjustedSpeed),
+                    ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+            ));
+            timeLine.setCycleCount(Timeline.INDEFINITE);
+            if (!isPause.get() && !isGameOver.get()) {
+                timeLine.play();
+            }
+        }
+    }
+
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
@@ -261,6 +303,28 @@ public class GuiController implements Initializable {
     }
 
     public void pauseGame(ActionEvent actionEvent) {
+        togglePause();
         gamePanel.requestFocus();
+    }
+
+    /**
+     * Toggles game pause state.
+     */
+    private void togglePause() {
+        if (isGameOver.get()) {
+            return; // Can't pause if game is over
+        }
+
+        if (isPause.get()) {
+            // Resume game
+            isPause.setValue(Boolean.FALSE);
+            timeLine.play();
+            System.out.println("Game Resumed");
+        } else {
+            // Pause game
+            isPause.setValue(Boolean.TRUE);
+            timeLine.pause();
+            System.out.println("Game Paused");
+        }
     }
 }
