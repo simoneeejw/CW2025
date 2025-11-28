@@ -50,6 +50,9 @@ public class GuiController implements Initializable {
     @FXML
     private GameOverPanel gameOverPanel;
 
+    private LevelUpPanel levelUpPanel;
+    private StatusPanel statusPanel;
+
     private Rectangle[][] displayMatrix;
 
     private GameEventListener eventListener;
@@ -114,6 +117,20 @@ public class GuiController implements Initializable {
             }
         });
         gameOverPanel.setVisible(false);
+
+        // Initialize level-up panel
+        levelUpPanel = new LevelUpPanel();
+        levelUpPanel.setLayoutX(100);
+        levelUpPanel.setLayoutY(200);
+        levelUpPanel.setPrefSize(400, 150);
+        groupNotification.getChildren().add(levelUpPanel);
+
+        // Initialize status panel
+        statusPanel = new StatusPanel();
+        statusPanel.setLayoutX(400);
+        statusPanel.setLayoutY(50);
+        statusPanel.setPrefSize(200, 300);
+        groupNotification.getChildren().add(statusPanel);
 
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
@@ -325,6 +342,52 @@ public class GuiController implements Initializable {
             isPause.setValue(Boolean.TRUE);
             timeLine.pause();
             System.out.println("Game Paused");
+        }
+    }
+
+    /**
+     * Shows level-up notification.
+     * @param level New level number
+     * @param difficulty Difficulty name
+     */
+    public void showLevelUp(int level, String difficulty) {
+        if (levelUpPanel != null) {
+            levelUpPanel.showLevelUp(level);
+        }
+        if (statusPanel != null) {
+            statusPanel.updateLevel(level, difficulty);
+        }
+    }
+
+    /**
+     * Shows power-up notification.
+     * @param powerUpName Name of the power-up
+     */
+    public void showPowerUpNotification(String powerUpName) {
+        if (levelUpPanel != null) {
+            levelUpPanel.showPowerUp(powerUpName);
+        }
+    }
+
+    /**
+     * Shows Tetris (4-line clear) notification.
+     */
+    public void showTetrisNotification() {
+        if (levelUpPanel != null) {
+            levelUpPanel.showTetris();
+        }
+    }
+
+    /**
+     * Updates status panel with current game state.
+     * @param level Current level
+     * @param difficulty Difficulty name
+     * @param score Current score
+     */
+    public void updateStatus(int level, String difficulty, int score) {
+        if (statusPanel != null) {
+            statusPanel.updateLevel(level, difficulty);
+            statusPanel.updateScore(score);
         }
     }
 }

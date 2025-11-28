@@ -84,16 +84,19 @@ public class TetrisBoard implements Board {
         ClearRow clearRow = MatrixOperations.checkRemoving(boardState.getCurrentGameMatrix());
         boardState.setCurrentGameMatrix(clearRow.getNewMatrix());
 
+        PowerUp triggeredPowerUp = null;
         // Trigger power-up if 4 lines cleared (Tetris)
         if (clearRow.getLinesRemoved() == 4) {
-            PowerUp powerUp = powerUpManager.triggerRandomPowerUp();
+            triggeredPowerUp = powerUpManager.triggerRandomPowerUp();
             // Handle CLEAR_BOTTOM power-up immediately
-            if (powerUp == PowerUp.CLEAR_BOTTOM) {
+            if (triggeredPowerUp == PowerUp.CLEAR_BOTTOM) {
                 clearBottomRow();
             }
         }
 
-        return clearRow;
+        // Return new ClearRow with power-up information
+        return new ClearRow(clearRow.getLinesRemoved(), clearRow.getNewMatrix(),
+                           clearRow.getScoreBonus(), triggeredPowerUp);
     }
 
     @Override

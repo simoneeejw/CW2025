@@ -51,7 +51,24 @@ public class GameController implements GameEventListener {
                 if (leveledUp) {
                     viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
                                                      tetrisBoard.getPowerUpManager().getSpeedMultiplier());
+                    viewGuiController.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
+                                                 tetrisBoard.getLevelManager().getLevelDifficulty());
                 }
+
+                // Show Tetris notification for 4-line clear
+                if (clearRow.getLinesRemoved() == 4) {
+                    viewGuiController.showTetrisNotification();
+                }
+
+                // Show power-up notification if one was triggered
+                if (clearRow.getPowerUp() != null) {
+                    viewGuiController.showPowerUpNotification(clearRow.getPowerUp().getName());
+                }
+
+                // Update status display
+                viewGuiController.updateStatus(tetrisBoard.getLevelManager().getCurrentLevel(),
+                                              tetrisBoard.getLevelManager().getLevelDifficulty(),
+                                              board.getScore().scoreProperty().get());
             }
             if (!board.createNewBrick()) {
                 viewGuiController.gameOver();
