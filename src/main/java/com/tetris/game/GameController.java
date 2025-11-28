@@ -27,6 +27,14 @@ public class GameController implements GameEventListener {
 
         // Set initial game speed
         viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
+
+        // Initialize status display
+        viewGuiController.updateStatus(
+            tetrisBoard.getLevelManager().getCurrentLevel(),
+            tetrisBoard.getLevelManager().getLevelDifficulty(),
+            board.getScore().scoreProperty().get(),
+            tetrisBoard.getLevelManager().getTotalLinesCleared()
+        );
     }
 
     @Override
@@ -46,13 +54,22 @@ public class GameController implements GameEventListener {
 
                 board.getScore().add(finalScore);
 
-                // Check for level progression
-                boolean leveledUp = tetrisBoard.getLevelManager().updateLevel(board.getScore().scoreProperty().get());
+                // Track lines cleared and check for level progression
+                boolean leveledUp = tetrisBoard.getLevelManager().addLinesCleared(clearRow.getLinesRemoved());
                 if (leveledUp) {
                     viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
                                                      tetrisBoard.getPowerUpManager().getSpeedMultiplier());
                     viewGuiController.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
                                                  tetrisBoard.getLevelManager().getLevelDifficulty());
+
+                    // Add ghost row on Level 4 (randomly, 30% chance)
+                    if (tetrisBoard.getLevelManager().getCurrentLevel() == 4) {
+                        java.util.Random random = new java.util.Random();
+                        if (random.nextDouble() < 0.3) {
+                            tetrisBoard.addGhostRow();
+                            viewGuiController.scheduleGhostRowRemoval(3000); // Remove after 3 seconds
+                        }
+                    }
                 }
 
                 // Show Tetris notification for 4-line clear
@@ -68,7 +85,8 @@ public class GameController implements GameEventListener {
                 // Update status display
                 viewGuiController.updateStatus(tetrisBoard.getLevelManager().getCurrentLevel(),
                                               tetrisBoard.getLevelManager().getLevelDifficulty(),
-                                              board.getScore().scoreProperty().get());
+                                              board.getScore().scoreProperty().get(),
+                                              tetrisBoard.getLevelManager().getTotalLinesCleared());
             }
             if (!board.createNewBrick()) {
                 viewGuiController.gameOver();
@@ -125,5 +143,29 @@ public class GameController implements GameEventListener {
         // Reset game speed to level 1
         TetrisBoard tetrisBoard = (TetrisBoard) board;
         viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
+
+        // Reset status display
+        viewGuiController.updateStatus(
+            tetrisBoard.getLevelManager().getCurrentLevel(),
+            tetrisBoard.getLevelManager().getLevelDifficulty(),
+            board.getScore().scoreProperty().get(),
+            tetrisBoard.getLevelManager().getTotalLinesCleared()
+        );
+    }
+
+    /**
+     * Gets the board instance (for ghost row removal).
+     * @return Board instance
+     */
+    public Board getBoard() {
+        return board;
+    }
+
+    /**
+     * Gets the Y position where the current piece would land (for ghost piece).
+     * @return Ghost Y position
+     */
+    public int getGhostYPosition() {
+        return board.getGhostYPosition();
     }
 }

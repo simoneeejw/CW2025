@@ -19,4 +19,6 @@ public interface Board {
     void newGame();
 
     void holdBrick();
+
+    int getGhostYPosition();
 }

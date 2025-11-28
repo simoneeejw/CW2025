@@ -6,6 +6,8 @@ import com.tetris.model.EventType;
 import com.tetris.model.MoveEvent;
 import com.tetris.model.ViewData;
 import com.tetris.game.GameEventListener;
+import com.tetris.game.GameController;
+import com.tetris.game.TetrisBoard;
 import com.tetris.util.BrickColorMapper;
 import com.tetris.util.GameConstants;
 import javafx.animation.KeyFrame;
@@ -50,8 +52,12 @@ public class GuiController implements Initializable {
     @FXML
     private GameOverPanel gameOverPanel;
 
+    @FXML
+    private javafx.scene.control.Label scoreLabel;
+
     private LevelUpPanel levelUpPanel;
     private StatusPanel statusPanel;
+    private GridPane ghostPanel; // Shadow piece
 
     private Rectangle[][] displayMatrix;
 
@@ -60,6 +66,7 @@ public class GuiController implements Initializable {
     private Rectangle[][] rectangles;
 
     private Rectangle[][] heldRectangles;
+    private Rectangle[][] ghostRectangles;
 
     private Timeline timeLine;
 
@@ -82,37 +89,37 @@ public class GuiController implements Initializable {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                    } else if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
                         refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+                    } else if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
                         refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                    } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.C) {
+                    } else if (keyEvent.getCode() == KeyCode.C) {
                         refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        // Instant hard drop - repeatedly call down until it locks
-                        for (int i = 0; i < 20; i++) {
-                            moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+                    } else if (keyEvent.getCode() == KeyCode.SPACE) {
+                        // Hard drop - keep moving down until piece locks
+                        boolean keepDropping = true;
+                        while (keepDropping) {
+                            DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
+                            refreshBrick(downData.getViewData());
+                            // Stop if piece has locked (clearRow check indicates piece merged)
+                            if (downData.getClearRow() != null) {
+                                keepDropping = false;
+                            }
                         }
                         keyEvent.consume();
                     }
-                }
-                if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
                     togglePause();
                     keyEvent.consume();
-                }
-                if (keyEvent.getCode() == KeyCode.N) {
+                } else if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
+                    keyEvent.consume();
                 }
             }
         });
@@ -125,13 +132,6 @@ public class GuiController implements Initializable {
         levelUpPanel.setPrefSize(400, 150);
         groupNotification.getChildren().add(levelUpPanel);
 
-        // Initialize status panel
-        statusPanel = new StatusPanel();
-        statusPanel.setLayoutX(400);
-        statusPanel.setLayoutY(50);
-        statusPanel.setPrefSize(200, 300);
-        groupNotification.getChildren().add(statusPanel);
-
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -139,6 +139,19 @@ public class GuiController implements Initializable {
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
+        // Initialize status panel and add to root Pane
+        if (statusPanel == null) {
+            statusPanel = new StatusPanel();
+            statusPanel.setLayoutX(420);
+            statusPanel.setLayoutY(30);
+            statusPanel.setPrefSize(220, 350);
+            statusPanel.setVisible(true);
+
+            // Add to root pane
+            javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
+            rootPane.getChildren().add(statusPanel);
+            statusPanel.toFront(); // Bring to front
+        }
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
@@ -171,6 +184,24 @@ public class GuiController implements Initializable {
                 heldPanel.add(rectangle, j, i);
             }
         }
+
+        // Initialize ghost panel (shadow piece)
+        ghostPanel = new GridPane();
+        ghostPanel.setHgap(1);
+        ghostPanel.setVgap(1);
+        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+                ghostRectangles[i][j] = rectangle;
+                ghostPanel.add(rectangle, j, i);
+            }
+        }
+        // Add ghost panel to root - get parent of gamePanel
+        javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getParent().getParent();
+        rootPane.getChildren().add(ghostPanel);
+        ghostPanel.toBack(); // Send to back so it's behind actual piece
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(GameConstants.DEFAULT_FALL_SPEED_MS),
@@ -207,6 +238,10 @@ public class GuiController implements Initializable {
             case 7:
                 returnPaint = Color.BURLYWOOD;
                 break;
+            case 8:
+                // Ghost row - semi-transparent gray
+                returnPaint = Color.rgb(150, 150, 150, 0.5);
+                break;
             default:
                 returnPaint = Color.WHITE;
                 break;
@@ -238,7 +273,58 @@ public class GuiController implements Initializable {
                     }
                 }
             }
+
+            // Update ghost piece (shadow)
+            updateGhostPiece(brick);
         }
+    }
+
+    /**
+     * Updates the ghost piece (shadow) position to show where brick will land.
+     */
+    private void updateGhostPiece(ViewData brick) {
+        if (ghostPanel == null) return;
+
+        // Calculate ghost position by simulating drops until collision
+        int ghostY = calculateGhostYPosition(brick);
+
+        // Position ghost panel
+        ghostPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * ghostPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        ghostPanel.setLayoutY(-42 + gamePanel.getLayoutY() + ghostY * ghostPanel.getHgap() + ghostY * BRICK_SIZE);
+
+        // Update ghost rectangles with semi-transparent version of brick
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                if (brick.getBrickData()[i][j] != 0) {
+                    // Make it semi-transparent
+                    Color color = (Color) getFillColor(brick.getBrickData()[i][j]);
+                    ghostRectangles[i][j].setFill(Color.rgb(
+                        (int)(color.getRed() * 255),
+                        (int)(color.getGreen() * 255),
+                        (int)(color.getBlue() * 255),
+                        0.3 // 30% opacity
+                    ));
+                    ghostRectangles[i][j].setArcHeight(9);
+                    ghostRectangles[i][j].setArcWidth(9);
+                } else {
+                    ghostRectangles[i][j].setFill(Color.TRANSPARENT);
+                }
+            }
+        }
+    }
+
+    /**
+     * Calculates where the ghost piece should be positioned (where piece will land).
+     */
+    private int calculateGhostYPosition(ViewData brick) {
+        // Get actual ghost position from game controller
+        if (eventListener instanceof GameController) {
+            GameController gc = (GameController) eventListener;
+            return gc.getGhostYPosition();
+        }
+
+        // Fallback to current position if unable to calculate
+        return brick.getyPosition();
     }
 
     public void refreshGameBackground(int[][] board) {
@@ -273,6 +359,9 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
+        if (scoreLabel != null) {
+            scoreLabel.textProperty().bind(integerProperty.asString("Score: %d"));
+        }
     }
 
     public void bindLevel(IntegerProperty levelProperty) {
@@ -383,11 +472,34 @@ public class GuiController implements Initializable {
      * @param level Current level
      * @param difficulty Difficulty name
      * @param score Current score
+     * @param linesCleared Total lines cleared
      */
-    public void updateStatus(int level, String difficulty, int score) {
+    public void updateStatus(int level, String difficulty, int score, int linesCleared) {
         if (statusPanel != null) {
             statusPanel.updateLevel(level, difficulty);
             statusPanel.updateScore(score);
+            statusPanel.updateLinesCleared(linesCleared);
         }
+    }
+
+    /**
+     * Schedules ghost row removal after a delay.
+     * @param delayMs Delay in milliseconds
+     */
+    public void scheduleGhostRowRemoval(long delayMs) {
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
+            javafx.util.Duration.millis(delayMs)
+        );
+        pause.setOnFinished(e -> {
+            if (eventListener instanceof GameController) {
+                GameController gc = (GameController) eventListener;
+                if (gc.getBoard() instanceof TetrisBoard) {
+                    TetrisBoard tb = (TetrisBoard) gc.getBoard();
+                    tb.removeGhostRow();
+                    refreshGameBackground(tb.getBoardMatrix());
+                }
+            }
+        });
+        pause.play();
     }
 }

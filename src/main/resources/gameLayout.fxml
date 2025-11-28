@@ -17,6 +17,10 @@
         </center>
     </BorderPane>
 
+    <!-- Score Display -->
+    <Label fx:id="scoreLabel" layoutX="40" layoutY="5" text="Score: 0"
+           style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>

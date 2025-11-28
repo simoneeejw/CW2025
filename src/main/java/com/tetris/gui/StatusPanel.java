@@ -15,12 +15,14 @@ public class StatusPanel extends VBox {
 
     private final Text levelText;
     private final Text scoreText;
+    private final Text linesText;
     private final Text powerUpText;
     private final Text controlsText;
 
     public StatusPanel() {
         this.levelText = new Text("Level: 1");
         this.scoreText = new Text("Score: 0");
+        this.linesText = new Text("Lines: 0");
         this.powerUpText = new Text("");
         this.controlsText = new Text();
         setupUI();
@@ -41,6 +43,10 @@ public class StatusPanel extends VBox {
         scoreText.setFont(Font.font("System", FontWeight.BOLD, 20));
         scoreText.setFill(Color.WHITE);
 
+        // Lines text
+        linesText.setFont(Font.font("System", FontWeight.BOLD, 18));
+        linesText.setFill(Color.LIGHTBLUE);
+
         // Power-up text
         powerUpText.setFont(Font.font("System", FontWeight.BOLD, 18));
         powerUpText.setFill(Color.CYAN);
@@ -58,7 +64,7 @@ public class StatusPanel extends VBox {
                             "ESC : Pause\n" +
                             "N : New Game");
 
-        getChildren().addAll(levelText, scoreText, powerUpText, controlsText);
+        getChildren().addAll(levelText, scoreText, linesText, powerUpText, controlsText);
     }
 
     /**
@@ -76,6 +82,14 @@ public class StatusPanel extends VBox {
      */
     public void updateScore(int score) {
         scoreText.setText("Score: " + score);
+    }
+
+    /**
+     * Updates the lines cleared display.
+     * @param lines Total lines cleared
+     */
+    public void updateLinesCleared(int lines) {
+        linesText.setText("Lines: " + lines);
     }
 
     /**

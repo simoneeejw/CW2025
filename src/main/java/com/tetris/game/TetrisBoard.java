@@ -16,6 +16,7 @@ public class TetrisBoard implements Board {
     private final Score score;
     private final LevelManager levelManager;
     private final PowerUpManager powerUpManager;
+    private int ghostRow = -1; // Track which row is a ghost row (-1 = none)
 
     public TetrisBoard(int width, int height) {
         this.width = width;
@@ -25,6 +26,7 @@ public class TetrisBoard implements Board {
         this.score = new Score();
         this.levelManager = new LevelManager();
         this.powerUpManager = new PowerUpManager();
+        this.ghostRow = -1;
     }
 
     @Override
@@ -110,6 +112,21 @@ public class TetrisBoard implements Board {
     }
 
     @Override
+    public int getGhostYPosition() {
+        Point currentPos = new Point(boardState.getCurrentOffset());
+        int[][] currentMatrix = MatrixOperations.copy(boardState.getCurrentGameMatrix());
+        int[][] currentShape = brickManager.getCurrentShape();
+
+        // Keep moving down until we hit a collision
+        int ghostY = (int) currentPos.getY();
+        while (!MatrixOperations.intersect(currentMatrix, currentShape, (int) currentPos.getX(), ghostY + 1)) {
+            ghostY++;
+        }
+
+        return ghostY;
+    }
+
+    @Override
     public void newGame() {
         boardState.reset(width, height);
         score.reset();
@@ -148,5 +165,56 @@ public class TetrisBoard implements Board {
      */
     public PowerUpManager getPowerUpManager() {
         return powerUpManager;
+    }
+
+    /**
+     * Adds a ghost row at a random position (for Level 4).
+     * Ghost rows are filled and will be removed after 3 seconds.
+     */
+    public void addGhostRow() {
+        if (ghostRow != -1) {
+            return; // Already have a ghost row
+        }
+
+        int[][] matrix = boardState.getCurrentGameMatrix();
+        java.util.Random random = new java.util.Random();
+
+        // Find a random empty or partially filled row (not top 2 rows, not bottom row)
+        int rowIndex = random.nextInt(matrix.length - 4) + 2;
+
+        // Fill the row with a special color (8 for ghost)
+        for (int j = 0; j < matrix[rowIndex].length; j++) {
+            matrix[rowIndex][j] = 8; // Special ghost color
+        }
+
+        ghostRow = rowIndex;
+        boardState.setCurrentGameMatrix(matrix);
+    }
+
+    /**
+     * Removes the current ghost row.
+     */
+    public void removeGhostRow() {
+        if (ghostRow == -1) {
+            return; // No ghost row to remove
+        }
+
+        int[][] matrix = boardState.getCurrentGameMatrix();
+
+        // Clear the ghost row
+        for (int j = 0; j < matrix[ghostRow].length; j++) {
+            matrix[ghostRow][j] = 0;
+        }
+
+        ghostRow = -1;
+        boardState.setCurrentGameMatrix(matrix);
+    }
+
+    /**
+     * Checks if there is currently a ghost row.
+     * @return true if ghost row exists
+     */
+    public boolean hasGhostRow() {
+        return ghostRow != -1;
     }
 }
