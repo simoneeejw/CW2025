@@ -1,0 +1,242 @@
+/* ========================================
+   Tetris Light Classic Theme - styles.css
+   ======================================== */
+
+/* Root background with light gradient and subtle diagonal lines */
+.root {
+    -fx-background-color:
+        repeating-linear-gradient(
+            45deg,
+            transparent 0px,
+            transparent 15px,
+            rgba(160, 208, 224, 0.1) 15px,
+            rgba(160, 208, 224, 0.1) 30px
+        ),
+        linear-gradient(to bottom, #B0E0E6, #E6F3FF);
+}
+
+/* BorderPane container */
+.border-pane {
+    -fx-background-color: transparent;
+}
+
+/* Title "TETRIS" text styling */
+.title-text {
+    -fx-font-family: "Arial";
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #FF8C00 0%, #FFD700 100%);
+    -fx-effect: dropshadow(gaussian, black, 5, 0.3, 2, 2);
+}
+
+/* Subtitle "N-BLOCK" text styling */
+.subtitle-text {
+    -fx-font-family: "Arial";
+    -fx-font-size: 24px;
+    -fx-font-style: italic;
+    -fx-fill: #00FFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 3, 0.2, 1, 1);
+}
+
+/* Game board container (board-stack) - Classic Tetris with light blue tint */
+.game-board-container,
+.board-stack {
+    -fx-background-color: rgba(176, 224, 230, 0.3);
+    -fx-background-radius: 5px;
+    -fx-border-color: #00FFFF;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0, 3);
+}
+
+/* NOTE: For faint cyan grid on cells, implement in GuiController.setRectangleData():
+   Apply to each Rectangle: setStroke(Color.web("#00FFFF", 0.2)) for 1px borders at 20% opacity.
+   This creates a subtle grid pattern overlaying the board cells. */
+
+/* Game panel GridPane */
+#gamePanel {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: #00FFFF;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+}
+
+/* Sidebar info boxes */
+.info-box {
+    -fx-background-color: rgba(245, 245, 245, 0.8);
+    -fx-background-radius: 5px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.3, 0, 2);
+}
+
+/* Labels in sidebar - titles */
+.info-label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+/* Labels in sidebar - values */
+.info-value {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #00BFFF;
+}
+
+/* Score label */
+#scoreLabel {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #00BFFF;
+}
+
+/* Lines label */
+#linesLabel {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #00BFFF;
+}
+
+/* Level label */
+#levelLabel {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #00BFFF;
+}
+
+/* Level name label */
+#levelNameLabel {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #FF8C00;
+}
+
+/* Pause button */
+#pauseButton {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.3, 0, 2);
+}
+
+#pauseButton:hover {
+    -fx-background-color: #5179F1;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(65, 105, 225, 0.5), 8, 0.5, 0, 3);
+}
+
+#pauseButton:pressed {
+    -fx-background-color: #315CD1;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Music icon text */
+.music-icon {
+    -fx-font-size: 20px;
+    -fx-fill: #4169E1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.3, 1, 1);
+}
+
+/* Separator text */
+.separator-text {
+    -fx-font-size: 16px;
+    -fx-fill: #999999;
+}
+
+/* Bottom bar container */
+.bottom-bar {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-radius: 5px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0.2, 0, 1);
+}
+
+/* Piece Rectangle styling - subtle glow and rounded corners */
+.piece-rect {
+    -fx-arc-height: 2;
+    -fx-arc-width: 2;
+    -fx-effect: innershadow(gaussian, white, 2, 0.5, 0, 0);
+}
+
+/* Brick color styling - applied programmatically but defined here for reference */
+.brick-cyan {
+    -fx-fill: #00FFFF;
+    -fx-stroke: #00CCCC;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-yellow {
+    -fx-fill: #FFFF00;
+    -fx-stroke: #CCCC00;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-purple {
+    -fx-fill: #8B00FF;
+    -fx-stroke: #6B00CC;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-green {
+    -fx-fill: #00FF00;
+    -fx-stroke: #00CC00;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-red {
+    -fx-fill: #FF0000;
+    -fx-stroke: #CC0000;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-orange {
+    -fx-fill: #FF8C00;
+    -fx-stroke: #CC7000;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+.brick-blue {
+    -fx-fill: #0000FF;
+    -fx-stroke: #0000CC;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 4px;
+    -fx-arc-height: 4px;
+}
+
+/* VBox container for sidebar */
+.sidebar-container {
+    -fx-spacing: 10px;
+}
+
+/* HBox for info items */
+.info-item-container {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+}
+

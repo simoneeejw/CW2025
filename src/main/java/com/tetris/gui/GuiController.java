@@ -12,15 +12,15 @@ import com.tetris.util.BrickColorMapper;
 import com.tetris.util.GameConstants;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
-import javafx.scene.effect.Reflection;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,32 +46,25 @@ public class GuiController implements Initializable {
     private GridPane gamePanel;
 
     @FXML
-    private Group groupNotification;
-
-    @FXML
-    private GridPane brickPanel;
-
-    @FXML
-    private GridPane heldPanel;
-
-    @FXML
-    private GameOverPanel gameOverPanel;
-
-    @FXML
     private javafx.scene.control.Label scoreLabel;
 
-    private LevelUpPanel levelUpPanel;
-    private StatusPanel statusPanel;
-    private GridPane ghostPanel; // Shadow piece
+    @FXML
+    private javafx.scene.control.Label linesLabel;
+
+    @FXML
+    private javafx.scene.control.Label levelLabel;
+
+    @FXML
+    private javafx.scene.control.Label levelNameLabel;
+
+    @FXML
+    private javafx.scene.control.Button pauseButton;
 
     private Rectangle[][] displayMatrix;
 
     private GameEventListener eventListener;
 
-    private Rectangle[][] rectangles;
-
     private Rectangle[][] heldRectangles;
-    private Rectangle[][] ghostRectangles;
 
     private Timeline timeLine;
 
@@ -79,13 +72,18 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    private final IntegerProperty scoreProp = new SimpleIntegerProperty(0);
+
+    private final IntegerProperty linesProp = new SimpleIntegerProperty(0);
+
+    private final IntegerProperty levelProp = new SimpleIntegerProperty(1);
+
     private long currentFallSpeed = GameConstants.DEFAULT_FALL_SPEED_MS;
     private double speedMultiplier = 1.0;
 
     // Theme variables
     private Theme currentTheme;
     private Rectangle themeBackground;
-    private ParticleEffect particleEffect;
     private Timeline glowPulseTimeline;
 
     @Override
@@ -128,33 +126,23 @@ public class GuiController implements Initializable {
                 } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
                     togglePause();
                     keyEvent.consume();
-                } else if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
-                    keyEvent.consume();
                 }
             }
         });
-        gameOverPanel.setVisible(false);
 
-        // Initialize level-up panel
-        levelUpPanel = new LevelUpPanel();
-        levelUpPanel.setLayoutX(100);
-        levelUpPanel.setLayoutY(200);
-        levelUpPanel.setPrefSize(400, 150);
-        groupNotification.getChildren().add(levelUpPanel);
+        // Bind labels to properties
+        scoreLabel.textProperty().bind(Bindings.concat("Score: ", scoreProp));
+        linesLabel.textProperty().bind(Bindings.concat("Lines: ", linesProp));
+        levelLabel.textProperty().bind(Bindings.concat("Level: ", levelProp));
+        levelNameLabel.setText("Beginner");
 
-        final Reflection reflection = new Reflection();
-        reflection.setFraction(0.8);
-        reflection.setTopOpacity(0.9);
-        reflection.setTopOffset(-12);
+        // Set pause button action
+        pauseButton.setOnAction(e -> togglePause());
 
         // Load and apply saved theme
         loadSavedTheme();
         initializeThemeBackground();
         applyTheme(currentTheme);
-
-        // Initialize particle effect system
-        initializeParticleEffect();
 
         // Initialize glow pulse animation for active pieces
         initializeGlowPulse();
@@ -162,68 +150,39 @@ public class GuiController implements Initializable {
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         // Initialize status panel and add to root Pane
-        if (statusPanel == null) {
-            statusPanel = new StatusPanel();
-            statusPanel.setLayoutX(420);
-            statusPanel.setLayoutY(30);
-            statusPanel.setPrefSize(220, 350);
-            statusPanel.setVisible(true);
+        // if (statusPanel == null) {
+        //     statusPanel = new StatusPanel();
+        //     statusPanel.setLayoutX(420);
+        //     statusPanel.setLayoutY(30);
+        //     statusPanel.setPrefSize(220, 350);
+        //     statusPanel.setVisible(true);
 
-            // Add to root pane
-            javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
-            rootPane.getChildren().add(statusPanel);
-            statusPanel.toFront(); // Bring to front
-        }
+        //     // Add to root pane
+        //     javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
+        //     rootPane.getChildren().add(statusPanel);
+        //     statusPanel.toFront(); // Bring to front
+        // }
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
+                rectangle.getStyleClass().add("piece-rect"); // Apply CSS styling for rounded corners and glow
                 displayMatrix[i][j] = rectangle;
                 gamePanel.add(rectangle, j, i - 2);
             }
         }
-
-        rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
-                rectangles[i][j] = rectangle;
-                brickPanel.add(rectangle, j, i);
-            }
-        }
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
-
 
         heldRectangles = new Rectangle[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
+                rectangle.getStyleClass().add("piece-rect"); // Apply CSS styling for rounded corners and glow
                 heldRectangles[i][j] = rectangle;
-                heldPanel.add(rectangle, j, i);
+                // heldPanel.add(rectangle, j, i);
             }
         }
-
-        // Initialize ghost panel (shadow piece)
-        ghostPanel = new GridPane();
-        ghostPanel.setHgap(1);
-        ghostPanel.setVgap(1);
-        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                ghostRectangles[i][j] = rectangle;
-                ghostPanel.add(rectangle, j, i);
-            }
-        }
-        // Add ghost panel to root - get parent of gamePanel
-        javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getParent().getParent();
-        rootPane.getChildren().add(ghostPanel);
-        ghostPanel.toBack(); // Send to back so it's behind actual piece
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(GameConstants.DEFAULT_FALL_SPEED_MS),
@@ -239,26 +198,26 @@ public class GuiController implements Initializable {
             case 0:
                 returnPaint = Color.TRANSPARENT;
                 break;
-            case 1:
-                returnPaint = Color.AQUA;
+            case 1: // I-piece - Cyan
+                returnPaint = Color.web("#00FFFF");
                 break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
+            case 2: // T-piece - Purple
+                returnPaint = Color.web("#8B00FF");
                 break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
+            case 3: // S-piece - Green
+                returnPaint = Color.web("#00FF00");
                 break;
-            case 4:
-                returnPaint = Color.YELLOW;
+            case 4: // O-piece - Yellow
+                returnPaint = Color.web("#FFFF00");
                 break;
-            case 5:
-                returnPaint = Color.RED;
+            case 5: // Z-piece - Red
+                returnPaint = Color.web("#FF0000");
                 break;
-            case 6:
-                returnPaint = Color.BEIGE;
+            case 6: // L-piece - Orange
+                returnPaint = Color.web("#FF8C00");
                 break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
+            case 7: // J-piece - Blue
+                returnPaint = Color.web("#0000FF");
                 break;
             case 8:
                 // Ghost row - semi-transparent gray
@@ -271,27 +230,56 @@ public class GuiController implements Initializable {
         return returnPaint;
     }
 
+    /**
+     * Gets the stroke color for a brick (darker version of fill).
+     */
+    private Paint getStrokeColor(int i) {
+        switch (i) {
+            case 1: return Color.web("#00CCCC"); // Cyan
+            case 2: return Color.web("#6B00CC"); // Purple
+            case 3: return Color.web("#00CC00"); // Green
+            case 4: return Color.web("#CCCC00"); // Yellow
+            case 5: return Color.web("#CC0000"); // Red
+            case 6: return Color.web("#CC7000"); // Orange
+            case 7: return Color.web("#0000CC"); // Blue
+            default: return Color.TRANSPARENT;
+        }
+    }
+
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
-            for (int i = 0; i < brick.getBrickData().length; i++) {
-                for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                    setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
-                }
+            // First, refresh the entire game background to show locked pieces
+            if (eventListener instanceof GameController) {
+                GameController gc = (GameController) eventListener;
+                refreshGameBackground(gc.getBoard().getBoardMatrix());
             }
-            int[][] heldData = brick.getHeldBrickData();
-            if (heldData != null) {
-                for (int i = 0; i < heldData.length; i++) {
-                    for (int j = 0; j < heldData[i].length; j++) {
-                        setRectangleData(heldData[i][j], heldRectangles[i][j]);
+
+            // Then overlay the active piece on top
+            int[][] brickData = brick.getBrickData();
+            int brickX = brick.getxPosition();
+            int brickY = brick.getyPosition();
+
+            for (int i = 0; i < brickData.length; i++) {
+                for (int j = 0; j < brickData[i].length; j++) {
+                    if (brickData[i][j] != 0) {
+                        int boardY = brickY + i;
+                        int boardX = brickX + j;
+                        // Make sure we're within bounds and adjust for the 2-row offset
+                        if (boardY >= 2 && boardY < displayMatrix.length &&
+                            boardX >= 0 && boardX < displayMatrix[0].length) {
+                            setRectangleData(brickData[i][j], displayMatrix[boardY][boardX]);
+                        }
                     }
                 }
-            } else {
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        heldRectangles[i][j].setFill(Color.TRANSPARENT);
+            }
+
+            // Update held piece display (not implemented in current layout)
+            int[][] heldData = brick.getHeldBrickData();
+            if (heldData != null) {
+                for (int i = 0; i < heldData.length && i < heldRectangles.length; i++) {
+                    for (int j = 0; j < heldData[i].length && j < heldRectangles[i].length; j++) {
+                        setRectangleData(heldData[i][j], heldRectangles[i][j]);
                     }
                 }
             }
@@ -305,31 +293,37 @@ public class GuiController implements Initializable {
      * Updates the ghost piece (shadow) position to show where brick will land.
      */
     private void updateGhostPiece(ViewData brick) {
-        if (ghostPanel == null) return;
-
         // Calculate ghost position by simulating drops until collision
         int ghostY = calculateGhostYPosition(brick);
 
-        // Position ghost panel
-        ghostPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * ghostPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        ghostPanel.setLayoutY(-42 + gamePanel.getLayoutY() + ghostY * ghostPanel.getHgap() + ghostY * BRICK_SIZE);
+        // Don't draw ghost if it's at the same position as the active piece
+        if (ghostY == brick.getyPosition()) {
+            return;
+        }
 
-        // Update ghost rectangles with semi-transparent version of brick
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                if (brick.getBrickData()[i][j] != 0) {
-                    // Make it semi-transparent
-                    Color color = (Color) getFillColor(brick.getBrickData()[i][j]);
-                    ghostRectangles[i][j].setFill(Color.rgb(
-                        (int)(color.getRed() * 255),
-                        (int)(color.getGreen() * 255),
-                        (int)(color.getBlue() * 255),
-                        0.3 // 30% opacity
-                    ));
-                    ghostRectangles[i][j].setArcHeight(9);
-                    ghostRectangles[i][j].setArcWidth(9);
-                } else {
-                    ghostRectangles[i][j].setFill(Color.TRANSPARENT);
+        // Draw ghost piece on the board with low opacity
+        int[][] brickData = brick.getBrickData();
+        int brickX = brick.getxPosition();
+
+        for (int i = 0; i < brickData.length; i++) {
+            for (int j = 0; j < brickData[i].length; j++) {
+                if (brickData[i][j] != 0) {
+                    int boardY = ghostY + i;
+                    int boardX = brickX + j;
+                    // Make sure we're within bounds and adjust for the 2-row offset
+                    if (boardY >= 2 && boardY < displayMatrix.length &&
+                        boardX >= 0 && boardX < displayMatrix[0].length) {
+                        // Only draw if the cell is empty (don't overwrite locked pieces or active piece)
+                        if (displayMatrix[boardY][boardX].getFill() == Color.TRANSPARENT) {
+                            Color color = (Color) getFillColor(brickData[i][j]);
+                            displayMatrix[boardY][boardX].setFill(Color.rgb(
+                                (int)(color.getRed() * 255),
+                                (int)(color.getGreen() * 255),
+                                (int)(color.getBlue() * 255),
+                                0.3 // 30% opacity for ghost
+                            ));
+                        }
+                    }
                 }
             }
         }
@@ -359,21 +353,23 @@ public class GuiController implements Initializable {
 
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
+
+        if (color != 0 && color != 8) { // Not transparent or ghost
+            rectangle.setStroke(getStrokeColor(color));
+            rectangle.setStrokeWidth(1.0);
+            rectangle.setArcHeight(4);
+            rectangle.setArcWidth(4);
+        } else {
+            rectangle.setStroke(Color.TRANSPARENT);
+            rectangle.setStrokeWidth(0);
+            rectangle.setArcHeight(4);
+            rectangle.setArcWidth(4);
+        }
     }
 
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
-            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(notificationPanel);
-                notificationPanel.showScore(groupNotification.getChildren());
-
-                // Create particle burst effect for line clears
-                createLineClearParticles(downData.getClearRow().getLinesRemoved());
-            }
             refreshBrick(downData.getViewData());
         }
         gamePanel.requestFocus();
@@ -419,13 +415,13 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         timeLine.stop();
-        gameOverPanel.setVisible(true);
+        // gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
-        gameOverPanel.setVisible(false);
+        // gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
@@ -456,54 +452,6 @@ public class GuiController implements Initializable {
             isPause.setValue(Boolean.TRUE);
             timeLine.pause();
             System.out.println("Game Paused");
-        }
-    }
-
-    /**
-     * Shows level-up notification.
-     * @param level New level number
-     * @param difficulty Difficulty name
-     */
-    public void showLevelUp(int level, String difficulty) {
-        if (levelUpPanel != null) {
-            levelUpPanel.showLevelUp(level);
-        }
-        if (statusPanel != null) {
-            statusPanel.updateLevel(level, difficulty);
-        }
-    }
-
-    /**
-     * Shows power-up notification.
-     * @param powerUpName Name of the power-up
-     */
-    public void showPowerUpNotification(String powerUpName) {
-        if (levelUpPanel != null) {
-            levelUpPanel.showPowerUp(powerUpName);
-        }
-    }
-
-    /**
-     * Shows Tetris (4-line clear) notification.
-     */
-    public void showTetrisNotification() {
-        if (levelUpPanel != null) {
-            levelUpPanel.showTetris();
-        }
-    }
-
-    /**
-     * Updates status panel with current game state.
-     * @param level Current level
-     * @param difficulty Difficulty name
-     * @param score Current score
-     * @param linesCleared Total lines cleared
-     */
-    public void updateStatus(int level, String difficulty, int score, int linesCleared) {
-        if (statusPanel != null) {
-            statusPanel.updateLevel(level, difficulty);
-            statusPanel.updateScore(score);
-            statusPanel.updateLinesCleared(linesCleared);
         }
     }
 
@@ -564,13 +512,6 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Initializes the particle effect system.
-     */
-    private void initializeParticleEffect() {
-        particleEffect = new ParticleEffect(groupNotification);
-    }
-
-    /**
      * Initializes the glow pulse animation for active pieces.
      */
     private void initializeGlowPulse() {
@@ -588,8 +529,8 @@ public class GuiController implements Initializable {
      * @param opacity The opacity value (0.0 to 1.0)
      */
     private void setGlowOpacity(double opacity) {
-        if (rectangles != null) {
-            for (Rectangle[] row : rectangles) {
+        if (displayMatrix != null) {
+            for (Rectangle[] row : displayMatrix) {
                 for (Rectangle rect : row) {
                     if (rect != null && rect.getEffect() instanceof DropShadow) {
                         DropShadow glow = (DropShadow) rect.getEffect();
@@ -624,11 +565,6 @@ public class GuiController implements Initializable {
             scoreLabel.setStyle("-fx-text-fill: " + theme.getUiAccentColor() + ";");
         }
 
-        // Update status panel colors
-        if (statusPanel != null) {
-            statusPanel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        }
-
         // Apply glow effects to active pieces
         applyPieceGlow(theme);
     }
@@ -638,8 +574,8 @@ public class GuiController implements Initializable {
      * @param theme Current theme
      */
     private void applyPieceGlow(Theme theme) {
-        if (rectangles != null) {
-            for (Rectangle[] row : rectangles) {
+        if (displayMatrix != null) {
+            for (Rectangle[] row : displayMatrix) {
                 for (Rectangle rect : row) {
                     if (rect != null && rect.getFill() != Color.TRANSPARENT) {
                         // Add drop shadow effect
@@ -659,15 +595,7 @@ public class GuiController implements Initializable {
      * @param linesCleared Number of lines cleared
      */
     public void createLineClearParticles(int linesCleared) {
-        if (particleEffect == null) {
-            particleEffect = new ParticleEffect(groupNotification);
-        }
-
-        // Create burst at center of game board
-        double centerX = gamePanel.getLayoutX() + gamePanel.getWidth() / 2;
-        double centerY = gamePanel.getLayoutY() + gamePanel.getHeight() / 2;
-
-        particleEffect.createBurst(centerX, centerY, currentTheme);
+        // Particle effect code removed as per changes
     }
 
     /**
@@ -679,5 +607,44 @@ public class GuiController implements Initializable {
         if (selected != null) {
             applyTheme(selected);
         }
+    }
+
+    /**
+     * Shows level-up notification.
+     * @param level New level number
+     * @param difficulty Difficulty name
+     */
+    public void showLevelUp(int level, String difficulty) {
+        levelProp.set(level);
+        levelNameLabel.setText(difficulty);
+    }
+
+    /**
+     * Shows power-up notification.
+     * @param powerUpName Name of the power-up
+     */
+    public void showPowerUpNotification(String powerUpName) {
+        // No notification in classic layout
+    }
+
+    /**
+     * Shows Tetris (4-line clear) notification.
+     */
+    public void showTetrisNotification() {
+        // No notification in classic layout
+    }
+
+    /**
+     * Updates status panel with current game state.
+     * @param level Current level
+     * @param difficulty Difficulty name
+     * @param score Current score
+     * @param linesCleared Total lines cleared
+     */
+    public void updateStatus(int level, String difficulty, int score, int linesCleared) {
+        scoreProp.set(score);
+        linesProp.set(linesCleared);
+        levelProp.set(level);
+        levelNameLabel.setText(difficulty);
     }
 }

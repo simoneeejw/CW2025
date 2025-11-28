@@ -29,13 +29,18 @@ public class MainMenu {
         this.selectedTheme = ThemeManager.getInstance().getCurrentTheme();
         this.settingsDialog = new SettingsDialog();
         this.highScoresDialog = new HighScoresDialog();
+
+        // Initialize sound settings from preferences
+        java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(SettingsDialog.class);
+        com.tetris.util.SoundManager.getInstance().setMusicEnabled(prefs.getBoolean("music_enabled", true));
+        com.tetris.util.SoundManager.getInstance().setSoundEffectsEnabled(prefs.getBoolean("sound_effects_enabled", true));
     }
 
     /**
      * Shows the main menu.
      */
     public void show() {
-        VBox mainLayout = new VBox(25);
+        VBox mainLayout = new VBox(0);
         mainLayout.setPadding(new Insets(40));
         mainLayout.setAlignment(Pos.CENTER);
         mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0a0033, #000000);");
@@ -44,7 +49,7 @@ public class MainMenu {
         VBox header = createHeader();
 
         // === QUICK ACTIONS SECTION ===
-        HBox quickActions = createQuickActions();
+        VBox quickActions = createQuickActions();
 
         // === MAIN PLAY BUTTON ===
         Button playButton = createPlayButton();
@@ -54,7 +59,7 @@ public class MainMenu {
 
         // Add spacing
         Region spacer1 = new Region();
-        VBox.setVgrow(spacer1, Priority.ALWAYS);
+        VBox.setVgrow(spacer1, Priority.NEVER);
         Region spacer2 = new Region();
         VBox.setVgrow(spacer2, Priority.ALWAYS);
 
@@ -62,18 +67,24 @@ public class MainMenu {
         VBox creditsFooter = createCreditsFooter();
 
         mainLayout.getChildren().addAll(
-            header,
-            spacer1,
-            quickActions,
-            spacer2,
-            playButton,
-            exitButton,
-            creditsFooter
+                header,
+                spacer1,
+                playButton,
+                quickActions,
+                spacer2,
+                exitButton,
+                creditsFooter
         );
 
-        Scene scene = new Scene(mainLayout, 600, 700);
+        // Apply custom margins for tighter spacing
+        VBox.setMargin(playButton, new Insets(-20, 0, 0, 0));  // Add some space below header
+        VBox.setMargin(quickActions, new Insets(0, 0, 0, 0));
+
+        Scene scene = new Scene(mainLayout, 650, 700);  // Increased width from 600 to 650
         stage.setScene(scene);
         stage.setTitle("TETRIS - Main Menu");
+        stage.setMinWidth(500);  // Prevent squeezing narrower than button + padding
+        stage.setMinHeight(600);  // Prevent vertical squeezing
         stage.centerOnScreen();
         stage.show();
     }
@@ -87,7 +98,7 @@ public class MainMenu {
         try {
             Image logoImage = new Image(getClass().getResourceAsStream("/tetris_logo.png"));
             logo = new ImageView(logoImage);
-            logo.setFitWidth(300);
+            logo.setFitWidth(360);
             logo.setPreserveRatio(true);
         } catch (Exception e) {
             System.out.println("Logo not found. Using text title.");
@@ -107,19 +118,73 @@ public class MainMenu {
         return header;
     }
 
-    private HBox createQuickActions() {
-        HBox quickActions = new HBox(30);
+    private VBox createQuickActions() {
+        VBox quickActions = new VBox(20);
         quickActions.setAlignment(Pos.CENTER);
         quickActions.setPadding(new Insets(20));
 
         // High Scores Button
         Button scoresBtn = new Button("🏆 HIGH SCORES");
-        styleQuickActionButton(scoresBtn, "#FFC107", "#FFD54F");
+        scoresBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        scoresBtn.setPrefSize(300, 70);
+        String baseBg = "linear-gradient(to bottom, #FFC107, #FFB300)";
+        String hoverBg = "linear-gradient(to bottom, #FFECB3, #FFE082)";
+        String shadowColorBase = "rgba(255,193,7,0.6)";
+        String shadowColorHover = "#FFC107";
+        scoresBtn.setStyle(
+                "-fx-background-color: " + baseBg + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBase + ", 15, 0.5, 0, 3);"
+        );
+
+        scoresBtn.setOnMouseEntered(e -> scoresBtn.setStyle(
+                "-fx-background-color: " + hoverBg + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorHover + ", 25, 0.8, 0, 0); " +
+                        "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+        ));
+
+        scoresBtn.setOnMouseExited(e -> scoresBtn.setStyle(
+                "-fx-background-color: " + baseBg + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBase + ", 15, 0.5, 0, 3);"
+        ));
+
         scoresBtn.setOnAction(e -> highScoresDialog.show(stage));
 
         // Settings Button
         Button settingsBtn = new Button("⚙ SETTINGS");
-        styleQuickActionButton(settingsBtn, "#2196F3", "#42A5F5");
+        settingsBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        settingsBtn.setPrefSize(300, 70);
+        String baseBgS = "linear-gradient(to bottom, #2196F3, #1976D2)";
+        String hoverBgS = "linear-gradient(to bottom, #BBDEFB, #90CAF9)";
+        String shadowColorBaseS = "rgba(33,150,243,0.6)";
+        String shadowColorHoverS = "#2196F3";
+        settingsBtn.setStyle(
+                "-fx-background-color: " + baseBgS + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBaseS + ", 15, 0.5, 0, 3);"
+        );
+
+        settingsBtn.setOnMouseEntered(e -> settingsBtn.setStyle(
+                "-fx-background-color: " + hoverBgS + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorHoverS + ", 25, 0.8, 0, 0); " +
+                        "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+        ));
+
+        settingsBtn.setOnMouseExited(e -> settingsBtn.setStyle(
+                "-fx-background-color: " + baseBgS + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBaseS + ", 15, 0.5, 0, 3);"
+        ));
+
         settingsBtn.setOnAction(e -> {
             Theme newTheme = settingsDialog.show(stage, selectedTheme);
             if (newTheme != null) {
@@ -133,56 +198,30 @@ public class MainMenu {
         return quickActions;
     }
 
-    private void styleQuickActionButton(Button button, String baseColor, String hoverColor) {
-        button.setFont(Font.font("System", FontWeight.BOLD, 14));
-        button.setPrefSize(160, 60);
-        button.setStyle(
-            "-fx-background-color: " + baseColor + "; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 10; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);"
-        );
-
-        button.setOnMouseEntered(e -> button.setStyle(
-            "-fx-background-color: " + hoverColor + "; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 10; " +
-            "-fx-effect: dropshadow(gaussian, " + baseColor + ", 15, 0.6, 0, 0); " +
-            "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
-        ));
-
-        button.setOnMouseExited(e -> button.setStyle(
-            "-fx-background-color: " + baseColor + "; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 10; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);"
-        ));
-    }
-
     private Button createPlayButton() {
         Button playButton = new Button("▶ PLAY GAME");
         playButton.setFont(Font.font("System", FontWeight.BOLD, 24));
         playButton.setPrefSize(300, 70);
         playButton.setStyle(
-            "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
-            "-fx-text-fill: #000000; " +
-            "-fx-background-radius: 15; " +
-            "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
+                "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
         );
 
         playButton.setOnMouseEntered(e -> playButton.setStyle(
-            "-fx-background-color: linear-gradient(to bottom, #FFED4E, #FFB84D); " +
-            "-fx-text-fill: #000000; " +
-            "-fx-background-radius: 15; " +
-            "-fx-effect: dropshadow(gaussian, #FFD700, 25, 0.8, 0, 0); " +
-            "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+                "-fx-background-color: linear-gradient(to bottom, #FFED4E, #FFB84D); " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, #FFD700, 25, 0.8, 0, 0); " +
+                        "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
         ));
 
         playButton.setOnMouseExited(e -> playButton.setStyle(
-            "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
-            "-fx-text-fill: #000000; " +
-            "-fx-background-radius: 15; " +
-            "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
+                "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
         ));
 
         playButton.setOnAction(e -> {
@@ -196,32 +235,33 @@ public class MainMenu {
     private Button createExitButton() {
         Button exitButton = new Button("EXIT");
         exitButton.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        exitButton.setPrefSize(120, 35);
+        exitButton.setPrefSize(300, 35);  // Match width of other buttons for consistent centering
+        exitButton.setAlignment(Pos.CENTER);  // Center text horizontally
         exitButton.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-text-fill: #888888; " +
-            "-fx-border-color: #888888; " +
-            "-fx-border-width: 1; " +
-            "-fx-border-radius: 5; " +
-            "-fx-background-radius: 5;"
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #888888; " +
+                        "-fx-border-color: #888888; " +
+                        "-fx-border-width: 1; " +
+                        "-fx-border-radius: 5; " +
+                        "-fx-background-radius: 5;"
         );
 
         exitButton.setOnMouseEntered(e -> exitButton.setStyle(
-            "-fx-background-color: #FF5252; " +
-            "-fx-text-fill: white; " +
-            "-fx-border-color: #FF5252; " +
-            "-fx-border-width: 1; " +
-            "-fx-border-radius: 5; " +
-            "-fx-background-radius: 5;"
+                "-fx-background-color: #FF5252; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-border-color: #FF5252; " +
+                        "-fx-border-width: 1; " +
+                        "-fx-border-radius: 5; " +
+                        "-fx-background-radius: 5;"
         ));
 
         exitButton.setOnMouseExited(e -> exitButton.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-text-fill: #888888; " +
-            "-fx-border-color: #888888; " +
-            "-fx-border-width: 1; " +
-            "-fx-border-radius: 5; " +
-            "-fx-background-radius: 5;"
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #888888; " +
+                        "-fx-border-color: #888888; " +
+                        "-fx-border-width: 1; " +
+                        "-fx-border-radius: 5; " +
+                        "-fx-background-radius: 5;"
         ));
 
         exitButton.setOnAction(e -> System.exit(0));
@@ -253,15 +293,15 @@ public class MainMenu {
         alert.setTitle("Credits");
         alert.setHeaderText("TETRIS - COMP2042 Coursework 2025");
         alert.setContentText(
-            "Developed by: [Your Name]\n" +
-            "Student ID: [Your ID]\n\n" +
-            "Features:\n" +
-            "✓ Progressive Levels\n" +
-            "✓ Power-Up System\n" +
-            "✓ Visual Themes\n" +
-            "✓ High Scores\n" +
-            "✓ Custom Settings\n\n" +
-            "© 2025 All Rights Reserved"
+                "Developed by: [Your Name]\n" +
+                        "Student ID: [Your ID]\n\n" +
+                        "Features:\n" +
+                        "✓ Progressive Levels\n" +
+                        "✓ Power-Up System\n" +
+                        "✓ Visual Themes\n" +
+                        "✓ High Scores\n" +
+                        "✓ Custom Settings\n\n" +
+                        "© 2025 All Rights Reserved"
         );
         alert.initOwner(stage);
         alert.showAndWait();
@@ -303,6 +343,9 @@ public class MainMenu {
             // Initialize game controller
             new com.tetris.game.GameController(c);
 
+            // Start background music
+            com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
+
             // Apply theme to GUI
             ThemeManager.getInstance().applyTheme(c);
         } catch (Exception e) {
@@ -315,4 +358,3 @@ public class MainMenu {
         }
     }
 }
-

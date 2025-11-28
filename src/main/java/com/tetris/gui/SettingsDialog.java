@@ -210,12 +210,50 @@ public class SettingsDialog {
         audioPanel.setAlignment(Pos.TOP_CENTER);
         audioPanel.setStyle("-fx-background-color: #2a2a2a;");
 
-        Label note = new Label("Audio settings will be available in a future update");
-        note.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        note.setTextFill(Color.WHITE);
-        note.setWrapText(true);
+        Label title = new Label("Audio Settings");
+        title.setFont(Font.font("System", FontWeight.BOLD, 18));
+        title.setTextFill(Color.web("#00FFFF"));
 
-        audioPanel.getChildren().add(note);
+        VBox controls = new VBox(15);
+        controls.setAlignment(Pos.TOP_LEFT);
+
+        // Background Music Toggle
+        HBox musicBox = new HBox(15);
+        musicBox.setAlignment(Pos.CENTER_LEFT);
+        Label musicLabel = new Label("Background Music:");
+        musicLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        musicLabel.setTextFill(Color.WHITE);
+        musicLabel.setPrefWidth(150);
+
+        CheckBox musicCheckBox = new CheckBox();
+        musicCheckBox.setSelected(prefs.getBoolean("music_enabled", true));
+        musicCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            prefs.putBoolean("music_enabled", newVal);
+            com.tetris.util.SoundManager.getInstance().setMusicEnabled(newVal);
+        });
+
+        musicBox.getChildren().addAll(musicLabel, musicCheckBox);
+
+        // Sound Effects Toggle
+        HBox sfxBox = new HBox(15);
+        sfxBox.setAlignment(Pos.CENTER_LEFT);
+        Label sfxLabel = new Label("Sound Effects:");
+        sfxLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        sfxLabel.setTextFill(Color.WHITE);
+        sfxLabel.setPrefWidth(150);
+
+        CheckBox sfxCheckBox = new CheckBox();
+        sfxCheckBox.setSelected(prefs.getBoolean("sound_effects_enabled", true));
+        sfxCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            prefs.putBoolean("sound_effects_enabled", newVal);
+            com.tetris.util.SoundManager.getInstance().setSoundEffectsEnabled(newVal);
+        });
+
+        sfxBox.getChildren().addAll(sfxLabel, sfxCheckBox);
+
+        controls.getChildren().addAll(musicBox, sfxBox);
+
+        audioPanel.getChildren().addAll(title, controls);
 
         return audioPanel;
     }

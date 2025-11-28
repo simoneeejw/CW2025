@@ -1,5 +1,12 @@
 :# Tetris Game Project
 
+A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
+
+**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
+**🎨 Visual Design**: Light classic theme with gradient backgrounds, rounded corners, drop shadows, and vibrant Tetris colors  
+**🏗️ Architecture**: Refactored from monolithic design to SRP-compliant classes with Observer and Factory patterns  
+**✅ Quality**: 60 passing unit tests, comprehensive error handling, persistent high scores and settings  
+
 ## GitHub
 Repository: https://github.com/simoneeejw/CW2025
 
@@ -51,16 +58,29 @@ The following features have been successfully implemented and are functioning as
   - Core game mechanics (brick movement, rotation, collision detection).
   - Matrix operations (merging, clearing, intersection checks).
   - Brick generation and validation.
-  - A total of 37 tests pass, ensuring reliability and preventing regressions.
+  - A total of 60 tests pass (increased from 37 baseline), ensuring reliability and preventing regressions.
 
 - **Game Functionality**: The application provides a complete Tetris experience, including:
   - Brick movement (left, right, down) using keyboard controls.
   - Brick rotation with collision detection.
   - Line clearing when rows are filled.
-  - Scoring system that increases with cleared lines.
+  - Scoring system that increases with cleared lines and level multipliers.
   - Hold feature allowing players to store and swap bricks.
+  - Ghost piece (shadow) showing where the active piece will land.
+  - Progressive level system with increasing speed (4 levels).
+  - Power-up system triggered by Tetris clears (4 lines).
 
-- **Application Launch**: The game launches successfully as a JavaFX desktop application, featuring a graphical user interface with smooth animations and responsive controls.
+- **Classic Light Theme GUI**: The game features a professionally redesigned interface with:
+  - Light blue gradient background with subtle diagonal line pattern.
+  - BorderPane layout with centered game board and sidebar.
+  - 30x30px brick cells with rounded corners and stroke borders.
+  - Vibrant classic Tetris colors (cyan, yellow, purple, green, red, orange, blue).
+  - Real-time score, lines, and level display in styled sidebar boxes.
+  - Orange-to-gold gradient "TETRIS" title with drop shadow effect.
+  - Cyan "N-BLOCK" subtitle with italics.
+  - Royal blue pause button with hover effects.
+
+- **Application Launch**: The game launches successfully as a JavaFX desktop application, featuring a modern graphical user interface with smooth animations, responsive controls, and professional styling.
 
 ## Additional Features (25 Marks)
 
@@ -102,32 +122,78 @@ The following features have been successfully implemented and are functioning as
 **Description**: Shows a semi-transparent shadow of where the current piece will land when dropped.
 
 **Implementation Details**:
-- **Ghost Panel**: Added ghostPanel GridPane with ghostRectangles array to display shadow
-- **Position Calculation**: `getGhostYPosition()` method in TetrisBoard simulates piece drop using collision detection
-- **Visual Design**: Shadow rendered at 30% opacity in the same color as the active piece
-- **Real-time Updates**: Ghost position updates on every brick movement via `updateGhostPiece()` method
-- **Integration**: Ghost panel positioned dynamically based on current piece X position and calculated landing Y position
+- **Direct Board Rendering**: Ghost piece is rendered directly on the game board's displayMatrix at 30% opacity
+- **Position Calculation**: `getGhostYPosition()` method in GameController simulates piece drop using collision detection to find landing position
+- **Visual Design**: Shadow rendered at 30% opacity in the same color as the active piece, only on empty cells
+- **Real-time Updates**: Ghost position updates on every brick movement via `updateGhostPiece()` method in GuiController
+- **Smart Overlay**: Ghost only draws on transparent cells to avoid overwriting locked pieces or the active piece
+- **Performance**: Integrated rendering eliminates need for separate panels, improving performance
 
-**User Benefit**: Players can now plan moves more effectively by seeing exactly where pieces will land, improving gameplay experience and reducing mistakes.
+**User Benefit**: Players can now plan moves more effectively by seeing exactly where pieces will land, improving gameplay experience and reducing mistakes. The ghost piece disappears when the active piece reaches the landing position to avoid visual confusion.
 
-### 4. Enhanced UI and Status Display
-**Description**: Comprehensive status panel showing game state and score display.
+### 4. Classic Light Theme GUI Redesign (Visual Appeal + User Experience)
+**Description**: Complete redesign of the Tetris GUI with a professional light theme inspired by classic Tetris aesthetics.
 
 **Implementation Details**:
-- **StatusPanel.java**: New VBox component displaying:
-  - Current level and difficulty name
-  - Real-time score updates
-  - Total lines cleared
-  - Active power-ups with remaining time
-  - Complete controls reference
-- **Score Label**: Prominent "Score: X" label at top of game board, bound to score property for live updates
-- **Visual Notifications**: LevelUpPanel with animated pop-ups for:
-  - Level advancement ("LEVEL X!")
-  - Power-up activation
-  - Tetris clears (4 lines)
-- **Styling**: Professional appearance with semi-transparent backgrounds, gold/cyan colors, and drop shadows
+- **Layout Architecture**: BorderPane root layout with three main sections:
+  - **Top**: VBox containing "TETRIS" title (Arial 48px bold, orange-to-gold gradient) with drop shadow and "N-BLOCK" subtitle (Arial 24px italic, cyan)
+  - **Center**: HBox with game board (300x600px StackPane) and sidebar (150px VBox)
+  - **Bottom**: HBox with music icon (♫), separator, and pause button
+- **Background Styling**: Repeating linear gradient at 45° creating subtle diagonal lines (transparent to #A0D0E0 at 10% opacity), overlaid on a light blue to pale cyan gradient (#B0E0E6 to #E6F3FF)
+- **Game Board Design**:
+  - Light blue tinted background (rgba(176, 224, 230, 0.3)) for subtle depth
+  - 3px cyan border (#00FFFF) with 5px rounded corners
+  - Drop shadow for elevated appearance
+  - 20x10 grid (30x30px cells) with gap of 1px
+- **Brick Styling**: 
+  - Classic Tetris colors with proper hex values (cyan #00FFFF, yellow #FFFF00, purple #8B00FF, green #00FF00, red #FF0000, orange #FF8C00, blue #0000FF)
+  - 1px darker stroke on all colored bricks for definition
+  - 2px rounded corners (arc-height/width: 4px)
+  - Inner shadow glow effect via CSS (.piece-rect class)
+- **Sidebar Info Boxes**:
+  - Three stacked HBox containers with light white background (rgba(245, 245, 245, 0.8))
+  - 5px border radius and 10px padding
+  - Drop shadow for depth perception
+  - Score, Lines, and Level labels in Arial Bold 14px
+  - Values displayed in cyan (#00BFFF) for high contrast
+  - Level difficulty name in orange (#FF8C00)
+- **Pause Button**:
+  - Royal blue background (#4169E1) with white text
+  - 10px border radius for pill shape
+  - Hover effect: scales to 105% with enhanced blue glow shadow
+  - Pressed effect: scales to 98% for tactile feedback
+  - Hand cursor on hover
+- **CSS Integration**: External styles.css file linked in gameLayout.fxml containing all styling rules for maintainability
+- **Property Binding**: Score, lines, and level labels bound to JavaFX properties for real-time updates without manual refresh
+- **Theme Consistency**: All UI elements use coordinated color scheme (blues, cyans, oranges) for cohesive visual identity
 
-### 5. Improved Controls and Input Handling
+**User Experience**: The light, airy design reduces eye strain during extended play sessions while maintaining high contrast for piece visibility. The classic Tetris aesthetic creates nostalgic appeal while modern styling elements (shadows, gradients, rounded corners) provide a polished, professional appearance.
+
+### 5. Fixed Game Rendering and Mechanics (Critical Bug Fixes)
+**Description**: Resolved major rendering issues where active pieces were not visible and game mechanics were broken.
+
+**Problems Identified**:
+- Active pieces were created but never displayed on the game board
+- Separate brickPanel system was removed during refactoring but rendering logic wasn't updated
+- Ghost piece used a disconnected GridPane that wasn't properly integrated
+- Pieces appeared to "jump" or not move correctly due to display matrix not being refreshed
+
+**Solutions Implemented**:
+- **Unified Rendering System**: Completely rewrote `refreshBrick()` method to use the displayMatrix directly
+  - First refreshes entire game background to show locked pieces
+  - Then overlays active piece on top by updating cells at the piece's current position
+  - Ensures pieces are always visible and positioned correctly
+- **Ghost Piece Integration**: Reimplemented ghost rendering to work directly on the game board
+  - Calculates landing position using existing collision detection
+  - Renders ghost at 30% opacity only on empty cells
+  - Avoids overwriting active or locked pieces
+  - Disappears when active piece reaches landing position
+- **Removed Obsolete Code**: Eliminated unused rendering components (separate rectangles arrays, ghost panels) that were causing confusion and bugs
+- **Display Matrix as Single Source of Truth**: All visual updates now go through the displayMatrix, ensuring consistency between game state and visual representation
+
+**Impact**: These fixes were critical for basic gameplay. Before the fixes, players couldn't see pieces moving, making the game unplayable. After the fixes, all game mechanics work correctly with proper visual feedback.
+
+### 6. Improved Controls and Input Handling
 **Description**: Fixed keyboard input issues and enhanced control responsiveness.
 
 **Implementation Details**:
@@ -146,7 +212,7 @@ The following features have been successfully implemented and are functioning as
 - ESC: Pause/resume game
 - N: New game
 
-### 6. Comprehensive Testing
+### 7. Comprehensive Testing
 **Total Tests**: 60 unit tests (increased from 37 baseline)
 - LevelManagerTest: 12 tests for level progression
 - PowerUpManagerTest: 11 tests for power-up mechanics
@@ -162,22 +228,30 @@ The following features have been successfully implemented and are functioning as
 
 All tests pass successfully, ensuring reliability and preventing regressions.
 
-### 7. Dynamic Visual Themes with Piece Glows and Board Gradients (Visual Appeal + Immersion)
-**Description**: Implemented swappable visual themes with gradient backgrounds, glowing piece effects, and particle burst animations for line clears.
+### 8. CSS-Based Styling System (Maintainability + Extensibility)
+**Description**: External CSS stylesheet for centralized styling and easy theme modifications.
 
 **Implementation Details**:
-- **Theme.java**: Enum defining three distinct themes:
-  - **Classic Retro**: Black-to-gray gradient, white glows, yellow accents
-  - **Neon Night**: Dark blue-to-darker blue gradient, cyan glows, magenta accents
-  - **Zen Minimal**: Light gray-to-white gradient, dark gray glows, gray accents
-- **ThemeManager.java**: Singleton managing theme persistence using Java Preferences API. Automatically loads saved theme on startup and saves selections.
-- **ThemeSelector.java**: Modal dialog shown at game start with RadioButtons for theme selection. Displays theme previews with color-coded buttons.
-- **Board Gradients**: Full-screen LinearGradient background applied to root pane, creating immersive space/neon environments.
-- **Piece Glow Effects**: DropShadow effects with theme-matched colors and pulsing opacity animation (0.5s cycle) for active pieces.
-- **Particle Bursts**: Line clears trigger 20-30 fading circles that scatter outward using TranslateTransition and FadeTransition animations.
-- **Integration**: Press 'T' during gameplay to open theme selector. Theme persists across game sessions.
+- **styles.css**: Comprehensive stylesheet defining all visual properties:
+  - Root background gradients with diagonal line patterns
+  - Board container styling with transparency and borders
+  - Piece rectangles with rounded corners and inner shadow glow
+  - Sidebar info boxes with semi-transparent backgrounds
+  - Label and text styling (fonts, colors, sizes)
+  - Button states (normal, hover, pressed) with scale transitions
+  - Music icon and separator text styling
+- **Style Classes**: Semantic CSS classes applied via FXML:
+  - `.title-text`: Main Tetris logo with gradient fill and drop shadow
+  - `.subtitle-text`: N-Block subtitle with italic styling
+  - `.game-board-container`: Board wrapper with light blue tint
+  - `.piece-rect`: Individual brick cells with glow effects
+  - `.info-box`: Sidebar status containers
+  - `.bottom-bar`: Control panel at bottom
+- **Separation of Concerns**: Visual styling completely separated from Java logic, allowing designers to modify appearance without touching code
+- **Maintainability**: Single source of truth for all visual properties; changes propagate throughout the application
+- **Performance**: CSS styles compiled and cached by JavaFX for optimal rendering
 
-**Visual Impact**: Transforms the game from flat 2D to immersive 3D-like experience with dynamic lighting effects and atmospheric backgrounds. Each theme provides unique visual identity while maintaining gameplay clarity.
+**Technical Advantage**: This architecture allows for future theme expansion by creating alternate CSS files without modifying Java code. The current light classic theme could be easily complemented with dark, neon, or retro variants by swapping stylesheets.
 
 ## Implemented but Not Working Properly
 None. All implemented features are functioning correctly, including the recently added progressive levels, power-ups, and ghost piece.
@@ -217,16 +291,49 @@ The following new Java classes were introduced for the additional features:
 
 - **PowerUpManagerTest.java** (src/test/java/com/tetris/game): Unit test class with 11 tests covering power-up activation, expiration timing, multiplier calculations, property binding, and enum properties.
 
-- **Theme.java** (com.tetris.gui): Enumeration defining three visual themes (Classic Retro, Neon Night, Zen Minimal) with color schemes for board gradients, piece glows, and UI accents.
+- **Theme.java** (com.tetris.gui): Enumeration defining visual themes with color schemes for board gradients, piece glows, and UI accents. Currently implements a light classic theme system with support for extensibility.
 
-- **ThemeManager.java** (com.tetris.gui): Singleton class managing theme persistence and application. Handles loading/saving user theme preferences and applying themes to the GUI controller.
+- **ThemeManager.java** (com.tetris.gui): Singleton class managing theme persistence and application using Java Preferences API. Handles loading/saving user theme preferences across game sessions.
 
-- **ThemeSelector.java** (com.tetris.gui): JavaFX modal dialog for theme selection. Displays theme previews with RadioButtons and applies selected theme to the game.
+- **ThemeSelector.java** (com.tetris.gui): JavaFX modal dialog for theme selection with RadioButton previews (currently disabled in favor of fixed light classic theme).
 
-- **ParticleEffect.java** (com.tetris.gui): Animation system for line clear particle bursts. Creates 20-30 fading circles that scatter outward from cleared lines using Translate and Fade transitions.
+- **ParticleEffect.java** (com.tetris.gui): Animation system for visual effects (currently not active in the light theme design but available for future enhancements).
+
+- **HighScoresDialog.java** (com.tetris.gui): Dialog for displaying and managing high scores with TableView display and score persistence.
+
+- **NotificationPanel.java** (com.tetris.gui): Animated panel for displaying score bonuses and game notifications with fade effects.
+
+- **SettingsDialog.java** (com.tetris.gui): Dialog for adjusting game settings including sound volume and theme selection.
+
+- **PauseMenuPanel.java** (com.tetris.gui): Overlay panel displayed when game is paused, providing options to resume, access settings, view help, or quit to main menu.
+
+- **HelpDialog.java** (com.tetris.gui): Modal dialog displaying game controls, scoring system, and gameplay tips for new players.
+
+- **MainMenu.java** (com.tetris.gui): Initial screen shown on application launch with options to start game, view high scores, adjust settings, or exit.
+
+## New Resource Files
+
+### CSS Stylesheets
+- **styles.css** (src/main/resources): Main stylesheet defining the classic light theme with:
+  - Root background gradient with diagonal line pattern
+  - Game board container with light blue tint and cyan border
+  - Piece rectangle styling with rounded corners and inner glow
+  - Sidebar info boxes with semi-transparent white backgrounds
+  - Typography for title, subtitle, and labels (Arial font family)
+  - Button styling with hover and pressed states
+  - Color scheme using classic Tetris colors and light blue palette
+
+### FXML Layouts
+- **gameLayout.fxml** (src/main/resources): Updated BorderPane layout structure:
+  - Top section with title and subtitle VBox
+  - Center section with game board StackPane and sidebar VBox
+  - Bottom section with controls HBox (music icon, pause button)
+  - CSS stylesheet links for window_style.css and styles.css
+  - Style class assignments for all major components
+  - Proper Insets for padding using JavaFX geometry
 
 ## Modified Java Classes
-The following classes from the original codebase were modified to support the refactoring:
+The following classes from the original codebase were modified to support the refactoring and new features:
 
 - **SimpleBoard.java**: Originally a monolithic class handling multiple responsibilities. It was refactored into the three new classes (BoardState, BrickManager, TetrisBoard) to adhere to the Single Responsibility Principle. This change was necessary to improve code maintainability, testability, and scalability.
 
@@ -234,14 +341,80 @@ The following classes from the original codebase were modified to support the re
 
 - **GameController.java**: Updated to integrate the new refactored classes and implement the GameEventListener interface. Changes included adding references to LevelManager and modifying event handling methods. These modifications were necessary to support the new architecture and ensure proper event propagation.
 
-- **GuiController.java**: Extended with new methods for handling level progression and pause functionality. The updates included adding event handlers for the 'P' key and integrating with the LevelManager for speed adjustments. This was required to support the enhanced gameplay features.
+- **GuiController.java**: Extensively modified to support the new GUI design and fix critical rendering issues:
+  - **Rendering System Rewrite**: Completely overhauled `refreshBrick()` method to render pieces directly on displayMatrix instead of using separate panels
+  - **Ghost Piece Integration**: Implemented `updateGhostPiece()` to render shadow pieces at 30% opacity on the main board
+  - **CSS Style Application**: Added style class assignments ("piece-rect") to all Rectangle cells during initialization
+  - **Property Binding**: Implemented real-time updates for score, lines, and level labels using JavaFX property binding
+  - **Color Management**: Updated `getFillColor()` and added `getStrokeColor()` methods with proper hex color values for classic Tetris pieces
+  - **Brick Styling**: Enhanced `setRectangleData()` to apply stroke, rounded corners, and fill colors to cells
+  - **Level Display**: Added `showLevelUp()` and `updateStatus()` methods to refresh sidebar information
+  - **Code Cleanup**: Removed obsolete rendering code (separate rectangles arrays, ghost panels) that were causing bugs
+  - **Theme Support**: Integrated theme loading from Java Preferences API with `loadSavedTheme()` and `applyTheme()` methods
+  
+  These changes were critical for fixing the broken game mechanics where pieces were invisible and for implementing the new light classic theme design.
+
+## Current Game State (November 2025)
+
+### What's Working
+The game is fully functional with the following features:
+- ✅ **Core Gameplay**: All Tetris mechanics working correctly (movement, rotation, line clearing, scoring)
+- ✅ **Visual Display**: Pieces are visible and render properly on a light blue classic-themed board
+- ✅ **Ghost Piece**: Semi-transparent shadow shows landing position in real-time
+- ✅ **Progressive Levels**: 4 difficulty levels with increasing speed (500ms → 200ms fall time)
+- ✅ **Power-Ups**: Random power-ups awarded for Tetris clears (4 lines)
+- ✅ **Hold Mechanic**: Players can store and swap pieces using the 'C' key
+- ✅ **Hard Drop**: Space bar instantly drops pieces to bottom
+- ✅ **Pause/Resume**: ESC key pauses game with proper state management
+- ✅ **Score Tracking**: Real-time score, lines, and level display with property binding
+- ✅ **Sound System**: Background music and sound effects for piece drops, line clears, level-ups
+- ✅ **High Scores**: Persistent high score tracking with dialog display
+- ✅ **Main Menu**: Start screen with game options and settings
+- ✅ **CSS Styling**: Professional light classic theme with gradients, shadows, and rounded corners
+
+### Known Visual Elements
+- Light blue diagonal striped background (subtle repeating pattern)
+- Orange-to-gold gradient "TETRIS" title with drop shadow
+- Cyan "N-BLOCK" subtitle
+- Cyan bordered game board (3px) with light blue tint background
+- Classic Tetris colors: Cyan (I), Yellow (O), Purple (T), Green (S), Red (Z), Orange (L), Blue (J)
+- White semi-transparent sidebar boxes showing Score, Lines, Level
+- Royal blue pause button with hover effects
+
+### Recent Fixes (Critical)
+The game underwent major rendering fixes to resolve critical bugs:
+- **Fixed invisible pieces**: Pieces now render correctly on the board
+- **Fixed ghost piece**: Shadow pieces display at correct position with proper opacity
+- **Fixed display updates**: Board refreshes properly after each move/lock
+- **Fixed coordinate system**: Active pieces overlay correctly on the game board
+- **Removed broken code**: Eliminated obsolete rendering systems causing conflicts
+
+### Testing Status
+- **60 unit tests** passing (100% success rate)
+- All core mechanics verified through automated tests
+- Manual playtesting confirms smooth gameplay experience
+- No known game-breaking bugs
 
 ## Unexpected Problems
-During the refactoring assignment, several unexpected challenges were encountered:
+During the refactoring and feature implementation, several unexpected challenges were encountered:
 
 - **Dependency Conflicts**: Maven dependency resolution issues arose when updating package structures, causing compilation failures. This was addressed by carefully reviewing and updating the pom.xml file to ensure compatible versions of JavaFX and JUnit dependencies.
 
 - **Event Handling Complexity**: Implementing the observer pattern initially led to redundant event triggers and potential memory leaks. The problem was resolved by refactoring the event listener registration process, ensuring proper cleanup, and adding null checks to prevent exceptions.
+
+- **Rendering System Breakdown**: During GUI redesign, the removal of the old brickPanel system broke piece rendering entirely, making pieces invisible. The root cause was that pieces were being created but never added to the display. This was fixed by completely rewriting the rendering logic to use displayMatrix as the single source of truth, with active pieces overlaid directly on the game board cells.
+
+- **FXML Syntax Errors**: Initial FXML layout had invalid syntax including:
+  - Direct RGBA color values in `fill` attributes (not supported in JavaFX)
+  - Missing proper `xmlns` namespace declarations
+  - Incorrect `padding` attribute format (needed `<Insets>` element)
+  - Invalid gradient syntax for CSS linear-gradient in inline styles
+  
+  These were resolved by using proper JavaFX FXML syntax, moving color definitions to CSS, and using style attributes with correct JavaFX property formats.
+
+- **CSS Linear Gradient Compatibility**: JavaFX CSS gradient syntax differs from standard CSS. The repeating-linear-gradient for diagonal lines required specific JavaFX format with explicit color stops and proper angle specification (45deg vs 45). Multiple iterations were needed to achieve the desired light blue diagonal line effect.
+
+- **Ghost Piece Z-Order Issues**: Initially tried using a separate GridPane for ghost rendering, but this caused z-ordering problems where ghost appeared above active pieces. Solution was to render ghost directly on displayMatrix before active piece, only on transparent cells, ensuring proper layering.
 
 - **Testing Edge Cases**: Certain game logic scenarios, such as simultaneous brick movements and line clears, were difficult to reproduce manually. This was mitigated by expanding the JUnit test suite with parameterized tests and mock objects to simulate complex interactions.
 

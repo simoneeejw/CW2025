@@ -7,6 +7,7 @@ import com.tetris.model.MoveEvent;
 import com.tetris.model.ViewData;
 import com.tetris.gui.GuiController;
 import com.tetris.util.GameConstants;
+import com.tetris.util.SoundManager;
 
 public class GameController implements GameEventListener {
 
@@ -43,8 +44,19 @@ public class GameController implements GameEventListener {
         ClearRow clearRow = null;
         if (!canMove) {
             board.mergeBrickToBackground();
+
+            // Play piece drop sound when piece locks
+            SoundManager.getInstance().playPieceDropSound();
+
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
+                // Play line clear sound
+                if (clearRow.getLinesRemoved() == 4) {
+                    SoundManager.getInstance().playTetrisSound();
+                } else {
+                    SoundManager.getInstance().playLineClearSound();
+                }
+
                 // Apply level and power-up multipliers to score
                 TetrisBoard tetrisBoard = (TetrisBoard) board;
                 int baseScore = clearRow.getScoreBonus();
@@ -57,6 +69,7 @@ public class GameController implements GameEventListener {
                 // Track lines cleared and check for level progression
                 boolean leveledUp = tetrisBoard.getLevelManager().addLinesCleared(clearRow.getLinesRemoved());
                 if (leveledUp) {
+                    SoundManager.getInstance().playLevelUpSound();
                     viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
                                                      tetrisBoard.getPowerUpManager().getSpeedMultiplier());
                     viewGuiController.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
@@ -89,6 +102,7 @@ public class GameController implements GameEventListener {
                                               tetrisBoard.getLevelManager().getTotalLinesCleared());
             }
             if (!board.createNewBrick()) {
+                SoundManager.getInstance().playGameOverSound();
                 viewGuiController.gameOver();
             }
 
