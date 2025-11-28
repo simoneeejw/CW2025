@@ -5,9 +5,9 @@ package com.tetris.gui;
  * Each theme defines colors for board background, piece effects, and UI elements.
  */
 public enum Theme {
-    CLASSIC_RETRO("Classic Retro", "#000000", "#333333", "#FFFFFF", "#FFFF00"),
-    NEON_NIGHT("Neon Night", "#000033", "#000066", "#00FFFF", "#FF00FF"),
-    ZEN_MINIMAL("Zen Minimal", "#F5F5F5", "#E0E0E0", "#333333", "#666666");
+    CLASSIC_RETRO("Classic Retro", "#000000", "#1a0a00", "#FFD700", "#FFFF00"),
+    NEON_NIGHT("Neon Night", "#0a0033", "#1a0066", "#00FFFF", "#FF00FF"),
+    ZEN_MINIMAL("Zen Minimal", "#E8E8E8", "#FFFFFF", "#2E7D32", "#4CAF50");
 
     private final String displayName;
     private final String boardGradientStart;

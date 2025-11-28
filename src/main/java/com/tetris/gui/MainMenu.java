@@ -1,0 +1,318 @@
+package com.tetris.gui;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+/**
+ * Main menu for the Tetris game with Quick Play, High Scores, Settings, and Play Game options.
+ */
+public class MainMenu {
+
+    private Stage stage;
+    private Theme selectedTheme;
+    private boolean startGame = false;
+    private SettingsDialog settingsDialog;
+    private HighScoresDialog highScoresDialog;
+
+    public MainMenu(Stage stage) {
+        this.stage = stage;
+        this.selectedTheme = ThemeManager.getInstance().getCurrentTheme();
+        this.settingsDialog = new SettingsDialog();
+        this.highScoresDialog = new HighScoresDialog();
+    }
+
+    /**
+     * Shows the main menu.
+     */
+    public void show() {
+        VBox mainLayout = new VBox(25);
+        mainLayout.setPadding(new Insets(40));
+        mainLayout.setAlignment(Pos.CENTER);
+        mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0a0033, #000000);");
+
+        // === HEADER SECTION ===
+        VBox header = createHeader();
+
+        // === QUICK ACTIONS SECTION ===
+        HBox quickActions = createQuickActions();
+
+        // === MAIN PLAY BUTTON ===
+        Button playButton = createPlayButton();
+
+        // === EXIT BUTTON ===
+        Button exitButton = createExitButton();
+
+        // Add spacing
+        Region spacer1 = new Region();
+        VBox.setVgrow(spacer1, Priority.ALWAYS);
+        Region spacer2 = new Region();
+        VBox.setVgrow(spacer2, Priority.ALWAYS);
+
+        // === CREDITS FOOTER ===
+        VBox creditsFooter = createCreditsFooter();
+
+        mainLayout.getChildren().addAll(
+            header,
+            spacer1,
+            quickActions,
+            spacer2,
+            playButton,
+            exitButton,
+            creditsFooter
+        );
+
+        Scene scene = new Scene(mainLayout, 600, 700);
+        stage.setScene(scene);
+        stage.setTitle("TETRIS - Main Menu");
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    private VBox createHeader() {
+        VBox header = new VBox(10);
+        header.setAlignment(Pos.CENTER);
+
+        // Try to load logo
+        ImageView logo = null;
+        try {
+            Image logoImage = new Image(getClass().getResourceAsStream("/tetris_logo.png"));
+            logo = new ImageView(logoImage);
+            logo.setFitWidth(300);
+            logo.setPreserveRatio(true);
+        } catch (Exception e) {
+            System.out.println("Logo not found. Using text title.");
+        }
+
+        if (logo != null) {
+            header.getChildren().add(logo);
+        } else {
+            // Fallback text logo
+            Label titleLabel = new Label("T E T R I S");
+            titleLabel.setFont(Font.font("System", FontWeight.BOLD, 48));
+            titleLabel.setTextFill(Color.web("#00FFFF"));
+            titleLabel.setStyle("-fx-effect: dropshadow(gaussian, #FF00FF, 20, 0.8, 0, 0);");
+            header.getChildren().add(titleLabel);
+        }
+
+        return header;
+    }
+
+    private HBox createQuickActions() {
+        HBox quickActions = new HBox(30);
+        quickActions.setAlignment(Pos.CENTER);
+        quickActions.setPadding(new Insets(20));
+
+        // High Scores Button
+        Button scoresBtn = new Button("🏆 HIGH SCORES");
+        styleQuickActionButton(scoresBtn, "#FFC107", "#FFD54F");
+        scoresBtn.setOnAction(e -> highScoresDialog.show(stage));
+
+        // Settings Button
+        Button settingsBtn = new Button("⚙ SETTINGS");
+        styleQuickActionButton(settingsBtn, "#2196F3", "#42A5F5");
+        settingsBtn.setOnAction(e -> {
+            Theme newTheme = settingsDialog.show(stage, selectedTheme);
+            if (newTheme != null) {
+                selectedTheme = newTheme;
+                ThemeManager.getInstance().setCurrentTheme(newTheme);
+            }
+        });
+
+        quickActions.getChildren().addAll(scoresBtn, settingsBtn);
+
+        return quickActions;
+    }
+
+    private void styleQuickActionButton(Button button, String baseColor, String hoverColor) {
+        button.setFont(Font.font("System", FontWeight.BOLD, 14));
+        button.setPrefSize(160, 60);
+        button.setStyle(
+            "-fx-background-color: " + baseColor + "; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 10; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);"
+        );
+
+        button.setOnMouseEntered(e -> button.setStyle(
+            "-fx-background-color: " + hoverColor + "; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 10; " +
+            "-fx-effect: dropshadow(gaussian, " + baseColor + ", 15, 0.6, 0, 0); " +
+            "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+        ));
+
+        button.setOnMouseExited(e -> button.setStyle(
+            "-fx-background-color: " + baseColor + "; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 10; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);"
+        ));
+    }
+
+    private Button createPlayButton() {
+        Button playButton = new Button("▶ PLAY GAME");
+        playButton.setFont(Font.font("System", FontWeight.BOLD, 24));
+        playButton.setPrefSize(300, 70);
+        playButton.setStyle(
+            "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
+            "-fx-text-fill: #000000; " +
+            "-fx-background-radius: 15; " +
+            "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
+        );
+
+        playButton.setOnMouseEntered(e -> playButton.setStyle(
+            "-fx-background-color: linear-gradient(to bottom, #FFED4E, #FFB84D); " +
+            "-fx-text-fill: #000000; " +
+            "-fx-background-radius: 15; " +
+            "-fx-effect: dropshadow(gaussian, #FFD700, 25, 0.8, 0, 0); " +
+            "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+        ));
+
+        playButton.setOnMouseExited(e -> playButton.setStyle(
+            "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
+            "-fx-text-fill: #000000; " +
+            "-fx-background-radius: 15; " +
+            "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.5, 0, 3);"
+        ));
+
+        playButton.setOnAction(e -> {
+            startGame = true;
+            loadGame();
+        });
+
+        return playButton;
+    }
+
+    private Button createExitButton() {
+        Button exitButton = new Button("EXIT");
+        exitButton.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        exitButton.setPrefSize(120, 35);
+        exitButton.setStyle(
+            "-fx-background-color: transparent; " +
+            "-fx-text-fill: #888888; " +
+            "-fx-border-color: #888888; " +
+            "-fx-border-width: 1; " +
+            "-fx-border-radius: 5; " +
+            "-fx-background-radius: 5;"
+        );
+
+        exitButton.setOnMouseEntered(e -> exitButton.setStyle(
+            "-fx-background-color: #FF5252; " +
+            "-fx-text-fill: white; " +
+            "-fx-border-color: #FF5252; " +
+            "-fx-border-width: 1; " +
+            "-fx-border-radius: 5; " +
+            "-fx-background-radius: 5;"
+        ));
+
+        exitButton.setOnMouseExited(e -> exitButton.setStyle(
+            "-fx-background-color: transparent; " +
+            "-fx-text-fill: #888888; " +
+            "-fx-border-color: #888888; " +
+            "-fx-border-width: 1; " +
+            "-fx-border-radius: 5; " +
+            "-fx-background-radius: 5;"
+        ));
+
+        exitButton.setOnAction(e -> System.exit(0));
+
+        return exitButton;
+    }
+
+    private VBox createCreditsFooter() {
+        VBox footer = new VBox(5);
+        footer.setAlignment(Pos.CENTER);
+        footer.setPadding(new Insets(10, 0, 10, 0));
+
+        Label credits = new Label("COMP2042 - Coursework 2025");
+        credits.setFont(Font.font("System", FontWeight.NORMAL, 11));
+        credits.setTextFill(Color.web("#666666"));
+        credits.setCursor(javafx.scene.Cursor.HAND);
+        credits.setOnMouseClicked(e -> showCredits());
+
+        credits.setOnMouseEntered(e -> credits.setTextFill(Color.web("#AAAAAA")));
+        credits.setOnMouseExited(e -> credits.setTextFill(Color.web("#666666")));
+
+        footer.getChildren().add(credits);
+
+        return footer;
+    }
+
+    private void showCredits() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Credits");
+        alert.setHeaderText("TETRIS - COMP2042 Coursework 2025");
+        alert.setContentText(
+            "Developed by: [Your Name]\n" +
+            "Student ID: [Your ID]\n\n" +
+            "Features:\n" +
+            "✓ Progressive Levels\n" +
+            "✓ Power-Up System\n" +
+            "✓ Visual Themes\n" +
+            "✓ High Scores\n" +
+            "✓ Custom Settings\n\n" +
+            "© 2025 All Rights Reserved"
+        );
+        alert.initOwner(stage);
+        alert.showAndWait();
+    }
+
+    /**
+     * Returns whether the user wants to start the game.
+     */
+    public boolean isStartGame() {
+        return startGame;
+    }
+
+    /**
+     * Returns the selected theme.
+     */
+    public Theme getSelectedTheme() {
+        return selectedTheme;
+    }
+
+    /**
+     * Loads the game after menu selection.
+     */
+    private void loadGame() {
+        try {
+            // Apply selected theme
+            ThemeManager.getInstance().setCurrentTheme(selectedTheme);
+
+            // Load the main game
+            java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
+            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
+            javafx.scene.Parent root = fxmlLoader.load();
+            GuiController c = fxmlLoader.getController();
+
+            stage.setTitle("TETRIS - COMP2042");
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 710);
+            stage.setScene(scene);
+            stage.centerOnScreen();
+
+            // Initialize game controller
+            new com.tetris.game.GameController(c);
+
+            // Apply theme to GUI
+            ThemeManager.getInstance().applyTheme(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to load game");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+}
+

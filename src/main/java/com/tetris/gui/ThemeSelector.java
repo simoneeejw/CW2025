@@ -5,6 +5,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -33,14 +35,36 @@ public class ThemeSelector {
         dialog.setResizable(false);
 
         // Create UI
-        VBox layout = new VBox(20);
+        VBox layout = new VBox(15);
         layout.setPadding(new Insets(30));
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-background-color: linear-gradient(to bottom, #1a1a1a, #000000);");
 
-        Label title = new Label("Choose Your Theme");
-        title.setFont(Font.font("System", FontWeight.BOLD, 24));
-        title.setTextFill(Color.WHITE);
+        // Try to load logo
+        ImageView logo = null;
+        try {
+            Image logoImage = new Image(getClass().getResourceAsStream("/tetris_logo.png"));
+            logo = new ImageView(logoImage);
+            logo.setFitWidth(200);
+            logo.setPreserveRatio(true);
+        } catch (Exception e) {
+            // Logo not found, will display text title instead
+            System.out.println("Logo not found. Using text title.");
+        }
+
+        // Title or Logo
+        if (logo != null) {
+            layout.getChildren().add(logo);
+        }
+
+        Label title = new Label("TETRIS");
+        title.setFont(Font.font("System", FontWeight.BOLD, 36));
+        title.setTextFill(Color.web("#00FFFF"));
+        title.setStyle("-fx-effect: dropshadow(gaussian, #FF00FF, 15, 0.7, 0, 0);");
+
+        Label subtitle = new Label("Choose Your Theme");
+        subtitle.setFont(Font.font("System", FontWeight.NORMAL, 18));
+        subtitle.setTextFill(Color.WHITE);
 
         // Theme buttons
         VBox themeButtons = new VBox(10);
@@ -51,14 +75,23 @@ public class ThemeSelector {
             themeButtons.getChildren().add(themeButton);
         }
 
-        Button startButton = new Button("Start Game");
-        startButton.setFont(Font.font("System", FontWeight.BOLD, 16));
-        startButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20;");
+        Button startButton = new Button("▶ START GAME");
+        startButton.setFont(Font.font("System", FontWeight.BOLD, 18));
+        startButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 15 40; " +
+                           "-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 2);");
         startButton.setOnAction(e -> dialog.close());
 
-        layout.getChildren().addAll(title, themeButtons, startButton);
+        // Add hover effect
+        startButton.setOnMouseEntered(e -> startButton.setStyle(
+            "-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-padding: 15 40; " +
+            "-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(76,175,80,0.8), 15, 0.7, 0, 2);"));
+        startButton.setOnMouseExited(e -> startButton.setStyle(
+            "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 15 40; " +
+            "-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 2);"));
 
-        Scene scene = new Scene(layout, 400, 350);
+        layout.getChildren().addAll(title, subtitle, themeButtons, startButton);
+
+        Scene scene = new Scene(layout, 450, 500);
         dialog.setScene(scene);
         dialog.showAndWait();
 
@@ -66,13 +99,10 @@ public class ThemeSelector {
     }
 
     private Button createThemeButton(Theme theme) {
-        Button button = new Button(theme.getDisplayName());
-        button.setFont(Font.font("System", FontWeight.NORMAL, 16));
-        button.setPrefWidth(200);
-        button.setStyle("-fx-background-color: " + theme.getBoardGradientStart() + "; " +
-                       "-fx-text-fill: " + theme.getUiAccentColor() + "; " +
-                       "-fx-border-color: " + theme.getPieceGlowColor() + "; " +
-                       "-fx-border-width: 2; -fx-padding: 10;");
+        Button button = new Button("● " + theme.getDisplayName().toUpperCase());
+        button.setFont(Font.font("System", FontWeight.BOLD, 16));
+        button.setPrefWidth(280);
+        button.setStyle(getUnselectedStyle(theme));
 
         button.setOnAction(e -> {
             selectedTheme = theme;
@@ -80,17 +110,49 @@ public class ThemeSelector {
             updateButtonStyles(button, theme);
         });
 
+        // Hover effect
+        button.setOnMouseEntered(e -> {
+            if (!theme.equals(selectedTheme)) {
+                button.setStyle(getHoverStyle(theme));
+            }
+        });
+        button.setOnMouseExited(e -> {
+            if (!theme.equals(selectedTheme)) {
+                button.setStyle(getUnselectedStyle(theme));
+            }
+        });
+
         return button;
     }
 
+    private String getUnselectedStyle(Theme theme) {
+        return "-fx-background-color: linear-gradient(to right, " +
+               theme.getBoardGradientStart() + ", " + theme.getBoardGradientEnd() + "); " +
+               "-fx-text-fill: " + theme.getUiAccentColor() + "; " +
+               "-fx-border-color: " + theme.getPieceGlowColor() + "; " +
+               "-fx-border-width: 2; -fx-padding: 15; -fx-background-radius: 8; " +
+               "-fx-border-radius: 8;";
+    }
+
+    private String getHoverStyle(Theme theme) {
+        return "-fx-background-color: linear-gradient(to right, " +
+               theme.getBoardGradientStart() + ", " + theme.getBoardGradientEnd() + "); " +
+               "-fx-text-fill: " + theme.getUiAccentColor() + "; " +
+               "-fx-border-color: " + theme.getPieceGlowColor() + "; " +
+               "-fx-border-width: 3; -fx-padding: 15; -fx-background-radius: 8; " +
+               "-fx-border-radius: 8; -fx-effect: dropshadow(gaussian, " +
+               theme.getPieceGlowColor() + ", 15, 0.6, 0, 0);";
+    }
+
     private void updateButtonStyles(Button selectedButton, Theme theme) {
-        // This would update all buttons to show which one is selected
-        // For simplicity, we'll just change the selected button's style
-        selectedButton.setStyle("-fx-background-color: " + theme.getBoardGradientEnd() + "; " +
+        selectedButton.setStyle("-fx-background-color: linear-gradient(to right, " +
+                               theme.getBoardGradientStart() + ", " + theme.getBoardGradientEnd() + "); " +
                                "-fx-text-fill: " + theme.getUiAccentColor() + "; " +
                                "-fx-border-color: " + theme.getPieceGlowColor() + "; " +
-                               "-fx-border-width: 3; -fx-padding: 10; -fx-effect: dropshadow(gaussian, " +
-                               theme.getPieceGlowColor() + ", 10, 0.5, 0, 0);");
+                               "-fx-border-width: 4; -fx-padding: 15; -fx-background-radius: 8; " +
+                               "-fx-border-radius: 8; -fx-effect: dropshadow(gaussian, " +
+                               theme.getPieceGlowColor() + ", 20, 0.8, 0, 0); " +
+                               "-fx-scale-x: 1.05; -fx-scale-y: 1.05;");
     }
 }
 
