@@ -4,16 +4,16 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * Manages game levels and difficulty progression.
- * Implements three difficulty levels: Easy, Medium, and Hard.
+ * Manages automatic level progression based on score.
+ * Players start at Level 1 and automatically advance when reaching score thresholds.
+ * Implements three difficulty levels with increasing speed and score multipliers.
  */
 public class LevelManager {
 
     private final IntegerProperty currentLevel = new SimpleIntegerProperty(1);
-    private int linesCleared = 0;
 
-    // Lines needed to advance to next level
-    private static final int[] LINES_TO_ADVANCE = {10, 25, 50};
+    // Score thresholds to advance to next level
+    private static final int[] SCORE_THRESHOLDS = {1000, 3000, 6000};
 
     // Fall speed for each level (milliseconds)
     private static final long[] FALL_SPEEDS = {1000, 700, 400};
@@ -25,36 +25,29 @@ public class LevelManager {
 
     public LevelManager() {
         this.currentLevel.set(1);
-        this.linesCleared = 0;
     }
 
     /**
-     * Increments the count of lines cleared.
-     * @param lines Number of lines cleared
+     * Checks and updates level based on current score.
+     * Automatically advances to next level when score threshold is reached.
+     * @param currentScore The player's current score
+     * @return true if level advanced, false otherwise
      */
-    public void addLinesCleared(int lines) {
-        linesCleared += lines;
-        checkLevelAdvancement();
-    }
-
-    /**
-     * Checks if the player should advance to the next level.
-     */
-    private void checkLevelAdvancement() {
+    public boolean updateLevel(int currentScore) {
         int level = currentLevel.get();
-        if (level < MAX_LEVEL && linesCleared >= LINES_TO_ADVANCE[level - 1]) {
-            advanceLevel();
-        }
-    }
 
-    /**
-     * Advances to the next level.
-     */
-    private void advanceLevel() {
-        if (currentLevel.get() < MAX_LEVEL) {
-            currentLevel.set(currentLevel.get() + 1);
-            linesCleared = 0; // Reset for next level
+        // Check if should advance to Level 2
+        if (level == 1 && currentScore >= SCORE_THRESHOLDS[0]) {
+            currentLevel.set(2);
+            return true;
         }
+        // Check if should advance to Level 3
+        else if (level == 2 && currentScore >= SCORE_THRESHOLDS[1]) {
+            currentLevel.set(3);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -90,30 +83,35 @@ public class LevelManager {
     }
 
     /**
-     * Gets the number of lines needed to advance to the next level.
-     * @return Lines needed, or 0 if at max level
+     * Gets the score needed to advance to the next level.
+     * @param currentScore The player's current score
+     * @return Score needed for next level, or 0 if at max level
      */
-    public int getLinesNeededForNextLevel() {
-        if (currentLevel.get() >= MAX_LEVEL) {
+    public int getScoreNeededForNextLevel(int currentScore) {
+        int level = currentLevel.get();
+        if (level >= MAX_LEVEL) {
             return 0;
         }
-        return LINES_TO_ADVANCE[currentLevel.get() - 1] - linesCleared;
+        return SCORE_THRESHOLDS[level - 1] - currentScore;
     }
 
     /**
-     * Gets the total lines cleared in the current level.
-     * @return Total lines cleared
+     * Gets the score threshold for the next level.
+     * @return Score threshold, or 0 if at max level
      */
-    public int getLinesCleared() {
-        return linesCleared;
+    public int getNextLevelThreshold() {
+        int level = currentLevel.get();
+        if (level >= MAX_LEVEL) {
+            return 0;
+        }
+        return SCORE_THRESHOLDS[level - 1];
     }
 
     /**
-     * Resets the level manager to initial state.
+     * Resets the level manager to initial state (Level 1).
      */
     public void reset() {
         currentLevel.set(1);
-        linesCleared = 0;
     }
 
     /**
@@ -122,9 +120,22 @@ public class LevelManager {
      */
     public String getLevelName() {
         switch (currentLevel.get()) {
-            case 1: return "Easy";
-            case 2: return "Medium";
-            case 3: return "Hard";
+            case 1: return "Level 1";
+            case 2: return "Level 2";
+            case 3: return "Level 3";
+            default: return "Unknown";
+        }
+    }
+
+    /**
+     * Gets a description of the current level difficulty.
+     * @return Difficulty description
+     */
+    public String getLevelDifficulty() {
+        switch (currentLevel.get()) {
+            case 1: return "Beginner";
+            case 2: return "Intermediate";
+            case 3: return "Expert";
             default: return "Unknown";
         }
     }
