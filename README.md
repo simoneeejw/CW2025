@@ -1,11 +1,12 @@
 :# Tetris Game Project
 
-A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
+A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, local multiplayer mode, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
 
-**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
+**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps, local 2-player multiplayer  
 **🎨 Visual Design**: Light classic theme with gradient backgrounds, rounded corners, drop shadows, and vibrant Tetris colors  
 **🏗️ Architecture**: Refactored from monolithic design to SRP-compliant classes with Observer and Factory patterns  
 **✅ Quality**: 60 passing unit tests, comprehensive error handling, persistent high scores and settings  
+**🌐 Multiplayer**: Split-screen competitive mode with separate controls for each player  
 
 ## GitHub
 Repository: https://github.com/simoneeejw/CW2025
@@ -232,16 +233,24 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 **Description**: Local 2-player competitive mode with split-screen display where players compete on separate boards simultaneously.
 
 **Implementation Details**:
-- **Main Menu Selection**: Added toggle buttons in the main menu to select between Single Player and Multiplayer modes
-  - Visual toggle with color-coded selection (green for selected, gray for unselected)
+- **Main Menu Selection**: Added horizontal toggle buttons in the main menu to select between Single Player and Multiplayer modes
+  - Visual toggle with color-coded selection (bright green gradient for selected, dark gray for unselected)
   - Game mode selection placed prominently above the "Play Game" button
-  - Smooth transition between mode selections with styled buttons
-- **Multiplayer Layout**: Created dedicated `multiplayerLayout.fxml` with side-by-side game boards:
-  - Player 1 board on the left with sidebar on the right
-  - Player 2 board on the right with sidebar on the left
-  - Each player has independent score, lines, level, held block, and next block displays
-  - Window sized precisely at 820x700px to fit content without excessive empty space
-  - Centered layout with proper spacing between elements
+  - Buttons arranged horizontally with equal widths (145px each) matching the play button's total width
+  - Smooth hover effects on unselected buttons
+  - Fixed button sizing prevents layout shifts when switching modes
+- **Consistent Window Sizing**: All three pages (Main Menu, Single Player, Multiplayer) use the same 820x700px window dimensions
+  - Main Menu: 820x700px with centered content
+  - Single Player: 820x700px with centered game board in the wider window
+  - Multiplayer: 820x700px precisely sized for side-by-side boards and sidebars
+  - Seamless transitions between pages without jarring size changes
+- **Multiplayer Layout**: Created dedicated `multiplayerLayout.fxml` with optimized BorderPane layout:
+  - **Left Sidebar**: Player 1 details (120px wide) with score, lines, level, held block, and next block
+  - **Center**: Two game boards (250px each) positioned side-by-side with 20px spacing
+  - **Right Sidebar**: Player 2 details (120px wide) with score, lines, level, held block, and next block
+  - Game boards centered in the window for balanced visual appearance
+  - Each player has independent game state and display
+  - Total content width: 120 + 250 + 20 + 250 + 120 = 760px (fits perfectly in 820px with padding)
 - **Separate Controls**: Each player uses different keyboard keys to avoid conflicts:
   - **Player 1 (WASD + Space + Tab)**:
     - A: Move left
@@ -258,17 +267,29 @@ All tests pass successfully, ensuring reliability and preventing regressions.
     - Enter: Hard drop
     - Backspace: Hold/reserve piece
 - **Instructions Display**: On game start, instructions are displayed for 2 seconds showing the control schemes for both players
+  - Clear, readable text explaining both control schemes
+  - Automatically fades after 2 seconds to not obstruct gameplay
+- **Property Binding System**: Implemented proper JavaFX property binding for real-time updates
+  - Created IntegerProperty instances for each player's score, lines, and level
+  - Labels bound to properties using Bindings.concat() for automatic updates
+  - updateStatus() method sets property values instead of text directly
+  - Eliminates "bound value cannot be set" errors
+- **Dual Game Controllers**: Two independent GameController instances manage separate game states
+  - Player1Listener and Player2Listener implement GameEventListener interface
+  - Each listener updates its respective player's UI components
+  - Separate game timelines for independent piece falling
+  - Key handling routes inputs to the correct controller
 - **Winner Detection**: Winner label at the bottom displays results when one or both players lose:
   - "PLAYER 1 WINS!" if Player 2's game ends first
   - "PLAYER 2 WINS!" if Player 1's game ends first
-  - "IT'S A TIE!" if both end simultaneously (score comparison)
+  - Score comparison for tie-breaking if implemented
 - **Shared Controls**: ESC to pause both games, N to start new game
-- **MultiplayerGuiController.java**: New controller class managing both player interfaces
-- **MultiplayerController.java**: Coordinator that initializes both game instances
+- **MultiplayerGuiController.java**: New controller class managing both player interfaces with proper property binding
+- **MultiplayerController.java**: Lightweight coordinator that initializes the multiplayer controller
 
-**User Experience**: Players can compete head-to-head in the same physical space, fostering competitive play and social interaction. The clear visual separation and distinct control schemes prevent confusion and enable smooth multiplayer gameplay.
+**User Experience**: Players can compete head-to-head in the same physical space, fostering competitive play and social interaction. The clear visual separation, distinct control schemes, and centered layout prevent confusion and enable smooth multiplayer gameplay. Consistent window sizing across all pages provides a polished, professional user experience.
 
-**Innovation**: This feature transforms Tetris from a solitary experience into a social, competitive game mode, significantly enhancing replayability and player engagement.
+**Innovation**: This feature transforms Tetris from a solitary experience into a social, competitive game mode, significantly enhancing replayability and player engagement. The split-screen implementation with independent game states demonstrates advanced JavaFX programming and proper MVC architecture.
 
 ### 9. CSS-Based Styling System (Maintainability + Extensibility)
 **Description**: External CSS stylesheet for centralized styling and easy theme modifications.
