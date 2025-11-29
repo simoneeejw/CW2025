@@ -291,7 +291,39 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Innovation**: This feature transforms Tetris from a solitary experience into a social, competitive game mode, significantly enhancing replayability and player engagement. The split-screen implementation with independent game states demonstrates advanced JavaFX programming and proper MVC architecture.
 
-### 9. CSS-Based Styling System (Maintainability + Extensibility)
+### 9. Critical Bug Fixes and Game Stability Improvements
+**Description**: Resolved multiple critical bugs that were preventing proper gameplay, including collision detection issues, spawn position problems, and rendering inconsistencies.
+
+**Implementation Details**:
+- **Fixed Collision Detection**: Corrected matrix indexing bugs in `MatrixOperations.intersect()` and `merge()` methods
+  - Fixed `brick[j][i]` to `brick[i][j]` for proper row-column access
+  - Fixed coordinate offsets from `targetX = x + i; targetY = y + j` to `targetX = x + j; targetY = y + i`
+  - Now pieces can properly detect collisions and reach board edges
+- **Fixed Spawn Position**: Corrected piece spawning to start at row 0 (top of board) instead of row 10 (middle)
+  - Updated `BrickManager.createNewBrick()` to set `currentOffset.setLocation(4, 0)`
+  - Updated `BoardState` constructor and reset methods to spawn at `(4, 0)`
+  - Pieces now appear at the top of the visible game area
+- **Fixed Board Rendering**: Resolved game board display issues where pieces weren't visible
+  - Updated `GuiController.initGameView()` to render from row 0 instead of row 2
+  - Removed gaps between board cells by setting `hgap="0" vgap="0"`
+  - Game board now fills the entire container from top to bottom
+- **Fixed Property Binding**: Resolved "bound value cannot be set" errors in multiplayer mode
+  - Created separate IntegerProperty instances for each player's stats
+  - Used `Bindings.concat()` for proper label binding
+  - updateStatus() methods now set property values instead of text directly
+- **Fixed Window Sizing**: Standardized all windows to consistent dimensions
+  - Main Menu: 820x700px
+  - Single Player: 450x720px (optimized for content)
+  - Multiplayer: 820x700px
+  - Added proper min/max constraints to prevent layout issues
+- **Fixed FXML Errors**: Resolved duplicate ID references and invalid attributes
+  - Removed duplicate `fx:id="gamePanel"` elements
+  - Added proper alignment attributes (`StackPane.alignment="TOP_LEFT"`)
+  - Fixed inconsistent min/max width/height values
+
+**Impact**: These fixes were essential for making the game playable. Before the fixes, pieces couldn't move properly, weren't visible, and spawned in wrong positions. After the fixes, all game mechanics work correctly with proper visual feedback and smooth gameplay.
+
+### 10. CSS-Based Styling System (Maintainability + Extensibility)
 **Description**: External CSS stylesheet for centralized styling and easy theme modifications.
 
 **Implementation Details**:
@@ -320,7 +352,7 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Technical Advantage**: This architecture allows for future theme expansion by creating alternate CSS files without modifying Java code. The current light classic theme could be easily complemented with dark, neon, or retro variants by swapping stylesheets.
 
-### 9. Consistent Window Sizing (UI Enhancement)
+### 11. Consistent Window Sizing (UI Enhancement)
 **Description**: Standardized the gameplay window dimensions to match the main menu for a seamless user experience.
 
 **Implementation Details**:
@@ -331,7 +363,7 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **User Benefit**: Provides a smooth, professional transition between application states without visual disruption.
 
-### 10. Next Block Preview (Gameplay Enhancement)
+### 12. Next Block Preview (Gameplay Enhancement)
 **Description**: Added a preview box in the sidebar showing the next tetromino that will appear after the current piece locks.
 
 **Implementation Details**:
@@ -343,7 +375,7 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **User Benefit**: Allows players to plan ahead by seeing what piece is coming next, improving strategic gameplay and reducing surprises.
 
-### 11. Hold/Reserve Function with 'R' Key (Gameplay Enhancement)
+### 13. Hold/Reserve Function with 'R' Key (Gameplay Enhancement)
 **Description**: Implemented a hold mechanic where players can store the current falling piece and swap it with the held piece using the 'R' key.
 
 **Implementation Details**:
