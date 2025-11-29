@@ -336,8 +336,10 @@ public class MainMenu {
             GuiController c = fxmlLoader.getController();
 
             stage.setTitle("TETRIS - COMP2042");
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 710);
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 700);
             stage.setScene(scene);
+            stage.setMinWidth(500);
+            stage.setMinHeight(600);
             stage.centerOnScreen();
 
             // Initialize game controller
