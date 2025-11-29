@@ -240,3 +240,18 @@
     -fx-padding: 10px;
 }
 
+/* Next block label */
+.next-label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+/* Held block label */
+.held-label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
