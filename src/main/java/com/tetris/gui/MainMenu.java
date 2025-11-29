@@ -21,6 +21,7 @@ public class MainMenu {
     private Stage stage;
     private Theme selectedTheme;
     private boolean startGame = false;
+    private boolean isMultiplayer = false; // New field for game mode
     private SettingsDialog settingsDialog;
     private HighScoresDialog highScoresDialog;
 
@@ -48,6 +49,9 @@ public class MainMenu {
         // === HEADER SECTION ===
         VBox header = createHeader();
 
+        // === GAME MODE SELECTION ===
+        VBox gameModeSelection = createGameModeSelection();
+
         // === QUICK ACTIONS SECTION ===
         VBox quickActions = createQuickActions();
 
@@ -69,6 +73,7 @@ public class MainMenu {
         mainLayout.getChildren().addAll(
                 header,
                 spacer1,
+                gameModeSelection,
                 playButton,
                 quickActions,
                 spacer2,
@@ -77,7 +82,8 @@ public class MainMenu {
         );
 
         // Apply custom margins for tighter spacing
-        VBox.setMargin(playButton, new Insets(-20, 0, 0, 0));  // Add some space below header
+        VBox.setMargin(gameModeSelection, new Insets(-10, 0, 0, 0));  // Add some space below header
+        VBox.setMargin(playButton, new Insets(0, 0, 0, 0));  // Add some space below header
         VBox.setMargin(quickActions, new Insets(0, 0, 0, 0));
 
         Scene scene = new Scene(mainLayout, 650, 700);  // Increased width from 600 to 650
@@ -116,6 +122,78 @@ public class MainMenu {
         }
 
         return header;
+    }
+
+    private VBox createGameModeSelection() {
+        VBox gameModeBox = new VBox(10);
+        gameModeBox.setAlignment(Pos.CENTER);
+        gameModeBox.setPadding(new Insets(10));
+
+        Label modeLabel = new Label("Select Game Mode:");
+        modeLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        modeLabel.setTextFill(Color.web("#FFFFFF"));
+
+        // Single Player Button
+        ToggleButton singlePlayerBtn = new ToggleButton("🕹️ SINGLE PLAYER");
+        singlePlayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
+        singlePlayerBtn.setPrefWidth(250);
+        styleToggleButton(singlePlayerBtn, true);
+
+        // Multiplayer Button
+        ToggleButton multiplayerBtn = new ToggleButton("🌐 MULTIPLAYER");
+        multiplayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
+        multiplayerBtn.setPrefWidth(250);
+        styleToggleButton(multiplayerBtn, false);
+
+        // Toggle group to ensure only one button is selected at a time
+        ToggleGroup modeToggleGroup = new ToggleGroup();
+        singlePlayerBtn.setToggleGroup(modeToggleGroup);
+        multiplayerBtn.setToggleGroup(modeToggleGroup);
+
+        // Select single player by default
+        singlePlayerBtn.setSelected(true);
+        isMultiplayer = false;
+
+        // Update button styles based on selection
+        updateToggleButtonStyle(singlePlayerBtn, true);
+        updateToggleButtonStyle(multiplayerBtn, false);
+
+        // Add listeners to update game mode
+        singlePlayerBtn.setOnAction(e -> {
+            isMultiplayer = false;
+            updateToggleButtonStyle(singlePlayerBtn, true);
+            updateToggleButtonStyle(multiplayerBtn, false);
+        });
+
+        multiplayerBtn.setOnAction(e -> {
+            isMultiplayer = true;
+            updateToggleButtonStyle(singlePlayerBtn, false);
+            updateToggleButtonStyle(multiplayerBtn, true);
+        });
+
+        gameModeBox.getChildren().addAll(modeLabel, singlePlayerBtn, multiplayerBtn);
+
+        return gameModeBox;
+    }
+
+    private void styleToggleButton(ToggleButton button, boolean isSelected) {
+        String baseStyle = "-fx-background-color: transparent; " +
+                "-fx-text-fill: " + (isSelected ? "#00FF00" : "#FFFFFF") + "; " +
+                "-fx-border-color: " + (isSelected ? "#00FF00" : "#888888") + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 5; " +
+                "-fx-background-radius: 5;";
+        button.setStyle(baseStyle);
+    }
+
+    private void updateToggleButtonStyle(ToggleButton button, boolean isSelected) {
+        String style = "-fx-background-color: " + (isSelected ? "#00FF00" : "transparent") + "; " +
+                "-fx-text-fill: " + (isSelected ? "#000000" : "#FFFFFF") + "; " +
+                "-fx-border-color: " + (isSelected ? "#00FF00" : "#888888") + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 5; " +
+                "-fx-background-radius: 5;";
+        button.setStyle(style);
     }
 
     private VBox createQuickActions() {
@@ -322,6 +400,13 @@ public class MainMenu {
     }
 
     /**
+     * Returns whether multiplayer mode is selected.
+     */
+    public boolean isMultiplayer() {
+        return isMultiplayer;
+    }
+
+    /**
      * Loads the game after menu selection.
      */
     private void loadGame() {
@@ -329,27 +414,46 @@ public class MainMenu {
             // Apply selected theme
             ThemeManager.getInstance().setCurrentTheme(selectedTheme);
 
-            // Load the main game
-            java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
-            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
-            javafx.scene.Parent root = fxmlLoader.load();
-            GuiController c = fxmlLoader.getController();
+            if (isMultiplayer) {
+                // Load multiplayer game
+                java.net.URL location = getClass().getClassLoader().getResource("multiplayerLayout.fxml");
+                javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
+                javafx.scene.Parent root = fxmlLoader.load();
+                MultiplayerGuiController c = fxmlLoader.getController();
 
-            stage.setTitle("TETRIS - COMP2042");
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 700);
-            stage.setScene(scene);
-            stage.setMinWidth(500);
-            stage.setMinHeight(600);
-            stage.centerOnScreen();
+                stage.setTitle("TETRIS MULTIPLAYER - COMP2042");
+                javafx.scene.Scene scene = new javafx.scene.Scene(root, 820, 700);  // Precisely sized for two boards
+                stage.setScene(scene);
+                stage.setMinWidth(820);
+                stage.setMinHeight(700);
+                stage.centerOnScreen();
 
-            // Initialize game controller
-            new com.tetris.game.GameController(c);
+                // Initialize multiplayer controller
+                new com.tetris.game.MultiplayerController(c);
 
-            // Start background music
-            com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
+                // Start background music
+                com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
+            } else {
+                // Load single player game
+                java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
+                javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
+                javafx.scene.Parent root = fxmlLoader.load();
+                GuiController c = fxmlLoader.getController();
+                c.setGameController(new com.tetris.game.GameController(c));
 
-            // Apply theme to GUI
-            ThemeManager.getInstance().applyTheme(c);
+                stage.setTitle("TETRIS - COMP2042");
+                javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 700);
+                stage.setScene(scene);
+                stage.setMinWidth(500);
+                stage.setMinHeight(600);
+                stage.centerOnScreen();
+
+                // Start background music
+                com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
+
+                // Apply theme to GUI
+                ThemeManager.getInstance().applyTheme(c);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);

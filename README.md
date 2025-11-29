@@ -228,7 +228,49 @@ The following features have been successfully implemented and are functioning as
 
 All tests pass successfully, ensuring reliability and preventing regressions.
 
-### 8. CSS-Based Styling System (Maintainability + Extensibility)
+### 8. Multiplayer Mode (Local Split-Screen) (New Playable Mode + Innovative Feature)
+**Description**: Local 2-player competitive mode with split-screen display where players compete on separate boards simultaneously.
+
+**Implementation Details**:
+- **Main Menu Selection**: Added toggle buttons in the main menu to select between Single Player and Multiplayer modes
+  - Visual toggle with color-coded selection (green for selected, gray for unselected)
+  - Game mode selection placed prominently above the "Play Game" button
+  - Smooth transition between mode selections with styled buttons
+- **Multiplayer Layout**: Created dedicated `multiplayerLayout.fxml` with side-by-side game boards:
+  - Player 1 board on the left with sidebar on the right
+  - Player 2 board on the right with sidebar on the left
+  - Each player has independent score, lines, level, held block, and next block displays
+  - Window sized precisely at 820x700px to fit content without excessive empty space
+  - Centered layout with proper spacing between elements
+- **Separate Controls**: Each player uses different keyboard keys to avoid conflicts:
+  - **Player 1 (WASD + Space + Tab)**:
+    - A: Move left
+    - D: Move right
+    - W: Rotate
+    - S: Soft drop
+    - Space: Hard drop
+    - Tab: Hold/reserve piece
+  - **Player 2 (Arrow Keys + Enter + Backspace)**:
+    - Left Arrow: Move left
+    - Right Arrow: Move right
+    - Up Arrow: Rotate
+    - Down Arrow: Soft drop
+    - Enter: Hard drop
+    - Backspace: Hold/reserve piece
+- **Instructions Display**: On game start, instructions are displayed for 2 seconds showing the control schemes for both players
+- **Winner Detection**: Winner label at the bottom displays results when one or both players lose:
+  - "PLAYER 1 WINS!" if Player 2's game ends first
+  - "PLAYER 2 WINS!" if Player 1's game ends first
+  - "IT'S A TIE!" if both end simultaneously (score comparison)
+- **Shared Controls**: ESC to pause both games, N to start new game
+- **MultiplayerGuiController.java**: New controller class managing both player interfaces
+- **MultiplayerController.java**: Coordinator that initializes both game instances
+
+**User Experience**: Players can compete head-to-head in the same physical space, fostering competitive play and social interaction. The clear visual separation and distinct control schemes prevent confusion and enable smooth multiplayer gameplay.
+
+**Innovation**: This feature transforms Tetris from a solitary experience into a social, competitive game mode, significantly enhancing replayability and player engagement.
+
+### 9. CSS-Based Styling System (Maintainability + Extensibility)
 **Description**: External CSS stylesheet for centralized styling and easy theme modifications.
 
 **Implementation Details**:
@@ -240,6 +282,7 @@ All tests pass successfully, ensuring reliability and preventing regressions.
   - Label and text styling (fonts, colors, sizes)
   - Button states (normal, hover, pressed) with scale transitions
   - Music icon and separator text styling
+  - Multiplayer-specific styles (player labels, winner label, new game button)
 - **Style Classes**: Semantic CSS classes applied via FXML:
   - `.title-text`: Main Tetris logo with gradient fill and drop shadow
   - `.subtitle-text`: N-Block subtitle with italic styling
@@ -247,11 +290,49 @@ All tests pass successfully, ensuring reliability and preventing regressions.
   - `.piece-rect`: Individual brick cells with glow effects
   - `.info-box`: Sidebar status containers
   - `.bottom-bar`: Control panel at bottom
+  - `.player-label`: Player identification in multiplayer mode
+  - `.winner-label`: Winner announcement styling
+  - `.new-game-button`: Green gradient button for restarting
 - **Separation of Concerns**: Visual styling completely separated from Java logic, allowing designers to modify appearance without touching code
 - **Maintainability**: Single source of truth for all visual properties; changes propagate throughout the application
 - **Performance**: CSS styles compiled and cached by JavaFX for optimal rendering
 
 **Technical Advantage**: This architecture allows for future theme expansion by creating alternate CSS files without modifying Java code. The current light classic theme could be easily complemented with dark, neon, or retro variants by swapping stylesheets.
+
+### 9. Consistent Window Sizing (UI Enhancement)
+**Description**: Standardized the gameplay window dimensions to match the main menu for a seamless user experience.
+
+**Implementation Details**:
+- **Window Dimensions**: Both main menu and gameplay windows now use 650px width and 700px height
+- **Minimum Size Constraints**: Added setMinWidth(500) and setMinHeight(600) to prevent window squeezing
+- **Centering**: Windows automatically center on screen for optimal positioning
+- **Consistency**: Eliminates jarring size changes when transitioning between menu and game
+
+**User Benefit**: Provides a smooth, professional transition between application states without visual disruption.
+
+### 10. Next Block Preview (Gameplay Enhancement)
+**Description**: Added a preview box in the sidebar showing the next tetromino that will appear after the current piece locks.
+
+**Implementation Details**:
+- **UI Component**: Added "Next Block" label and 4x4 GridPane in the sidebar
+- **Data Integration**: Utilizes ViewData.getNextBrickData() to display upcoming piece
+- **Real-time Updates**: Preview updates automatically when new pieces are generated
+- **Visual Design**: Matches game board styling with proper colors and rounded corners
+- **Positioning**: Placed below the held block section for logical flow
+
+**User Benefit**: Allows players to plan ahead by seeing what piece is coming next, improving strategic gameplay and reducing surprises.
+
+### 11. Hold/Reserve Function with 'R' Key (Gameplay Enhancement)
+**Description**: Implemented a hold mechanic where players can store the current falling piece and swap it with the held piece using the 'R' key.
+
+**Implementation Details**:
+- **Key Binding**: Changed hold key from 'C' to 'R' for better accessibility
+- **UI Component**: Added "Held Block" label and 4x4 GridPane above the next block preview
+- **Swap Logic**: Pressing 'R' swaps current piece with held piece, or holds current piece if none held
+- **Visual Feedback**: Held piece displayed in sidebar with same styling as game board
+- **State Management**: Integrated with existing ViewData.getHeldBrickData() system
+
+**User Benefit**: Adds strategic depth by allowing players to save pieces for later use, enabling better planning around difficult piece sequences.
 
 ## Implemented but Not Working Properly
 None. All implemented features are functioning correctly, including the recently added progressive levels, power-ups, and ghost piece.

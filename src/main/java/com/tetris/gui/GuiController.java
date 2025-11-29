@@ -38,7 +38,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-public class GuiController implements Initializable {
+public class GuiController implements Initializable, GameEventListener {
 
     private static final int BRICK_SIZE = GameConstants.BRICK_SIZE_PIXELS;
 
@@ -68,7 +68,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] displayMatrix;
 
-    private GameEventListener eventListener;
+    private GameController gameController;
 
     private Rectangle[][] heldRectangles;
 
@@ -104,25 +104,25 @@ public class GuiController implements Initializable {
             public void handle(KeyEvent keyEvent) {
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                        refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+                        refreshBrick(gameController.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                        refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+                        refreshBrick(gameController.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+                        refreshBrick(gameController.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.R) {
-                        refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
+                        refreshBrick(gameController.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.SPACE) {
                         // Hard drop - keep moving down until piece locks
                         boolean keepDropping = true;
                         while (keepDropping) {
-                            DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
+                            DownData downData = gameController.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
                             refreshBrick(downData.getViewData());
                             // Stop if piece has locked (clearRow check indicates piece merged)
                             if (downData.getClearRow() != null) {
@@ -269,8 +269,8 @@ public class GuiController implements Initializable {
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             // First, refresh the entire game background to show locked pieces
-            if (eventListener instanceof GameController) {
-                GameController gc = (GameController) eventListener;
+            if (gameController instanceof GameController) {
+                GameController gc = (GameController) gameController;
                 refreshGameBackground(gc.getBoard().getBoardMatrix());
             }
 
@@ -363,8 +363,8 @@ public class GuiController implements Initializable {
      */
     private int calculateGhostYPosition(ViewData brick) {
         // Get actual ghost position from game controller
-        if (eventListener instanceof GameController) {
-            GameController gc = (GameController) eventListener;
+        if (gameController instanceof GameController) {
+            GameController gc = (GameController) gameController;
             return gc.getGhostYPosition();
         }
 
@@ -398,14 +398,10 @@ public class GuiController implements Initializable {
 
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = eventListener.onDownEvent(event);
+            DownData downData = gameController.onDownEvent(event);
             refreshBrick(downData.getViewData());
         }
         gamePanel.requestFocus();
-    }
-
-    public void setEventListener(GameEventListener eventListener) {
-        this.eventListener = eventListener;
     }
 
     public void bindScore(IntegerProperty integerProperty) {
@@ -451,7 +447,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         // gameOverPanel.setVisible(false);
-        eventListener.createNewGame();
+        gameController.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
@@ -488,13 +484,13 @@ public class GuiController implements Initializable {
      * Schedules ghost row removal after a delay.
      * @param delayMs Delay in milliseconds
      */
-    public void scheduleGhostRowRemoval(long delayMs) {
+    public void scheduleGhostRowRemoval(int delayMs) {
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
             javafx.util.Duration.millis(delayMs)
         );
         pause.setOnFinished(e -> {
-            if (eventListener instanceof GameController) {
-                GameController gc = (GameController) eventListener;
+            if (gameController != null) {
+                GameController gc = gameController;
                 if (gc.getBoard() instanceof TetrisBoard) {
                     TetrisBoard tb = (TetrisBoard) gc.getBoard();
                     tb.removeGhostRow();
@@ -675,5 +671,9 @@ public class GuiController implements Initializable {
         linesProp.set(linesCleared);
         levelProp.set(level);
         levelNameLabel.setText(difficulty);
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
     }
 }

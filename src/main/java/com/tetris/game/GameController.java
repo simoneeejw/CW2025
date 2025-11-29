@@ -5,32 +5,30 @@ import com.tetris.model.DownData;
 import com.tetris.model.EventSource;
 import com.tetris.model.MoveEvent;
 import com.tetris.model.ViewData;
-import com.tetris.gui.GuiController;
 import com.tetris.util.GameConstants;
 import com.tetris.util.SoundManager;
 
-public class GameController implements GameEventListener {
+public class GameController {
 
     private final Board board = new TetrisBoard(GameConstants.BOARD_HEIGHT, GameConstants.BOARD_WIDTH);
 
-    private final GuiController viewGuiController;
+    private final GameEventListener guiListener;
 
-    public GameController(GuiController c) {
-        viewGuiController = c;
+    public GameController(GameEventListener guiListener) {
+        this.guiListener = guiListener;
         board.createNewBrick();
-        viewGuiController.setEventListener(this);
-        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        viewGuiController.bindScore(board.getScore().scoreProperty());
+        guiListener.initGameView(board.getBoardMatrix(), board.getViewData());
+        guiListener.bindScore(board.getScore().scoreProperty());
 
         // Bind level to GUI
         TetrisBoard tetrisBoard = (TetrisBoard) board;
-        viewGuiController.bindLevel(tetrisBoard.getLevelManager().currentLevelProperty());
+        guiListener.bindLevel(tetrisBoard.getLevelManager().currentLevelProperty());
 
         // Set initial game speed
-        viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
+        guiListener.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
 
         // Initialize status display
-        viewGuiController.updateStatus(
+        guiListener.updateStatus(
             tetrisBoard.getLevelManager().getCurrentLevel(),
             tetrisBoard.getLevelManager().getLevelDifficulty(),
             board.getScore().scoreProperty().get(),
@@ -38,7 +36,6 @@ public class GameController implements GameEventListener {
         );
     }
 
-    @Override
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
@@ -70,9 +67,9 @@ public class GameController implements GameEventListener {
                 boolean leveledUp = tetrisBoard.getLevelManager().addLinesCleared(clearRow.getLinesRemoved());
                 if (leveledUp) {
                     SoundManager.getInstance().playLevelUpSound();
-                    viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
+                    guiListener.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
                                                      tetrisBoard.getPowerUpManager().getSpeedMultiplier());
-                    viewGuiController.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
+                    guiListener.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
                                                  tetrisBoard.getLevelManager().getLevelDifficulty());
 
                     // Add ghost row on Level 4 (randomly, 30% chance)
@@ -80,33 +77,33 @@ public class GameController implements GameEventListener {
                         java.util.Random random = new java.util.Random();
                         if (random.nextDouble() < 0.3) {
                             tetrisBoard.addGhostRow();
-                            viewGuiController.scheduleGhostRowRemoval(3000); // Remove after 3 seconds
+                            guiListener.scheduleGhostRowRemoval(3000); // Remove after 3 seconds
                         }
                     }
                 }
 
                 // Show Tetris notification for 4-line clear
                 if (clearRow.getLinesRemoved() == 4) {
-                    viewGuiController.showTetrisNotification();
+                    guiListener.showTetrisNotification();
                 }
 
                 // Show power-up notification if one was triggered
                 if (clearRow.getPowerUp() != null) {
-                    viewGuiController.showPowerUpNotification(clearRow.getPowerUp().getName());
+                    guiListener.showPowerUpNotification(clearRow.getPowerUp().getName());
                 }
 
                 // Update status display
-                viewGuiController.updateStatus(tetrisBoard.getLevelManager().getCurrentLevel(),
+                guiListener.updateStatus(tetrisBoard.getLevelManager().getCurrentLevel(),
                                               tetrisBoard.getLevelManager().getLevelDifficulty(),
                                               board.getScore().scoreProperty().get(),
                                               tetrisBoard.getLevelManager().getTotalLinesCleared());
             }
             if (!board.createNewBrick()) {
                 SoundManager.getInstance().playGameOverSound();
-                viewGuiController.gameOver();
+                guiListener.gameOver();
             }
 
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            guiListener.refreshGameBackground(board.getBoardMatrix());
 
         } else {
             if (event.getEventSource() == EventSource.USER) {
@@ -124,42 +121,37 @@ public class GameController implements GameEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
-    @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
         return board.getViewData();
     }
 
-    @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
         return board.getViewData();
     }
 
-    @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
         return board.getViewData();
     }
 
-    @Override
     public ViewData onHoldEvent(MoveEvent event) {
         board.holdBrick();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        guiListener.refreshGameBackground(board.getBoardMatrix());
         return board.getViewData();
     }
 
-    @Override
     public void createNewGame() {
         board.newGame();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        guiListener.refreshGameBackground(board.getBoardMatrix());
 
         // Reset game speed to level 1
         TetrisBoard tetrisBoard = (TetrisBoard) board;
-        viewGuiController.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
+        guiListener.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
 
         // Reset status display
-        viewGuiController.updateStatus(
+        guiListener.updateStatus(
             tetrisBoard.getLevelManager().getCurrentLevel(),
             tetrisBoard.getLevelManager().getLevelDifficulty(),
             board.getScore().scoreProperty().get(),
