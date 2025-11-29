@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.binding.Bindings;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,6 +50,10 @@ public class MultiplayerGuiController implements Initializable {
     private final IntegerProperty linesProp2 = new SimpleIntegerProperty(0);
     private final IntegerProperty levelProp2 = new SimpleIntegerProperty(1);
 
+    private GameOverDialog gameOverDialog;
+    private Runnable onRestartCallback;
+    private Runnable onMainMenuCallback;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bind labels to properties
@@ -65,6 +70,9 @@ public class MultiplayerGuiController implements Initializable {
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(2));
         pause.setOnFinished(e -> winnerLabel.setText(""));
         pause.play();
+
+        // Initialize game over dialog
+        gameOverDialog = new GameOverDialog();
     }
 
     public void initializeGame() {
@@ -205,8 +213,10 @@ public class MultiplayerGuiController implements Initializable {
 
         @Override
         public void gameOver() {
-            // Handle player 1 game over
-            winnerLabel.setText("PLAYER 2 WINS!");
+            // Handle player 1 game over - player 2 wins
+            if (gamePanel1.getScene() != null && gameOverDialog != null) {
+                gameOverDialog.show((Stage) gamePanel1.getScene().getWindow(), scoreProp1.get(), scoreProp2.get(), onRestartCallback, onMainMenuCallback);
+            }
         }
     }
 
@@ -266,8 +276,35 @@ public class MultiplayerGuiController implements Initializable {
 
         @Override
         public void gameOver() {
-            // Handle player 2 game over
-            winnerLabel.setText("PLAYER 1 WINS!");
+            // Handle player 2 game over - player 1 wins
+            if (gamePanel2.getScene() != null && gameOverDialog != null) {
+                gameOverDialog.show((Stage) gamePanel2.getScene().getWindow(), scoreProp1.get(), scoreProp2.get(), onRestartCallback, onMainMenuCallback);
+            }
         }
+    }
+
+    public void restartGame() {
+        // Reset properties
+        scoreProp1.set(0);
+        linesProp1.set(0);
+        levelProp1.set(1);
+        scoreProp2.set(0);
+        linesProp2.set(0);
+        levelProp2.set(1);
+
+        // Restart the games
+        player1Controller.createNewGame();
+        player2Controller.createNewGame();
+
+        // Clear winner label
+        winnerLabel.setText("");
+    }
+
+    public void setOnRestartCallback(Runnable callback) {
+        this.onRestartCallback = callback;
+    }
+
+    public void setOnMainMenuCallback(Runnable callback) {
+        this.onMainMenuCallback = callback;
     }
 }

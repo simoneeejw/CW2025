@@ -36,6 +36,9 @@ public class HighScoresDialog {
      * Shows the high scores dialog.
      */
     public void show(Stage owner) {
+        // Reload scores to get the latest data
+        reloadScores();
+
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(owner);
@@ -124,6 +127,7 @@ public class HighScoresDialog {
      * Adds a new score to the high scores list.
      */
     public void addScore(String playerName, int score, int level) {
+        System.out.println("Adding new score - Player: " + playerName + ", Score: " + score + ", Level: " + level);
         scores.add(new ScoreEntry(0, playerName, score, level));
         Collections.sort(scores, (a, b) -> Integer.compare(b.getScore(), a.getScore()));
 
@@ -133,6 +137,23 @@ public class HighScoresDialog {
         }
 
         saveScores();
+        System.out.println("Score saved. Total scores: " + scores.size());
+    }
+
+    /**
+     * Checks if the given score qualifies as a high score (top 10).
+     */
+    public boolean isHighScore(int score) {
+        if (scores.size() < 10) return true;
+        // Check against the 10th best score (index 9)
+        return score > scores.get(9).getScore();
+    }
+
+    /**
+     * Reloads scores from disk to get the latest data.
+     */
+    public void reloadScores() {
+        loadScores();
     }
 
     private void loadScores() {

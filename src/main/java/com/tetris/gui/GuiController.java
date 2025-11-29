@@ -37,6 +37,7 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+import javafx.stage.Stage;
 
 public class GuiController implements Initializable, GameEventListener {
 
@@ -93,6 +94,11 @@ public class GuiController implements Initializable, GameEventListener {
     private Theme currentTheme;
     private Rectangle themeBackground;
     private Timeline glowPulseTimeline;
+
+    private GameOverDialog gameOverDialog;
+
+    private Runnable onRestartCallback;
+    private Runnable onMainMenuCallback;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -154,6 +160,9 @@ public class GuiController implements Initializable, GameEventListener {
 
         // Initialize glow pulse animation for active pieces
         initializeGlowPulse();
+
+        // Initialize game over dialog
+        gameOverDialog = new GameOverDialog();
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -440,8 +449,17 @@ public class GuiController implements Initializable, GameEventListener {
 
     public void gameOver() {
         timeLine.stop();
-        // gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+
+        // Play game over sound
+        com.tetris.util.SoundManager.getInstance().playGameOverSound();
+
+        // Show game over dialog on JavaFX Application Thread
+        javafx.application.Platform.runLater(() -> {
+            if (gameOverDialog != null && gamePanel.getScene() != null) {
+                gameOverDialog.show((Stage) gamePanel.getScene().getWindow(), scoreProp.get(), levelProp.get(), linesProp.get(), onRestartCallback, onMainMenuCallback);
+            }
+        });
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -675,5 +693,13 @@ public class GuiController implements Initializable, GameEventListener {
 
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
+    }
+
+    public void setOnRestartCallback(Runnable callback) {
+        this.onRestartCallback = callback;
+    }
+
+    public void setOnMainMenuCallback(Runnable callback) {
+        this.onMainMenuCallback = callback;
     }
 }

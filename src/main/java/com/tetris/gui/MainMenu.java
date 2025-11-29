@@ -453,6 +453,10 @@ public class MainMenu {
                 javafx.scene.Parent root = fxmlLoader.load();
                 MultiplayerGuiController c = fxmlLoader.getController();
 
+                // Set callbacks for game over dialog
+                c.setOnRestartCallback(() -> c.restartGame());
+                c.setOnMainMenuCallback(() -> show());
+
                 stage.setTitle("TETRIS MULTIPLAYER - COMP2042");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root, 820, 700);  // Precisely sized for two boards
                 stage.setScene(scene);
@@ -472,6 +476,10 @@ public class MainMenu {
                 javafx.scene.Parent root = fxmlLoader.load();
                 GuiController c = fxmlLoader.getController();
                 c.setGameController(new com.tetris.game.GameController(c));
+
+                // Set callbacks for game over dialog
+                c.setOnRestartCallback(() -> c.newGame(null));
+                c.setOnMainMenuCallback(() -> show());
 
                 stage.setTitle("TETRIS - COMP2042");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
