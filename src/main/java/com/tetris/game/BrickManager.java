@@ -24,7 +24,7 @@ public class BrickManager {
     public boolean createNewBrick(int[][] currentGameMatrix, Point currentOffset) {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
-        currentOffset.setLocation(4, 10);
+        currentOffset.setLocation(GameConstants.SPAWN_X, GameConstants.SPAWN_Y);
         return !MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
@@ -83,4 +83,3 @@ public class BrickManager {
         heldBrick = null;
     }
 }
-

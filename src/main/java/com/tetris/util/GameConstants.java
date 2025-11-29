@@ -14,8 +14,6 @@ public final class GameConstants {
     public static final int SCORE_PER_DROP = 1;
     public static final int SCORE_BONUS_MULTIPLIER = 50;
     public static final int SPAWN_X = 4;
-    public static final int SPAWN_Y = 10;
+    public static final int SPAWN_Y = 1;
     public static final int BRICK_PANEL_Y_OFFSET = -42;
 }
-
-

@@ -465,10 +465,10 @@ public class MainMenu {
                 c.setGameController(new com.tetris.game.GameController(c));
 
                 stage.setTitle("TETRIS - COMP2042");
-                javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 720);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
+                javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
                 stage.setScene(scene);
                 stage.setMinWidth(450);
-                stage.setMinHeight(720);
+                stage.setMinHeight(740);
                 stage.centerOnScreen();
 
                 // Start background music
