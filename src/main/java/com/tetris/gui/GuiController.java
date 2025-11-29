@@ -60,11 +60,19 @@ public class GuiController implements Initializable {
     @FXML
     private javafx.scene.control.Button pauseButton;
 
+    @FXML
+    private GridPane nextBlockPanel;
+
+    @FXML
+    private GridPane heldBlockPanel;
+
     private Rectangle[][] displayMatrix;
 
     private GameEventListener eventListener;
 
     private Rectangle[][] heldRectangles;
+
+    private Rectangle[][] nextRectangles;
 
     private Timeline timeLine;
 
@@ -107,7 +115,7 @@ public class GuiController implements Initializable {
                     } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.C) {
+                    } else if (keyEvent.getCode() == KeyCode.R) {
                         refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == KeyCode.SPACE) {
@@ -180,7 +188,18 @@ public class GuiController implements Initializable {
                 rectangle.setFill(Color.TRANSPARENT);
                 rectangle.getStyleClass().add("piece-rect"); // Apply CSS styling for rounded corners and glow
                 heldRectangles[i][j] = rectangle;
-                // heldPanel.add(rectangle, j, i);
+                heldBlockPanel.add(rectangle, j, i);
+            }
+        }
+
+        nextRectangles = new Rectangle[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+                rectangle.getStyleClass().add("piece-rect"); // Apply CSS styling for rounded corners and glow
+                nextRectangles[i][j] = rectangle;
+                nextBlockPanel.add(rectangle, j, i);
             }
         }
 
@@ -274,12 +293,22 @@ public class GuiController implements Initializable {
                 }
             }
 
-            // Update held piece display (not implemented in current layout)
+            // Update held piece display
             int[][] heldData = brick.getHeldBrickData();
             if (heldData != null) {
                 for (int i = 0; i < heldData.length && i < heldRectangles.length; i++) {
                     for (int j = 0; j < heldData[i].length && j < heldRectangles[i].length; j++) {
                         setRectangleData(heldData[i][j], heldRectangles[i][j]);
+                    }
+                }
+            }
+
+            // Update next piece display
+            int[][] nextData = brick.getNextBrickData();
+            if (nextData != null) {
+                for (int i = 0; i < nextData.length && i < nextRectangles.length; i++) {
+                    for (int j = 0; j < nextData[i].length && j < nextRectangles[i].length; j++) {
+                        setRectangleData(nextData[i][j], nextRectangles[i][j]);
                     }
                 }
             }
