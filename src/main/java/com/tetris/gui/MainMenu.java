@@ -82,21 +82,21 @@ public class MainMenu {
         );
 
         // Apply custom margins for tighter spacing
-        VBox.setMargin(gameModeSelection, new Insets(-10, 0, 0, 0));  // Add some space below header
+        VBox.setMargin(gameModeSelection, new Insets(-53, 0, 0, 0));  // Increased negative margin to move buttons up and nearer to logo
         VBox.setMargin(playButton, new Insets(0, 0, 0, 0));  // Add some space below header
         VBox.setMargin(quickActions, new Insets(0, 0, 0, 0));
 
-        Scene scene = new Scene(mainLayout, 650, 700);  // Increased width from 600 to 650
+        Scene scene = new Scene(mainLayout, 820, 700);  // Match multiplayer window size
         stage.setScene(scene);
         stage.setTitle("TETRIS - Main Menu");
-        stage.setMinWidth(500);  // Prevent squeezing narrower than button + padding
-        stage.setMinHeight(600);  // Prevent vertical squeezing
+        stage.setMinWidth(820);  // Match multiplayer minimum width
+        stage.setMinHeight(700);  // Match multiplayer minimum height
         stage.centerOnScreen();
         stage.show();
     }
 
     private VBox createHeader() {
-        VBox header = new VBox(10);
+        VBox header = new VBox(5); // Reduced spacing from 10 to 5 to bring elements closer
         header.setAlignment(Pos.CENTER);
 
         // Try to load logo
@@ -133,17 +133,21 @@ public class MainMenu {
         modeLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
         modeLabel.setTextFill(Color.web("#FFFFFF"));
 
+        // Container for the toggle buttons (horizontal layout)
+        HBox buttonContainer = new HBox(10); // 10px spacing between buttons
+        buttonContainer.setAlignment(Pos.CENTER);
+
         // Single Player Button
-        ToggleButton singlePlayerBtn = new ToggleButton("🕹️ SINGLE PLAYER");
+        ToggleButton singlePlayerBtn = new ToggleButton("SINGLE PLAYER");
         singlePlayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
-        singlePlayerBtn.setPrefWidth(250);
-        styleToggleButton(singlePlayerBtn, true);
+        singlePlayerBtn.setPrefWidth(145); // Half of 300px minus spacing
+        singlePlayerBtn.setPrefHeight(50);
 
         // Multiplayer Button
-        ToggleButton multiplayerBtn = new ToggleButton("🌐 MULTIPLAYER");
+        ToggleButton multiplayerBtn = new ToggleButton("MULTIPLAYER");
         multiplayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
-        multiplayerBtn.setPrefWidth(250);
-        styleToggleButton(multiplayerBtn, false);
+        multiplayerBtn.setPrefWidth(145); // Half of 300px minus spacing
+        multiplayerBtn.setPrefHeight(50);
 
         // Toggle group to ensure only one button is selected at a time
         ToggleGroup modeToggleGroup = new ToggleGroup();
@@ -154,9 +158,9 @@ public class MainMenu {
         singlePlayerBtn.setSelected(true);
         isMultiplayer = false;
 
-        // Update button styles based on selection
-        updateToggleButtonStyle(singlePlayerBtn, true);
-        updateToggleButtonStyle(multiplayerBtn, false);
+        // Enhanced button styling
+        styleToggleButton(singlePlayerBtn, true);
+        styleToggleButton(multiplayerBtn, false);
 
         // Add listeners to update game mode
         singlePlayerBtn.setOnAction(e -> {
@@ -171,28 +175,47 @@ public class MainMenu {
             updateToggleButtonStyle(multiplayerBtn, true);
         });
 
-        gameModeBox.getChildren().addAll(modeLabel, singlePlayerBtn, multiplayerBtn);
+        buttonContainer.getChildren().addAll(singlePlayerBtn, multiplayerBtn);
+        gameModeBox.getChildren().addAll(modeLabel, buttonContainer);
 
         return gameModeBox;
     }
 
     private void styleToggleButton(ToggleButton button, boolean isSelected) {
-        String baseStyle = "-fx-background-color: transparent; " +
-                "-fx-text-fill: " + (isSelected ? "#00FF00" : "#FFFFFF") + "; " +
-                "-fx-border-color: " + (isSelected ? "#00FF00" : "#888888") + "; " +
+        String baseStyle = "-fx-background-color: " + (isSelected ? "linear-gradient(to bottom, #00FF00, #008000)" : "linear-gradient(to bottom, #333333, #111111)") + "; " +
+                "-fx-text-fill: " + (isSelected ? "#000000" : "#FFFFFF") + "; " +
+                "-fx-border-color: " + (isSelected ? "#00FF00" : "#666666") + "; " +
                 "-fx-border-width: 2; " +
-                "-fx-border-radius: 5; " +
-                "-fx-background-radius: 5;";
+                "-fx-border-radius: 10; " +
+                "-fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(gaussian, " + (isSelected ? "#00FF00" : "#000000") + ", 8, 0.5, 0, 2); " +
+                "-fx-min-width: 145px; -fx-max-width: 145px; -fx-min-height: 50px; -fx-max-height: 50px;";
         button.setStyle(baseStyle);
+
+        // Add hover effect
+        button.setOnMouseEntered(e -> {
+            if (!button.isSelected()) {
+                button.setStyle(baseStyle.replace("linear-gradient(to bottom, #333333, #111111)", "linear-gradient(to bottom, #555555, #222222)")
+                        .replace("dropshadow(gaussian, #000000, 8, 0.5, 0, 2)", "dropshadow(gaussian, #666666, 10, 0.7, 0, 3)"));
+            }
+        });
+
+        button.setOnMouseExited(e -> {
+            if (!button.isSelected()) {
+                button.setStyle(baseStyle);
+            }
+        });
     }
 
     private void updateToggleButtonStyle(ToggleButton button, boolean isSelected) {
-        String style = "-fx-background-color: " + (isSelected ? "#00FF00" : "transparent") + "; " +
+        String style = "-fx-background-color: " + (isSelected ? "linear-gradient(to bottom, #00FF00, #008000)" : "linear-gradient(to bottom, #333333, #111111)") + "; " +
                 "-fx-text-fill: " + (isSelected ? "#000000" : "#FFFFFF") + "; " +
-                "-fx-border-color: " + (isSelected ? "#00FF00" : "#888888") + "; " +
+                "-fx-border-color: " + (isSelected ? "#00FF00" : "#666666") + "; " +
                 "-fx-border-width: 2; " +
-                "-fx-border-radius: 5; " +
-                "-fx-background-radius: 5;";
+                "-fx-border-radius: 10; " +
+                "-fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(gaussian, " + (isSelected ? "#00FF00" : "#000000") + ", 8, 0.5, 0, 2); " +
+                "-fx-min-width: 145px; -fx-max-width: 145px; -fx-min-height: 50px; -fx-max-height: 50px;";
         button.setStyle(style);
     }
 
@@ -442,10 +465,10 @@ public class MainMenu {
                 c.setGameController(new com.tetris.game.GameController(c));
 
                 stage.setTitle("TETRIS - COMP2042");
-                javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 700);
+                javafx.scene.Scene scene = new javafx.scene.Scene(root, 820, 700);  // Match multiplayer window size
                 stage.setScene(scene);
-                stage.setMinWidth(500);
-                stage.setMinHeight(600);
+                stage.setMinWidth(820);
+                stage.setMinHeight(700);
                 stage.centerOnScreen();
 
                 // Start background music
