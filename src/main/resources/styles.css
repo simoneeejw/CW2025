@@ -53,12 +53,9 @@
    Apply to each Rectangle: setStroke(Color.web("#00FFFF", 0.2)) for 1px borders at 20% opacity.
    This creates a subtle grid pattern overlaying the board cells. */
 
-/* Game panel GridPane */
+/* Game panel GridPane - transparent, no border (container provides the border) */
 #gamePanel {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-border-color: #00FFFF;
-    -fx-border-width: 3px;
-    -fx-border-radius: 5px;
+    -fx-background-color: transparent;
 }
 
 /* Sidebar info boxes */

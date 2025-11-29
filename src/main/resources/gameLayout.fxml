@@ -22,8 +22,8 @@
     </top>
     <center>
         <HBox spacing="20" BorderPane.alignment="CENTER">
-            <StackPane prefWidth="300" prefHeight="600" styleClass="game-board-container">
-                <GridPane fx:id="gamePanel" hgap="1" vgap="1" />
+            <StackPane prefWidth="220" prefHeight="460" minWidth="219" maxWidth="210" minHeight="470" maxHeight="460" styleClass="game-board-container">
+                <GridPane fx:id="gamePanel" hgap="0" vgap="0" />
             </StackPane>
             <VBox prefWidth="150" spacing="10" styleClass="sidebar-container">
                 <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
