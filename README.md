@@ -139,7 +139,8 @@ The following features have been successfully implemented and are functioning as
 - **Layout Architecture**: BorderPane root layout with three main sections:
   - **Top**: VBox containing "TETRIS" title (Arial 48px bold, orange-to-gold gradient) with drop shadow and "N-BLOCK" subtitle (Arial 24px italic, cyan)
   - **Center**: HBox with game board (300x600px StackPane) and sidebar (150px VBox)
-  - **Bottom**: HBox with music icon (♫), separator, and pause button
+  - **Bottom**: HBox with music icon (♫) for audio indication
+  - **Pause Button**: Positioned at the bottom of the sidebar below "Next Block" panel for easy access during gameplay
 - **Background Styling**: Repeating linear gradient at 45° creating subtle diagonal lines (transparent to #A0D0E0 at 10% opacity), overlaid on a light blue to pale cyan gradient (#B0E0E6 to #E6F3FF)
 - **Game Board Design**:
   - Light blue tinted background (rgba(176, 224, 230, 0.3)) for subtle depth
@@ -200,18 +201,18 @@ The following features have been successfully implemented and are functioning as
 **Implementation Details**:
 - **Fixed Multiple Key Handling**: Changed independent `if` statements to `else if` chain to prevent simultaneous key processing
 - **Hard Drop**: SPACE key now properly drops piece to bottom without creating duplicates
-- **Pause/Resume**: ESC key toggles game pause with proper Timeline management
+- **Pause/Resume**: ESC key or Pause button toggles game pause with proper Timeline management and overlay menu
 - **Key Debouncing**: Prevents rapid repeated inputs from causing glitches
-- **Control Guide**: Full keyboard layout displayed in StatusPanel
+- **Control Guide**: Full keyboard layout available in the game interface
 
 **Controls**:
 - ← → (or A/D): Move left/right
 - ↑ (or W): Rotate piece
 - ↓ (or S): Soft drop (move down faster)
 - SPACE: Hard drop (instant drop to bottom)
-- C: Hold/swap piece
-- ESC: Pause/resume game
-- N: New game
+- R: Hold/swap piece
+- ESC or Pause Button: Open pause menu
+- N: New game (from pause menu)
 
 ### 7. Comprehensive Testing
 **Total Tests**: 60 unit tests (increased from 37 baseline)
@@ -415,6 +416,68 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Quality Assurance**: All changes tested with compilation verification and existing test suite (60 tests passing). Audio adjustments work in real-time without requiring application restart.
 
+### 15. Pause Menu System (UI Enhancement + User Experience)
+**Description**: Implemented a comprehensive pause menu overlay that appears when the game is paused, providing three key options: Resume, Options (settings), and Quit.
+
+**Implementation Details**:
+- **PauseMenuPanel.java**: Custom VBox component that serves as an overlay menu:
+  - Semi-transparent blue background (rgba(100, 120, 180, 0.95)) with border and rounded corners
+  - "PAUSED" title in large bold font (48px) with drop shadow effect
+  - Three menu buttons with distinct styling and visual hierarchy
+  - Automatically hidden by default, shown only when game is paused
+  - Positioned and centered over the game board using StackPane alignment
+- **Button Hierarchy**:
+  - **Resume Button**: Largest button (340x90px, 36px font) with prominent styling to emphasize primary action
+    - Light background with darker border for maximum visibility
+    - Hover effect: brightens to white with enhanced shadow
+    - Direct action: resumes game and hides menu
+  - **Options Button**: Standard size (320x80px, 32px font) for secondary actions
+    - Opens SettingsDialog for adjusting volume and key bindings
+    - Lighter styling than Resume to show secondary importance
+    - Hover effect: subtle color change and shadow
+  - **Quit Button**: Standard size matching Options button
+    - Returns player to main menu (ends current game)
+    - Same styling as Options for consistency
+    - Hover effect matches Options button
+- **Activation Methods**:
+  - ESC key: Toggles pause state (pause/resume)
+  - Pause button: Positioned below "Next Block" panel in sidebar for easy access
+  - Both methods trigger the same togglePause() method
+- **Lazy Initialization**: Menu panel created on first pause to optimize performance
+  - Checks for scene availability before initialization
+  - Sets up action handlers during first creation
+  - Subsequent pauses simply show/hide the existing panel
+- **Timeline Management**: Properly pauses game Timeline when menu is shown
+  - Prevents pieces from falling while paused
+  - Resumes Timeline when game continues
+  - Maintains game state integrity during pause
+- **UI Integration**: Seamlessly integrated into existing layout
+  - Added to center StackPane of BorderPane root
+  - Positioned on top of game board with proper z-ordering
+  - No interference with game board or sidebar elements
+  - Menu automatically focuses to accept input
+
+**User Experience**: 
+- **Intuitive Access**: ESC key is a universal pause shortcut, supplemented by a visible button
+- **Clear Visual Hierarchy**: Resume button stands out as the primary action
+- **Convenient Settings**: Players can adjust audio without leaving the game
+- **Safe Exit**: Quit option provides a clear way to return to menu
+- **Non-Intrusive**: Menu appears only when explicitly paused, doesn't obstruct gameplay
+- **Professional Polish**: Smooth transitions, consistent styling, and proper visual feedback
+
+**Technical Implementation**:
+- Pause button moved from bottom bar to sidebar (below Next Block panel) for better positioning
+- Added null checks in togglePause() to prevent crashes before initialization
+- Implemented show() and hide() methods for clean visibility management
+- Action handlers use Runnable callbacks for flexible integration
+- Settings dialog opens modally on top of pause menu
+
+**Quality**: 
+- Clean separation of concerns (PauseMenuPanel is self-contained)
+- Reusable component that could be extended for additional menu items
+- Properly integrated with existing game loop and UI architecture
+- No performance impact when not visible (hidden by default)
+
 ## Implemented but Not Working Properly
 None. All implemented features are functioning correctly, including the recently added progressive levels, power-ups, and ghost piece.
 
@@ -467,7 +530,7 @@ The following new Java classes were introduced for the additional features:
 
 - **SettingsDialog.java** (com.tetris.gui): Dialog for adjusting game settings including sound volume.
 
-- **PauseMenuPanel.java** (com.tetris.gui): Overlay panel displayed when game is paused, providing options to resume, access settings, view help, or quit to main menu.
+- **PauseMenuPanel.java** (com.tetris.gui): Overlay panel displayed when game is paused, providing three key options: Resume (larger button with prominent styling), Options (opens settings dialog for volume and key binding adjustments), and Quit (returns to main menu). Features semi-transparent background, visual hierarchy with distinct button sizes, and smooth hover effects.
 
 - **HelpDialog.java** (com.tetris.gui): Modal dialog displaying game controls, scoring system, and gameplay tips for new players.
 
@@ -490,7 +553,8 @@ The following new Java classes were introduced for the additional features:
 - **gameLayout.fxml** (src/main/resources): Updated BorderPane layout structure:
   - Top section with title and subtitle VBox
   - Center section with game board StackPane and sidebar VBox
-  - Bottom section with controls HBox (music icon, pause button)
+  - Bottom section with music icon (♫)
+  - Pause button positioned in sidebar below "Next Block" panel
   - CSS stylesheet links for window_style.css and styles.css
   - Style class assignments for all major components
   - Proper Insets for padding using JavaFX geometry
