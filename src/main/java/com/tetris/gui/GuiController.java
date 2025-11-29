@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -96,6 +97,8 @@ public class GuiController implements Initializable, GameEventListener {
     private Timeline glowPulseTimeline;
 
     private GameOverDialog gameOverDialog;
+
+    private PauseMenuPanel pauseMenuPanel;
 
     private Runnable onRestartCallback;
     private Runnable onMainMenuCallback;
@@ -481,20 +484,54 @@ public class GuiController implements Initializable, GameEventListener {
      * Toggles game pause state.
      */
     private void togglePause() {
+        System.out.println("togglePause called - pauseMenuPanel: " + (pauseMenuPanel != null) + ", isGameOver: " + isGameOver.get());
+
         if (isGameOver.get()) {
+            System.out.println("Cannot pause - game is over");
             return; // Can't pause if game is over
+        }
+
+        // Initialize pause menu panel if not already done
+        if (pauseMenuPanel == null && gamePanel.getScene() != null) {
+            System.out.println("Initializing pause menu panel on first pause...");
+            pauseMenuPanel = new PauseMenuPanel();
+
+            // Get the center pane and add the pause menu
+            javafx.scene.layout.StackPane centerPane = (javafx.scene.layout.StackPane) ((javafx.scene.layout.BorderPane) gamePanel.getScene().getRoot()).getCenter();
+            centerPane.getChildren().add(pauseMenuPanel);
+
+            // Ensure the pause menu is centered and on top
+            javafx.scene.layout.StackPane.setAlignment(pauseMenuPanel, Pos.CENTER);
+            pauseMenuPanel.toFront();
+
+            // Set pause menu actions
+            pauseMenuPanel.setOnResumeAction(this::togglePause);
+            pauseMenuPanel.setOnOptionsAction(() -> {
+                SettingsDialog settings = new SettingsDialog();
+                settings.show((Stage) gamePanel.getScene().getWindow());
+            });
+            pauseMenuPanel.setOnQuitAction(onMainMenuCallback);
+
+            System.out.println("Pause menu panel initialized successfully");
+        }
+
+        if (pauseMenuPanel == null) {
+            System.out.println("Cannot pause - scene not ready");
+            return;
         }
 
         if (isPause.get()) {
             // Resume game
             isPause.setValue(Boolean.FALSE);
-            timeLine.play();
-            System.out.println("Game Resumed");
+            if (timeLine != null) timeLine.play();
+            pauseMenuPanel.hide();
+            System.out.println("Game Resumed - menu hidden");
         } else {
             // Pause game
             isPause.setValue(Boolean.TRUE);
-            timeLine.pause();
-            System.out.println("Game Paused");
+            if (timeLine != null) timeLine.pause();
+            pauseMenuPanel.show();
+            System.out.println("Game Paused - menu should be visible now");
         }
     }
 
