@@ -44,7 +44,16 @@ public class MainMenu {
         VBox mainLayout = new VBox(0);
         mainLayout.setPadding(new Insets(40));
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0a0033, #000000);");
+        // Set background image
+        try {
+            Image bgImage = new Image(getClass().getResourceAsStream("/background_image.png"));
+            BackgroundImage bgImg = new BackgroundImage(bgImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(820, 700, false, false, false, false));
+            Background bg = new Background(bgImg);
+            mainLayout.setBackground(bg);
+        } catch (Exception e) {
+            // Fallback to gradient if image not found
+            mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0a0033, #000000);");
+        }
 
         // === HEADER SECTION ===
         VBox header = createHeader();
