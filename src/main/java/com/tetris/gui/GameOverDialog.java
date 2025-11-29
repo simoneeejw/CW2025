@@ -67,6 +67,9 @@ public class GameOverDialog {
         title.setTextFill(Color.web("#FF0000"));
         title.setStyle("-fx-effect: dropshadow(gaussian, #FF4500, 20, 0.8, 0, 0);");
 
+        VBox centerGroup = new VBox(20);
+        centerGroup.setAlignment(Pos.CENTER);
+
         VBox statsBox = new VBox(10);
         statsBox.setAlignment(Pos.CENTER);
 
@@ -135,11 +138,12 @@ public class GameOverDialog {
 
         buttonBox.getChildren().addAll(restartButton, mainMenuButton);
 
-        layout.getChildren().addAll(title, statsBox, buttonBox);
+        centerGroup.getChildren().addAll(statsBox, buttonBox);
+        layout.getChildren().addAll(title, centerGroup);
 
         Scene scene = new Scene(layout, 600, 500);
         dialog.setScene(scene);
-        dialog.showAndWait();
+        dialog.show();
 
         // After dialog closes, prompt for name if it was a high score (single player only)
         if (!isMultiplayer && highScoresDialog.isHighScore(score)) {

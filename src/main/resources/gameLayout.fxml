@@ -21,31 +21,33 @@
         </VBox>
     </top>
     <center>
-        <HBox spacing="20" BorderPane.alignment="CENTER">
-            <StackPane prefWidth="220" prefHeight="460" minWidth="219" maxWidth="210" minHeight="470" maxHeight="460" styleClass="game-board-container">
-                <GridPane fx:id="gamePanel" hgap="0" vgap="0" />
-            </StackPane>
-            <VBox prefWidth="150" spacing="10" styleClass="sidebar-container">
-                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
-                    <Label fx:id="scoreLabel" text="Score: 0" />
-                </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
-                    <Label fx:id="linesLabel" text="Lines: 0" />
-                </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
-                    <Label fx:id="levelLabel" text="Level: 1" />
-                    <Label fx:id="levelNameLabel" text="Beginner" />
-                </HBox>
-                <VBox alignment="CENTER" spacing="5" styleClass="info-box">
-                    <Label text="Held Block" styleClass="held-label" />
-                    <GridPane fx:id="heldBlockPanel" hgap="1" vgap="1" alignment="CENTER" />
+        <StackPane BorderPane.alignment="CENTER">
+            <HBox spacing="20" alignment="CENTER">
+                <StackPane prefWidth="220" prefHeight="460" minWidth="219" maxWidth="210" minHeight="470" maxHeight="460" styleClass="game-board-container">
+                    <GridPane fx:id="gamePanel" hgap="0" vgap="0" />
+                </StackPane>
+                <VBox prefWidth="150" spacing="10" styleClass="sidebar-container">
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
+                        <Label fx:id="scoreLabel" text="Score: 0" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
+                        <Label fx:id="linesLabel" text="Lines: 0" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
+                        <Label fx:id="levelLabel" text="Level: 1" />
+                        <Label fx:id="levelNameLabel" text="Beginner" />
+                    </HBox>
+                    <VBox alignment="CENTER" spacing="5" styleClass="info-box">
+                        <Label text="Held Block" styleClass="held-label" />
+                        <GridPane fx:id="heldBlockPanel" hgap="1" vgap="1" alignment="CENTER" />
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="5" styleClass="info-box">
+                        <Label text="Next Block" styleClass="next-label" />
+                        <GridPane fx:id="nextBlockPanel" hgap="1" vgap="1" alignment="CENTER" />
+                    </VBox>
                 </VBox>
-                <VBox alignment="CENTER" spacing="5" styleClass="info-box">
-                    <Label text="Next Block" styleClass="next-label" />
-                    <GridPane fx:id="nextBlockPanel" hgap="1" vgap="1" alignment="CENTER" />
-                </VBox>
-            </VBox>
-        </HBox>
+            </HBox>
+        </StackPane>
     </center>
     <bottom>
         <HBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER" styleClass="bottom-bar">
