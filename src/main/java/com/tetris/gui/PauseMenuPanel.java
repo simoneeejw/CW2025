@@ -16,12 +16,10 @@ public class PauseMenuPanel extends VBox {
 
     private Button resumeButton;
     private Button optionsButton;
-    private Button helpButton;
     private Button quitButton;
 
     private Runnable onResumeAction;
     private Runnable onOptionsAction;
-    private Runnable onHelpAction;
     private Runnable onQuitAction;
 
     public PauseMenuPanel() {
@@ -70,19 +68,13 @@ public class PauseMenuPanel extends VBox {
             if (onOptionsAction != null) onOptionsAction.run();
         });
 
-        // Help button
-        helpButton = createMenuButton("help", false);
-        helpButton.setOnAction(e -> {
-            if (onHelpAction != null) onHelpAction.run();
-        });
-
         // Quit button
         quitButton = createMenuButton("quit", false);
         quitButton.setOnAction(e -> {
             if (onQuitAction != null) onQuitAction.run();
         });
 
-        getChildren().addAll(titleBox, resumeButton, optionsButton, helpButton, quitButton);
+        getChildren().addAll(titleBox, resumeButton, optionsButton, quitButton);
     }
 
     private Button createMenuButton(String text, boolean isPrimary) {
@@ -93,6 +85,8 @@ public class PauseMenuPanel extends VBox {
 
         if (isPrimary) {
             // Resume button - darker/highlighted
+            button.setPrefSize(340, 90);
+            button.setMaxSize(340, 90);
             button.setStyle(
                 "-fx-background-color: rgba(230, 240, 255, 0.95); " +
                 "-fx-text-fill: #000000; " +
@@ -100,7 +94,7 @@ public class PauseMenuPanel extends VBox {
                 "-fx-border-width: 4; " +
                 "-fx-background-radius: 5; " +
                 "-fx-border-radius: 5; " +
-                "-fx-font-size: 32px; " +
+                "-fx-font-size: 36px; " +
                 "-fx-font-weight: bold;"
             );
 
@@ -111,7 +105,7 @@ public class PauseMenuPanel extends VBox {
                 "-fx-border-width: 4; " +
                 "-fx-background-radius: 5; " +
                 "-fx-border-radius: 5; " +
-                "-fx-font-size: 32px; " +
+                "-fx-font-size: 36px; " +
                 "-fx-font-weight: bold; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 0);"
             ));
@@ -123,7 +117,7 @@ public class PauseMenuPanel extends VBox {
                 "-fx-border-width: 4; " +
                 "-fx-background-radius: 5; " +
                 "-fx-border-radius: 5; " +
-                "-fx-font-size: 32px; " +
+                "-fx-font-size: 36px; " +
                 "-fx-font-weight: bold;"
             ));
         } else {
@@ -174,10 +168,6 @@ public class PauseMenuPanel extends VBox {
         this.onOptionsAction = action;
     }
 
-    public void setOnHelpAction(Runnable action) {
-        this.onHelpAction = action;
-    }
-
     public void setOnQuitAction(Runnable action) {
         this.onQuitAction = action;
     }
@@ -191,4 +181,3 @@ public class PauseMenuPanel extends VBox {
         setVisible(false);
     }
 }
-

@@ -6,11 +6,14 @@ import com.tetris.game.GameController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.binding.Bindings;
 import javafx.stage.Stage;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,6 +40,7 @@ public class MultiplayerGuiController implements Initializable {
 
     // Shared UI
     @FXML private Label winnerLabel;
+    @FXML private Button pauseButton;
 
     private GameController player1Controller;
     private GameController player2Controller;
@@ -51,8 +55,11 @@ public class MultiplayerGuiController implements Initializable {
     private final IntegerProperty levelProp2 = new SimpleIntegerProperty(1);
 
     private GameOverDialog gameOverDialog;
+    private PauseMenuPanel pauseMenuPanel;
     private Runnable onRestartCallback;
     private Runnable onMainMenuCallback;
+
+    private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -87,6 +94,19 @@ public class MultiplayerGuiController implements Initializable {
         player1Controller.createNewGame();
         player2Controller.createNewGame();
 
+        // Initialize pause menu panel
+        pauseMenuPanel = new PauseMenuPanel();
+        javafx.scene.layout.HBox centerPane = (javafx.scene.layout.HBox) ((javafx.scene.layout.BorderPane) gamePanel1.getScene().getRoot()).getCenter();
+        centerPane.getChildren().add(pauseMenuPanel);
+
+        // Set pause menu actions
+        pauseMenuPanel.setOnResumeAction(this::togglePause);
+        pauseMenuPanel.setOnOptionsAction(() -> {
+            SettingsDialog settings = new SettingsDialog();
+            settings.show((Stage) gamePanel1.getScene().getWindow());
+        });
+        pauseMenuPanel.setOnQuitAction(onMainMenuCallback);
+
         // Set up key handling for multiplayer
         setupKeyHandling();
     }
@@ -95,6 +115,7 @@ public class MultiplayerGuiController implements Initializable {
         // Get the scene from one of the UI elements
         if (gamePanel1.getScene() != null) {
             gamePanel1.getScene().setOnKeyPressed(event -> {
+                if (isPause.get()) return;
                 // Player 1 controls: A S D W Space Tab
                 switch (event.getCode()) {
                     case A:
@@ -149,9 +170,19 @@ public class MultiplayerGuiController implements Initializable {
                     case BACK_SPACE:
                         player2Controller.onHoldEvent(new com.tetris.model.MoveEvent(com.tetris.model.EventType.HOLD, com.tetris.model.EventSource.USER));
                         break;
+
+                    // Pause
+                    case ESCAPE:
+                        togglePause();
+                        break;
                 }
                 event.consume();
             });
+        }
+
+        // Set pause button action
+        if (pauseButton != null) {
+            pauseButton.setOnAction(e -> togglePause());
         }
     }
 
@@ -306,5 +337,22 @@ public class MultiplayerGuiController implements Initializable {
 
     public void setOnMainMenuCallback(Runnable callback) {
         this.onMainMenuCallback = callback;
+    }
+
+    private void togglePause() {
+        if (pauseMenuPanel == null) {
+            return; // Can't pause if menu not initialized
+        }
+
+        isPause.set(!isPause.get());
+        if (isPause.get()) {
+            // Pause the game
+            pauseMenuPanel.show();
+            if (pauseButton != null) pauseButton.setText("Resume");
+        } else {
+            // Resume the game
+            pauseMenuPanel.hide();
+            if (pauseButton != null) pauseButton.setText("Pause");
+        }
     }
 }
