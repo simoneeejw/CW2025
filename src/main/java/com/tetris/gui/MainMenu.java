@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 public class MainMenu {
 
     private Stage stage;
-    private Theme selectedTheme;
     private boolean startGame = false;
     private boolean isMultiplayer = false; // New field for game mode
     private SettingsDialog settingsDialog;
@@ -27,14 +26,8 @@ public class MainMenu {
 
     public MainMenu(Stage stage) {
         this.stage = stage;
-        this.selectedTheme = ThemeManager.getInstance().getCurrentTheme();
         this.settingsDialog = new SettingsDialog();
         this.highScoresDialog = new HighScoresDialog();
-
-        // Initialize sound settings from preferences
-        java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(SettingsDialog.class);
-        com.tetris.util.SoundManager.getInstance().setMusicEnabled(prefs.getBoolean("music_enabled", true));
-        com.tetris.util.SoundManager.getInstance().setSoundEffectsEnabled(prefs.getBoolean("sound_effects_enabled", true));
     }
 
     /**
@@ -296,11 +289,7 @@ public class MainMenu {
         ));
 
         settingsBtn.setOnAction(e -> {
-            Theme newTheme = settingsDialog.show(stage, selectedTheme);
-            if (newTheme != null) {
-                selectedTheme = newTheme;
-                ThemeManager.getInstance().setCurrentTheme(newTheme);
-            }
+            settingsDialog.show(stage);
         });
 
         quickActions.getChildren().addAll(scoresBtn, settingsBtn);
@@ -424,12 +413,6 @@ public class MainMenu {
         return startGame;
     }
 
-    /**
-     * Returns the selected theme.
-     */
-    public Theme getSelectedTheme() {
-        return selectedTheme;
-    }
 
     /**
      * Returns whether multiplayer mode is selected.
@@ -443,9 +426,6 @@ public class MainMenu {
      */
     private void loadGame() {
         try {
-            // Apply selected theme
-            ThemeManager.getInstance().setCurrentTheme(selectedTheme);
-
             if (isMultiplayer) {
                 // Load multiplayer game
                 java.net.URL location = getClass().getClassLoader().getResource("multiplayerLayout.fxml");

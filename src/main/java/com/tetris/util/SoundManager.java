@@ -5,6 +5,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.prefs.Preferences;
 
 /**
  * Manages sound effects and background music for the Tetris game.
@@ -13,11 +14,13 @@ public class SoundManager {
 
     private static SoundManager instance;
     private MediaPlayer backgroundMusicPlayer;
-    private boolean musicEnabled = true;
-    private boolean soundEffectsEnabled = true;
+    private double musicVolume = 0.3;
+    private double soundEffectsVolume = 0.7;
 
     private SoundManager() {
-        // Private constructor for singleton
+        Preferences prefs = Preferences.userNodeForPackage(SoundManager.class);
+        musicVolume = prefs.getDouble("music_volume", 0.3);
+        soundEffectsVolume = prefs.getDouble("sound_effects_volume", 0.7);
     }
 
     public static SoundManager getInstance() {
@@ -28,29 +31,41 @@ public class SoundManager {
     }
 
     /**
-     * Sets whether background music is enabled.
+     * Sets the music volume (0.0 to 1.0).
      */
-    public void setMusicEnabled(boolean enabled) {
-        musicEnabled = enabled;
-        if (!enabled && backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.stop();
-        } else if (enabled && backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.play();
+    public void setMusicVolume(double volume) {
+        musicVolume = Math.max(0.0, Math.min(1.0, volume));
+        if (backgroundMusicPlayer != null) {
+            backgroundMusicPlayer.setVolume(musicVolume);
         }
     }
 
     /**
-     * Sets whether sound effects are enabled.
+     * Sets the sound effects volume (0.0 to 1.0).
      */
-    public void setSoundEffectsEnabled(boolean enabled) {
-        soundEffectsEnabled = enabled;
+    public void setSoundEffectsVolume(double volume) {
+        soundEffectsVolume = Math.max(0.0, Math.min(1.0, volume));
+    }
+
+    /**
+     * Gets the current music volume.
+     */
+    public double getMusicVolume() {
+        return musicVolume;
+    }
+
+    /**
+     * Gets the current sound effects volume.
+     */
+    public double getSoundEffectsVolume() {
+        return soundEffectsVolume;
     }
 
     /**
      * Plays background music in a loop.
      */
     public void playBackgroundMusic() {
-        if (!musicEnabled) return;
+        if (musicVolume <= 0) return;
 
         try {
             URL musicUrl = getClass().getClassLoader().getResource("sounds/background_music.mp3");
@@ -58,7 +73,7 @@ public class SoundManager {
                 Media media = new Media(musicUrl.toString());
                 backgroundMusicPlayer = new MediaPlayer(media);
                 backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                backgroundMusicPlayer.setVolume(0.3); // Set volume to 30%
+                backgroundMusicPlayer.setVolume(musicVolume); // Set volume to 30%
                 backgroundMusicPlayer.play();
             } else {
                 System.out.println("Background music file not found.");
@@ -81,7 +96,7 @@ public class SoundManager {
      * Plays a sound effect once.
      */
     private void playSoundEffect(String soundFileName) {
-        if (!soundEffectsEnabled) {
+        if (soundEffectsVolume <= 0) {
             System.out.println("Sound effects are disabled!");
             return;
         }
@@ -93,7 +108,7 @@ public class SoundManager {
                 System.out.println("Sound file found at: " + soundUrl.toString());
                 Media media = new Media(soundUrl.toString());
                 MediaPlayer player = new MediaPlayer(media);
-                player.setVolume(0.7); // Set volume to 70%
+                player.setVolume(soundEffectsVolume); // Set volume to 70%
 
                 // Dispose of player after sound finishes to prevent memory leaks
                 player.setOnEndOfMedia(() -> player.dispose());

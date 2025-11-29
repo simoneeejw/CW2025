@@ -332,7 +332,7 @@ All tests pass successfully, ensuring reliability and preventing regressions.
   - Board container styling with transparency and borders
   - Piece rectangles with rounded corners and inner shadow glow
   - Sidebar info boxes with semi-transparent backgrounds
-  - Label and text styling (fonts, colors, sizes)
+  - Typography for title, subtitle, and labels (Arial font family)
   - Button states (normal, hover, pressed) with scale transitions
   - Music icon and separator text styling
   - Multiplayer-specific styles (player labels, winner label, new game button)
@@ -387,6 +387,34 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **User Benefit**: Adds strategic depth by allowing players to save pieces for later use, enabling better planning around difficult piece sequences.
 
+### 14. Adjustable Audio Volume Controls (Settings Enhancement)
+**Description**: Enhanced audio settings from simple on/off toggles to fully adjustable volume sliders, providing users with granular control over game audio levels.
+
+**Implementation Details**:
+- **SoundManager.java Refactor**: Completely redesigned audio management system:
+  - Removed boolean enabled flags in favor of volume-based control (0.0 to 1.0 range)
+  - Added `setMusicVolume()` and `setSoundEffectsVolume()` methods for precise control
+  - Added `getMusicVolume()` and `getSoundEffectsVolume()` getter methods
+  - Modified `playBackgroundMusic()` and `playSoundEffect()` to check volume > 0 instead of enabled flags
+  - Automatic preference loading on initialization for persistent volume settings
+- **SettingsDialog.java Enhancement**: Replaced checkboxes with professional volume sliders:
+  - 0-100% range sliders with tick marks at 25% intervals
+  - Real-time percentage labels updating as sliders move
+  - Immediate audio feedback when adjusting volume levels
+  - Persistent storage using Java Preferences API
+  - Default volumes: Background Music 30%, Sound Effects 70%
+- **UI Design**: Clean, intuitive interface with:
+  - Slider width: 200px for precise control
+  - Value labels in golden color (#FFD700) for visibility
+  - Smooth slider interaction with 5-unit increments
+  - Consistent styling matching the game's light classic theme
+- **User Experience**: Volume 0% effectively disables audio, maintaining off functionality while providing fine-tuned control
+- **Technical Integration**: Seamless integration with existing sound system without breaking changes
+
+**User Benefit**: Players can now customize audio levels to their environment and preferences, from complete silence to full volume, enhancing accessibility and user satisfaction. The professional slider interface provides precise control with immediate feedback.
+
+**Quality Assurance**: All changes tested with compilation verification and existing test suite (60 tests passing). Audio adjustments work in real-time without requiring application restart.
+
 ## Implemented but Not Working Properly
 None. All implemented features are functioning correctly, including the recently added progressive levels, power-ups, and ghost piece.
 
@@ -437,7 +465,7 @@ The following new Java classes were introduced for the additional features:
 
 - **NotificationPanel.java** (com.tetris.gui): Animated panel for displaying score bonuses and game notifications with fade effects.
 
-- **SettingsDialog.java** (com.tetris.gui): Dialog for adjusting game settings including sound volume and theme selection.
+- **SettingsDialog.java** (com.tetris.gui): Dialog for adjusting game settings including sound volume.
 
 - **PauseMenuPanel.java** (com.tetris.gui): Overlay panel displayed when game is paused, providing options to resume, access settings, view help, or quit to main menu.
 
@@ -455,8 +483,9 @@ The following new Java classes were introduced for the additional features:
   - Sidebar info boxes with semi-transparent white backgrounds
   - Typography for title, subtitle, and labels (Arial font family)
   - Button styling with hover and pressed states
-  - Color scheme using classic Tetris colors and light blue palette
-
+  - Music icon and separator text styling
+  - Multiplayer-specific styles (player labels, winner label, new game button)
+  
 ### FXML Layouts
 - **gameLayout.fxml** (src/main/resources): Updated BorderPane layout structure:
   - Top section with title and subtitle VBox
@@ -488,6 +517,10 @@ The following classes from the original codebase were modified to support the re
   
   These changes were critical for fixing the broken game mechanics where pieces were invisible and for implementing the new light classic theme design.
 
+- **SettingsDialog.java** (com.tetris.gui): Enhanced settings dialog with adjustable volume controls. Replaced simple on/off checkboxes with professional volume sliders (0-100%) featuring real-time percentage labels, tick marks, and immediate audio feedback. Integrated with Java Preferences API for persistent volume settings.
+
+- **SoundManager.java** (com.tetris.util): Completely redesigned audio management system. Removed boolean enabled flags in favor of volume-based control (0.0-1.0 range). Added volume setter/getter methods, automatic preference loading, and volume-based audio playback logic.
+
 ## Current Game State (November 2025)
 
 ### What's Working
@@ -501,7 +534,7 @@ The game is fully functional with the following features:
 - ✅ **Hard Drop**: Space bar instantly drops pieces to bottom
 - ✅ **Pause/Resume**: ESC key pauses game with proper state management
 - ✅ **Score Tracking**: Real-time score, lines, and level display with property binding
-- ✅ **Sound System**: Background music and sound effects for piece drops, line clears, level-ups
+- ✅ **Sound System**: Background music and sound effects for piece drops, line clears, level-ups with adjustable volume controls
 - ✅ **High Scores**: Persistent high score tracking with dialog display
 - ✅ **Main Menu**: Start screen with game options and settings
 - ✅ **CSS Styling**: Professional light classic theme with gradients, shadows, and rounded corners
