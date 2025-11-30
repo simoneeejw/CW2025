@@ -20,7 +20,6 @@ public class MainMenu {
 
     private Stage stage;
     private boolean startGame = false;
-    private boolean isMultiplayer = false; // New field for game mode
     private SettingsDialog settingsDialog;
     private HighScoresDialog highScoresDialog;
 
@@ -51,9 +50,6 @@ public class MainMenu {
         // === HEADER SECTION ===
         VBox header = createHeader();
 
-        // === GAME MODE SELECTION ===
-        VBox gameModeSelection = createGameModeSelection();
-
         // === QUICK ACTIONS SECTION ===
         VBox quickActions = createQuickActions();
 
@@ -75,7 +71,6 @@ public class MainMenu {
         mainLayout.getChildren().addAll(
                 header,
                 spacer1,
-                gameModeSelection,
                 playButton,
                 quickActions,
                 spacer2,
@@ -84,7 +79,6 @@ public class MainMenu {
         );
 
         // Apply custom margins for tighter spacing
-        VBox.setMargin(gameModeSelection, new Insets(-53, 0, 0, 0));  // Increased negative margin to move buttons up and nearer to logo
         VBox.setMargin(playButton, new Insets(0, 0, 0, 0));  // Add some space below header
         VBox.setMargin(quickActions, new Insets(0, 0, 0, 0));
 
@@ -124,101 +118,6 @@ public class MainMenu {
         }
 
         return header;
-    }
-
-    private VBox createGameModeSelection() {
-        VBox gameModeBox = new VBox(10);
-        gameModeBox.setAlignment(Pos.CENTER);
-        gameModeBox.setPadding(new Insets(10));
-
-        Label modeLabel = new Label("Select Game Mode:");
-        modeLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
-        modeLabel.setTextFill(Color.web("#FFFFFF"));
-
-        // Container for the toggle buttons (horizontal layout)
-        HBox buttonContainer = new HBox(10); // 10px spacing between buttons
-        buttonContainer.setAlignment(Pos.CENTER);
-
-        // Single Player Button
-        ToggleButton singlePlayerBtn = new ToggleButton("SINGLE PLAYER");
-        singlePlayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
-        singlePlayerBtn.setPrefWidth(145); // Half of 300px minus spacing
-        singlePlayerBtn.setPrefHeight(50);
-
-        // Multiplayer Button
-        ToggleButton multiplayerBtn = new ToggleButton("MULTIPLAYER");
-        multiplayerBtn.setFont(Font.font("System", FontWeight.BOLD, 16));
-        multiplayerBtn.setPrefWidth(145); // Half of 300px minus spacing
-        multiplayerBtn.setPrefHeight(50);
-
-        // Toggle group to ensure only one button is selected at a time
-        ToggleGroup modeToggleGroup = new ToggleGroup();
-        singlePlayerBtn.setToggleGroup(modeToggleGroup);
-        multiplayerBtn.setToggleGroup(modeToggleGroup);
-
-        // Select single player by default
-        singlePlayerBtn.setSelected(true);
-        isMultiplayer = false;
-
-        // Enhanced button styling
-        styleToggleButton(singlePlayerBtn, true);
-        styleToggleButton(multiplayerBtn, false);
-
-        // Add listeners to update game mode
-        singlePlayerBtn.setOnAction(e -> {
-            isMultiplayer = false;
-            updateToggleButtonStyle(singlePlayerBtn, true);
-            updateToggleButtonStyle(multiplayerBtn, false);
-        });
-
-        multiplayerBtn.setOnAction(e -> {
-            isMultiplayer = true;
-            updateToggleButtonStyle(singlePlayerBtn, false);
-            updateToggleButtonStyle(multiplayerBtn, true);
-        });
-
-        buttonContainer.getChildren().addAll(singlePlayerBtn, multiplayerBtn);
-        gameModeBox.getChildren().addAll(modeLabel, buttonContainer);
-
-        return gameModeBox;
-    }
-
-    private void styleToggleButton(ToggleButton button, boolean isSelected) {
-        String baseStyle = "-fx-background-color: " + (isSelected ? "linear-gradient(to bottom, #00FF00, #008000)" : "linear-gradient(to bottom, #333333, #111111)") + "; " +
-                "-fx-text-fill: " + (isSelected ? "#000000" : "#FFFFFF") + "; " +
-                "-fx-border-color: " + (isSelected ? "#00FF00" : "#666666") + "; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 10; " +
-                "-fx-background-radius: 10; " +
-                "-fx-effect: dropshadow(gaussian, " + (isSelected ? "#00FF00" : "#000000") + ", 8, 0.5, 0, 2); " +
-                "-fx-min-width: 145px; -fx-max-width: 145px; -fx-min-height: 50px; -fx-max-height: 50px;";
-        button.setStyle(baseStyle);
-
-        // Add hover effect
-        button.setOnMouseEntered(e -> {
-            if (!button.isSelected()) {
-                button.setStyle(baseStyle.replace("linear-gradient(to bottom, #333333, #111111)", "linear-gradient(to bottom, #555555, #222222)")
-                        .replace("dropshadow(gaussian, #000000, 8, 0.5, 0, 2)", "dropshadow(gaussian, #666666, 10, 0.7, 0, 3)"));
-            }
-        });
-
-        button.setOnMouseExited(e -> {
-            if (!button.isSelected()) {
-                button.setStyle(baseStyle);
-            }
-        });
-    }
-
-    private void updateToggleButtonStyle(ToggleButton button, boolean isSelected) {
-        String style = "-fx-background-color: " + (isSelected ? "linear-gradient(to bottom, #00FF00, #008000)" : "linear-gradient(to bottom, #333333, #111111)") + "; " +
-                "-fx-text-fill: " + (isSelected ? "#000000" : "#FFFFFF") + "; " +
-                "-fx-border-color: " + (isSelected ? "#00FF00" : "#666666") + "; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 10; " +
-                "-fx-background-radius: 10; " +
-                "-fx-effect: dropshadow(gaussian, " + (isSelected ? "#00FF00" : "#000000") + ", 8, 0.5, 0, 2); " +
-                "-fx-min-width: 145px; -fx-max-width: 145px; -fx-min-height: 50px; -fx-max-height: 50px;";
-        button.setStyle(style);
     }
 
     private VBox createQuickActions() {
@@ -414,66 +313,35 @@ public class MainMenu {
     }
 
 
-    /**
-     * Returns whether multiplayer mode is selected.
-     */
-    public boolean isMultiplayer() {
-        return isMultiplayer;
-    }
 
     /**
      * Loads the game after menu selection.
      */
     private void loadGame() {
         try {
-            if (isMultiplayer) {
-                // Load multiplayer game
-                java.net.URL location = getClass().getClassLoader().getResource("multiplayerLayout.fxml");
-                javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
-                javafx.scene.Parent root = fxmlLoader.load();
-                MultiplayerGuiController c = fxmlLoader.getController();
+            // Load single player game
+            java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
+            javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
+            javafx.scene.Parent root = fxmlLoader.load();
+            GuiController c = fxmlLoader.getController();
+            c.setGameController(new com.tetris.game.GameController(c));
 
-                // Set callbacks for game over dialog
-                c.setOnRestartCallback(() -> c.restartGame());
-                c.setOnMainMenuCallback(() -> show());
+            // Set callbacks for game over dialog
+            c.setOnRestartCallback(() -> c.newGame(null));
+            c.setOnMainMenuCallback(() -> show());
 
-                stage.setTitle("TETRIS MULTIPLAYER - COMP2042");
-                javafx.scene.Scene scene = new javafx.scene.Scene(root, 820, 700);  // Precisely sized for two boards
-                stage.setScene(scene);
-                stage.setMinWidth(820);
-                stage.setMinHeight(700);
-                stage.centerOnScreen();
+            stage.setTitle("TETRIS - COMP2042");
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
+            stage.setScene(scene);
+            stage.setMinWidth(450);
+            stage.setMinHeight(740);
+            stage.centerOnScreen();
 
-                // Initialize multiplayer controller
-                new com.tetris.game.MultiplayerController(c);
+            // Start background music
+            com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
 
-                // Start background music
-                com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
-            } else {
-                // Load single player game
-                java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
-                javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
-                javafx.scene.Parent root = fxmlLoader.load();
-                GuiController c = fxmlLoader.getController();
-                c.setGameController(new com.tetris.game.GameController(c));
-
-                // Set callbacks for game over dialog
-                c.setOnRestartCallback(() -> c.newGame(null));
-                c.setOnMainMenuCallback(() -> show());
-
-                stage.setTitle("TETRIS - COMP2042");
-                javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
-                stage.setScene(scene);
-                stage.setMinWidth(450);
-                stage.setMinHeight(740);
-                stage.centerOnScreen();
-
-                // Start background music
-                com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
-
-                // Apply theme to GUI
-                ThemeManager.getInstance().applyTheme(c);
-            }
+            // Apply theme to GUI
+            ThemeManager.getInstance().applyTheme(c);
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
