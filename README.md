@@ -1,12 +1,11 @@
 :# Tetris Game Project
 
-A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, local multiplayer mode, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
+A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
 
-**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps, local 2-player multiplayer  
+**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
 **🎨 Visual Design**: Light classic theme with gradient backgrounds, rounded corners, drop shadows, and vibrant Tetris colors  
 **🏗️ Architecture**: Refactored from monolithic design to SRP-compliant classes with Observer and Factory patterns  
 **✅ Quality**: 60 passing unit tests, comprehensive error handling, persistent high scores and settings  
-**🌐 Multiplayer**: Split-screen competitive mode with separate controls for each player  
 
 ## GitHub
 Repository: https://github.com/simoneeejw/CW2025
