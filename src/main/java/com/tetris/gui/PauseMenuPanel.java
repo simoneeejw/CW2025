@@ -35,25 +35,22 @@ public class PauseMenuPanel extends VBox {
                 "-fx-border-radius: 10; " +
                 "-fx-background-radius: 10;");
 
-        setPrefSize(380, 580);
-        setMaxSize(380, 580);
+        setPrefSize(400, 470);
+        setMaxSize(400, 470);
 
         createMenuContent();
     }
 
     private void createMenuContent() {
         // "PAUSED" title
-        Label pausedLabel = new Label("paused");
+        Label pausedLabel = new Label("PAUSED");
         pausedLabel.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-        pausedLabel.setTextFill(Color.web("#6B7BA8"));
+        pausedLabel.setTextFill(Color.web("#ffffff"));
         pausedLabel.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.5, 2, 2);");
 
         VBox titleBox = new VBox(pausedLabel);
         titleBox.setAlignment(Pos.CENTER);
         titleBox.setPadding(new Insets(20, 0, 30, 0));
-        titleBox.setStyle("-fx-background-color: rgba(200, 210, 230, 0.9); " +
-                "-fx-border-color: #4A5A8A; " +
-                "-fx-border-width: 3;");
         titleBox.setPrefHeight(120);
 
         // Resume button
