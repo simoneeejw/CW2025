@@ -59,27 +59,66 @@ public class SettingsDialog {
         VBox mainLayout = new VBox(20);
         mainLayout.setPadding(new Insets(25));
         mainLayout.setAlignment(Pos.TOP_CENTER);
-        mainLayout.setStyle("-fx-background-color: #1a1a1a;");
+        mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460); " +
+                "-fx-border-color: #e94560; " +
+                "-fx-border-width: 3; " +
+                "-fx-border-radius: 15; " +
+                "-fx-background-radius: 15;");
 
         // Title
-        Label title = new Label("⚙ SETTINGS");
-        title.setFont(Font.font("System", FontWeight.BOLD, 28));
-        title.setTextFill(Color.web("#00FFFF"));
+        Label title = new Label("⚙ SETTINGS ⚙");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        title.setTextFill(Color.web("#FFD700"));
+        title.setStyle("-fx-effect: dropshadow(gaussian, #FFA500, 20, 0.8, 2, 2); " +
+                "-fx-background-color: rgba(0, 0, 0, 0.5); " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-radius: 10;");
 
-        // Create tabs
-        TabPane tabPane = new TabPane();
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        tabPane.setPrefSize(500, 400);
+        // Option buttons
+        HBox optionButtons = new HBox(20);
+        optionButtons.setAlignment(Pos.CENTER);
+        optionButtons.setPadding(new Insets(10));
 
-        // Audio Tab
-        Tab audioTab = new Tab("Audio");
-        audioTab.setContent(createAudioPanel());
+        Button audioButton = new Button("🔊 Audio");
+        audioButton.setFont(Font.font("System", FontWeight.BOLD, 18));
+        audioButton.setPrefSize(150, 40);
+        audioButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;");
+        audioButton.setOnMouseEntered(e -> audioButton.setStyle("-fx-background-color: #FFECB3; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.5, 0, 0);"));
+        audioButton.setOnMouseExited(e -> audioButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;"));
 
-        // Controls Tab
-        Tab controlsTab = new Tab("Controls");
-        controlsTab.setContent(createControlsPanel());
+        Button controlsButton = new Button("🎮 Controls");
+        controlsButton.setFont(Font.font("System", FontWeight.BOLD, 18));
+        controlsButton.setPrefSize(150, 40);
+        controlsButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;");
+        controlsButton.setOnMouseEntered(e -> controlsButton.setStyle("-fx-background-color: rgba(255, 215, 0, 0.3); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.5, 0, 0);"));
+        controlsButton.setOnMouseExited(e -> controlsButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;"));
 
-        tabPane.getTabs().addAll(audioTab, controlsTab);
+        optionButtons.getChildren().addAll(audioButton, controlsButton);
+
+        // Content area
+        VBox contentArea = new VBox();
+        contentArea.setPrefSize(500, 350);
+        contentArea.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3); " +
+                "-fx-border-color: #FFD700; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 10; " +
+                "-fx-background-radius: 10;");
+
+        // Default to audio
+        contentArea.getChildren().setAll(createAudioPanelContent());
+
+        // Button actions
+        audioButton.setOnAction(e -> {
+            contentArea.getChildren().setAll(createAudioPanelContent());
+            audioButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;");
+            controlsButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;");
+        });
+
+        controlsButton.setOnAction(e -> {
+            contentArea.getChildren().setAll(createControlsPanelContent());
+            controlsButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;");
+            audioButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;");
+        });
 
         // Buttons
         HBox buttons = new HBox(15);
@@ -98,7 +137,7 @@ public class SettingsDialog {
 
         buttons.getChildren().addAll(saveButton, cancelButton);
 
-        mainLayout.getChildren().addAll(title, tabPane, buttons);
+        mainLayout.getChildren().addAll(title, optionButtons, contentArea, buttons);
 
         Scene scene = new Scene(mainLayout, 550, 550);
         dialog.setScene(scene);
@@ -154,18 +193,11 @@ public class SettingsDialog {
         dialog.showAndWait();
     }
 
-    private VBox createAudioPanel() {
+    private VBox createAudioPanelContent() {
         VBox audioPanel = new VBox(20);
         audioPanel.setPadding(new Insets(20));
         audioPanel.setAlignment(Pos.TOP_CENTER);
         audioPanel.setStyle("-fx-background-color: #2a2a2a;");
-
-        Label title = new Label("Audio Settings");
-        title.setFont(Font.font("System", FontWeight.BOLD, 18));
-        title.setTextFill(Color.web("#00FFFF"));
-
-        VBox controls = new VBox(15);
-        controls.setAlignment(Pos.TOP_LEFT);
 
         // Background Music Volume
         HBox musicBox = new HBox(15);
@@ -221,22 +253,16 @@ public class SettingsDialog {
 
         sfxBox.getChildren().addAll(sfxLabel, sfxSlider, sfxValueLabel);
 
-        controls.getChildren().addAll(musicBox, sfxBox);
-
-        audioPanel.getChildren().addAll(title, controls);
+        audioPanel.getChildren().addAll(musicBox, sfxBox);
 
         return audioPanel;
     }
 
-    private VBox createControlsPanel() {
+    private VBox createControlsPanelContent() {
         VBox controlsPanel = new VBox(15);
         controlsPanel.setPadding(new Insets(20));
         controlsPanel.setAlignment(Pos.TOP_CENTER);
         controlsPanel.setStyle("-fx-background-color: #2a2a2a;");
-
-        Label title = new Label("Keyboard Controls");
-        title.setFont(Font.font("System", FontWeight.BOLD, 18));
-        title.setTextFill(Color.web("#00FFFF"));
 
         VBox keyBindings = new VBox(10);
         keyBindings.setAlignment(Pos.TOP_LEFT);
@@ -271,7 +297,7 @@ public class SettingsDialog {
         holdLabel = (Label) holdRow.getChildren().get(0);
         keyBindings.getChildren().add(holdRow);
 
-        controlsPanel.getChildren().addAll(title, keyBindings);
+        controlsPanel.getChildren().addAll(keyBindings);
 
         return controlsPanel;
     }
@@ -283,8 +309,13 @@ public class SettingsDialog {
         Label label = new Label(labelText + ": " + currentKey.getName());
         label.setTextFill(Color.WHITE);
         label.setPrefWidth(150);
+        label.setFont(Font.font("System", FontWeight.NORMAL, 14));
 
         Button changeBtn = new Button("Change");
+        changeBtn.setPrefSize(100, 30);
+        changeBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 5;");
+        changeBtn.setOnMouseEntered(e -> changeBtn.setStyle("-fx-background-color: #42A5F5; -fx-text-fill: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0.5, 0, 0);"));
+        changeBtn.setOnMouseExited(e -> changeBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 5;"));
         changeBtn.setOnAction(e -> {
             changingAction = action;
             currentButton = changeBtn;
