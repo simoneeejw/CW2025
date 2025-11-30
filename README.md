@@ -477,8 +477,41 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 - Properly integrated with existing game loop and UI architecture
 - No performance impact when not visible (hidden by default)
 
-## Implemented but Not Working Properly
-None. All implemented features are functioning correctly, including the recently added progressive levels, power-ups, and ghost piece.
+### 16. Tutorial System (User Experience Enhancement)
+**Description**: Added a comprehensive tutorial accessible from the main menu to guide new players through game mechanics, controls, and strategies.
+
+**Implementation Details**:
+- **HelpDialog.java**: Modal dialog providing step-by-step tutorial content:
+  - **Game Controls Section**: Grid layout displaying all keyboard controls with clear action-key pairings
+  - **How to Play Section**: Numbered step-by-step instructions covering basic to advanced gameplay
+  - **Tips Section**: Strategic advice for better performance and avoiding common mistakes
+  - **Scrollable Interface**: ScrollPane wrapper allows content to extend beyond dialog height
+  - **Visual Design**: Dark blue background (#2A3A6A) with white title text and white content boxes for high contrast
+  - **Accessibility**: Text wrapping and proper font sizing (14-18px) for readability
+- **Main Menu Integration**: "❓ HELP" button added to quick actions section
+  - Styled consistently with other menu buttons (green gradient, hover effects)
+  - Positioned between High Scores and Settings for logical flow
+  - Opens HelpDialog modally when clicked
+- **Content Structure**:
+  - Introduction to Tetris mechanics
+  - Complete control reference (movement, rotation, special actions)
+  - Scoring and progression explanation
+  - Power-up and hold feature descriptions
+  - Strategic tips for line clearing and planning
+- **User Experience**: Provides immediate guidance for beginners without leaving the main menu
+  - Clear, concise instructions with visual hierarchy
+  - No assumptions about prior knowledge
+  - Encourages exploration of advanced features
+
+**User Benefit**: New players can learn the game quickly and effectively, reducing frustration and improving retention. Experienced players can reference controls and tips as needed.
+
+**Technical Implementation**:
+- Self-contained dialog class with no external dependencies
+- Scrollable content for comprehensive coverage without cramped layout
+- Consistent styling with game's light classic theme
+- Modal display prevents accidental navigation during reading
+
+**Quality Assurance**: Tutorial content tested for clarity and completeness. Dialog opens correctly from main menu and scrolls smoothly.
 
 ## Features Not Implemented
 None. All required refactoring and additional features have been successfully implemented.
