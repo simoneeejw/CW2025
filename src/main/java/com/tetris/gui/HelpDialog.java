@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -39,7 +38,7 @@ public class HelpDialog {
         // Game info
         VBox gameInfo = new VBox(10);
         gameInfo.setAlignment(Pos.CENTER_LEFT);
-        gameInfo.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); " +
+        gameInfo.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
                 "-fx-padding: 15; " +
                 "-fx-border-color: #4A5A8A; " +
                 "-fx-border-width: 2; " +
@@ -61,45 +60,53 @@ public class HelpDialog {
         Label tip2 = new Label("• Clear lines efficiently to avoid building up too high.");
         Label tip3 = new Label("• Practice makes perfect - keep playing to improve!");
 
-        Label[] labels = {intro, objective, step1, step2, step3, step4, step5, step6, step7, step8, tipsTitle, tip1, tip2, tip3};
+        // Base styling for all labels: dark text for high contrast on light background
+        Label[] labels = {intro, objective, step1, step2, step3, step4, step5, step6, step7, step8, tip1, tip2, tip3};
         for (Label label : labels) {
             label.setFont(Font.font("System", FontWeight.NORMAL, 14));
-            label.setTextFill(Color.RED);
+            label.setTextFill(Color.BLACK);  // Changed from Color.RED to Color.BLACK for better visibility
+            label.setStyle("-fx-text-fill: black;");  // Force black text to prevent CSS override
             label.setWrapText(true);
         }
+
+        // Special styling for tipsTitle: bold and black for consistency
+        tipsTitle.setFont(Font.font("System", FontWeight.BOLD, 14));
+        tipsTitle.setTextFill(Color.BLACK);  // Changed to black for consistency
+        tipsTitle.setStyle("-fx-text-fill: black;");  // Force black text
+        tipsTitle.setWrapText(true);
 
         gameInfo.getChildren().addAll(intro, objective, step1, step2, step3, step4, step5, step6, step7, step8, tipsTitle, tip1, tip2, tip3);
 
         // Close button
-        Button closeButton = new Button("I'M READY!");
+        Button closeButton = new Button("GOT IT!");
         closeButton.setFont(Font.font("System", FontWeight.BOLD, 16));
         closeButton.setPrefSize(150, 45);
         closeButton.setStyle(
-            "-fx-background-color: #4A5A8A; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 8; " +
-            "-fx-border-color: #2A3A6A; " +
-            "-fx-border-width: 2; " +
-            "-fx-border-radius: 8;"
+                "-fx-background-color: #4A5A8A; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-border-color: #2A3A6A; " +
+                        "-fx-border-width: 2; " +
+                        "-fx-border-radius: 8;"
         );
 
         closeButton.setOnMouseEntered(e -> closeButton.setStyle(
-            "-fx-background-color: #6A7AAA; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 8; " +
-            "-fx-border-color: #2A3A6A; " +
-            "-fx-border-width: 2; " +
-            "-fx-border-radius: 8; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 0);"
+                "-fx-background-color: #6A7AAA; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-border-color: #2A3A6A; " +
+                        "-fx-border-width: 2; " +
+                        "-fx-border-radius: 8; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 0);"
         ));
 
         closeButton.setOnMouseExited(e -> closeButton.setStyle(
-            "-fx-background-color: #4A5A8A; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 8; " +
-            "-fx-border-color: #2A3A6A; " +
-            "-fx-border-width: 2; " +
-            "-fx-border-radius: 8;"
+                "-fx-background-color: #4A5A8A; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-border-color: #2A3A6A; " +
+                        "-fx-border-width: 2; " +
+                        "-fx-border-radius: 8;"
         ));
 
         closeButton.setOnAction(e -> dialog.close());

@@ -513,6 +513,36 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Quality Assurance**: Tutorial content tested for clarity and completeness. Dialog opens correctly from main menu and scrolls smoothly.
 
+### 17. Customizable Key Bindings (User Experience Enhancement)
+**Description**: Added a settings interface allowing users to customize keyboard controls for all game actions, with persistent storage across sessions.
+
+**Implementation Details**:
+- **SettingsDialog.java Enhancement**: Added "Controls" tab with interactive key binding interface:
+  - Individual rows for each action (Move Left, Move Right, Rotate, Soft Drop, Hard Drop, Hold Piece)
+  - Current key display with "Change" buttons for each binding
+  - Real-time key capture when changing bindings (press any key to set)
+  - Immediate visual feedback showing new key assignments
+  - Persistent storage using Java Preferences API
+- **Default Controls**: Arrow keys for movement, Space for hard drop, R for hold (matching user request)
+- **GuiController.java Integration**: Loads custom key bindings on game start
+  - Replaces hardcoded KeyCode constants with configurable variables
+  - Maintains backward compatibility with default keys if not customized
+  - Key bindings apply immediately without restart required
+- **User Experience**: 
+  - Intuitive "Press key..." prompt during binding changes
+  - Clear visual indication of current key assignments
+  - No conflicts or duplicate key handling (basic implementation)
+  - Settings accessible from pause menu for in-game adjustments
+- **Technical Implementation**:
+  - KeyCode enum values stored as strings in preferences
+  - Scene-level key event handling for binding capture
+  - Automatic preference loading on application startup
+  - Seamless integration with existing input handling system
+
+**User Benefit**: Players can customize controls to match their preferences or accommodate different keyboard layouts, improving accessibility and comfort during extended play sessions.
+
+**Quality Assurance**: Key binding changes tested for persistence and immediate application. Default controls verified to work as specified.
+
 ## Features Not Implemented
 None. All required refactoring and additional features have been successfully implemented.
 

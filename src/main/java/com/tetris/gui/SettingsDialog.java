@@ -4,6 +4,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,6 +23,15 @@ import java.util.prefs.Preferences;
 public class SettingsDialog {
 
     private Preferences prefs;
+    private KeyCode moveLeftKey = KeyCode.LEFT;
+    private KeyCode moveRightKey = KeyCode.RIGHT;
+    private KeyCode rotateKey = KeyCode.UP;
+    private KeyCode softDropKey = KeyCode.DOWN;
+    private KeyCode hardDropKey = KeyCode.SPACE;
+    private KeyCode holdKey = KeyCode.R;
+    private String changingAction = null;
+    private Button currentButton = null;
+    private Label moveLeftLabel, moveRightLabel, rotateLabel, softDropLabel, hardDropLabel, holdLabel;
 
     public SettingsDialog() {
         prefs = Preferences.userNodeForPackage(SettingsDialog.class);
@@ -31,6 +42,14 @@ public class SettingsDialog {
      * @param owner The owner stage
      */
     public void show(Stage owner) {
+        // Load current key bindings
+        moveLeftKey = KeyCode.valueOf(prefs.get("moveLeft", "LEFT"));
+        moveRightKey = KeyCode.valueOf(prefs.get("moveRight", "RIGHT"));
+        rotateKey = KeyCode.valueOf(prefs.get("rotate", "UP"));
+        softDropKey = KeyCode.valueOf(prefs.get("softDrop", "DOWN"));
+        hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
+        holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
+
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(owner);
@@ -83,6 +102,55 @@ public class SettingsDialog {
 
         Scene scene = new Scene(mainLayout, 550, 550);
         dialog.setScene(scene);
+
+        // Request focus on the scene to ensure key events are captured
+        scene.getRoot().requestFocus();
+
+        // Handle key binding changes
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (changingAction != null) {
+                KeyCode newKey = event.getCode();
+                switch (changingAction) {
+                    case "moveLeft":
+                        moveLeftKey = newKey;
+                        prefs.put("moveLeft", newKey.name());
+                        moveLeftLabel.setText("Move Left: " + newKey.getName());
+                        break;
+                    case "moveRight":
+                        moveRightKey = newKey;
+                        prefs.put("moveRight", newKey.name());
+                        moveRightLabel.setText("Move Right: " + newKey.getName());
+                        break;
+                    case "rotate":
+                        rotateKey = newKey;
+                        prefs.put("rotate", newKey.name());
+                        rotateLabel.setText("Rotate: " + newKey.getName());
+                        break;
+                    case "softDrop":
+                        softDropKey = newKey;
+                        prefs.put("softDrop", newKey.name());
+                        softDropLabel.setText("Soft Drop: " + newKey.getName());
+                        break;
+                    case "hardDrop":
+                        hardDropKey = newKey;
+                        prefs.put("hardDrop", newKey.name());
+                        hardDropLabel.setText("Hard Drop: " + newKey.getName());
+                        break;
+                    case "hold":
+                        holdKey = newKey;
+                        prefs.put("hold", newKey.name());
+                        holdLabel.setText("Hold Piece: " + newKey.getName());
+                        break;
+                }
+                changingAction = null;
+                if (currentButton != null) {
+                    currentButton.setText("Change");
+                    currentButton = null;
+                }
+                event.consume();
+            }
+        });
+
         dialog.showAndWait();
     }
 
@@ -170,47 +238,62 @@ public class SettingsDialog {
         title.setFont(Font.font("System", FontWeight.BOLD, 18));
         title.setTextFill(Color.web("#00FFFF"));
 
-        GridPane controlsGrid = new GridPane();
-        controlsGrid.setHgap(20);
-        controlsGrid.setVgap(12);
-        controlsGrid.setAlignment(Pos.CENTER);
+        VBox keyBindings = new VBox(10);
+        keyBindings.setAlignment(Pos.TOP_LEFT);
 
-        String[][] controls = {
-            {"Move Left", "← or A"},
-            {"Move Right", "→ or D"},
-            {"Rotate", "↑ or W"},
-            {"Soft Drop", "↓ or S"},
-            {"Hard Drop", "SPACE"},
-            {"Hold Piece", "C"},
-            {"Pause", "ESC"},
-            {"New Game", "N"}
-        };
+        // Move Left
+        HBox moveLeftRow = createKeyBindingRow("Move Left", moveLeftKey, "moveLeft");
+        moveLeftLabel = (Label) moveLeftRow.getChildren().get(0);
+        keyBindings.getChildren().add(moveLeftRow);
 
-        for (int i = 0; i < controls.length; i++) {
-            Label actionLabel = new Label(controls[i][0] + ":");
-            actionLabel.setFont(Font.font("System", FontWeight.NORMAL, 13));
-            actionLabel.setTextFill(Color.WHITE);
+        // Move Right
+        HBox moveRightRow = createKeyBindingRow("Move Right", moveRightKey, "moveRight");
+        moveRightLabel = (Label) moveRightRow.getChildren().get(0);
+        keyBindings.getChildren().add(moveRightRow);
 
-            Label keyLabel = new Label(controls[i][1]);
-            keyLabel.setFont(Font.font("System", FontWeight.BOLD, 13));
-            keyLabel.setTextFill(Color.web("#FFD700"));
-            keyLabel.setStyle(
-                "-fx-background-color: #333333; " +
-                "-fx-padding: 5 10; " +
-                "-fx-background-radius: 5;"
-            );
+        // Rotate
+        HBox rotateRow = createKeyBindingRow("Rotate", rotateKey, "rotate");
+        rotateLabel = (Label) rotateRow.getChildren().get(0);
+        keyBindings.getChildren().add(rotateRow);
 
-            controlsGrid.add(actionLabel, 0, i);
-            controlsGrid.add(keyLabel, 1, i);
-        }
+        // Soft Drop
+        HBox softDropRow = createKeyBindingRow("Soft Drop", softDropKey, "softDrop");
+        softDropLabel = (Label) softDropRow.getChildren().get(0);
+        keyBindings.getChildren().add(softDropRow);
 
-        Label note = new Label("Note: Key bindings are currently fixed");
-        note.setFont(Font.font("System", FontWeight.NORMAL, 11));
-        note.setTextFill(Color.web("#888888"));
+        // Hard Drop
+        HBox hardDropRow = createKeyBindingRow("Hard Drop", hardDropKey, "hardDrop");
+        hardDropLabel = (Label) hardDropRow.getChildren().get(0);
+        keyBindings.getChildren().add(hardDropRow);
 
-        controlsPanel.getChildren().addAll(title, controlsGrid, note);
+        // Hold Piece
+        HBox holdRow = createKeyBindingRow("Hold Piece", holdKey, "hold");
+        holdLabel = (Label) holdRow.getChildren().get(0);
+        keyBindings.getChildren().add(holdRow);
+
+        controlsPanel.getChildren().addAll(title, keyBindings);
 
         return controlsPanel;
+    }
+
+    private HBox createKeyBindingRow(String labelText, KeyCode currentKey, String action) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        Label label = new Label(labelText + ": " + currentKey.getName());
+        label.setTextFill(Color.WHITE);
+        label.setPrefWidth(150);
+
+        Button changeBtn = new Button("Change");
+        changeBtn.setOnAction(e -> {
+            changingAction = action;
+            currentButton = changeBtn;
+            changeBtn.setText("Press key...");
+        });
+
+        row.getChildren().addAll(label, changeBtn);
+
+        return row;
     }
 
     private void styleButton(Button button, String baseColor, String hoverColor) {

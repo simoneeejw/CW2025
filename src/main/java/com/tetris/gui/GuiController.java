@@ -44,6 +44,14 @@ public class GuiController implements Initializable, GameEventListener {
 
     private static final int BRICK_SIZE = GameConstants.BRICK_SIZE_PIXELS;
 
+    // Customizable key bindings
+    private KeyCode moveLeftKey = KeyCode.LEFT;
+    private KeyCode moveRightKey = KeyCode.RIGHT;
+    private KeyCode rotateKey = KeyCode.UP;
+    private KeyCode softDropKey = KeyCode.DOWN;
+    private KeyCode hardDropKey = KeyCode.SPACE;
+    private KeyCode holdKey = KeyCode.R;
+
     @FXML
     private GridPane gamePanel;
 
@@ -105,6 +113,9 @@ public class GuiController implements Initializable, GameEventListener {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Load custom key bindings at initialization
+        loadKeyBindings();
+
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -112,22 +123,22 @@ public class GuiController implements Initializable, GameEventListener {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
-                    if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+                    if (keyEvent.getCode() == moveLeftKey) {
                         refreshBrick(gameController.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                    } else if (keyEvent.getCode() == moveRightKey) {
                         refreshBrick(gameController.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+                    } else if (keyEvent.getCode() == rotateKey) {
                         refreshBrick(gameController.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                    } else if (keyEvent.getCode() == softDropKey) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.R) {
+                    } else if (keyEvent.getCode() == holdKey) {
                         refreshBrick(gameController.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
-                    } else if (keyEvent.getCode() == KeyCode.SPACE) {
+                    } else if (keyEvent.getCode() == hardDropKey) {
                         // Hard drop - keep moving down until piece locks
                         boolean keepDropping = true;
                         while (keepDropping) {
@@ -169,6 +180,15 @@ public class GuiController implements Initializable, GameEventListener {
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
+        // Load custom key bindings
+        Preferences prefs = Preferences.userNodeForPackage(GuiController.class);
+        moveLeftKey = KeyCode.valueOf(prefs.get("moveLeft", "LEFT"));
+        moveRightKey = KeyCode.valueOf(prefs.get("moveRight", "RIGHT"));
+        rotateKey = KeyCode.valueOf(prefs.get("rotate", "UP"));
+        softDropKey = KeyCode.valueOf(prefs.get("softDrop", "DOWN"));
+        hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
+        holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
+
         // Initialize status panel and add to root Pane
         // if (statusPanel == null) {
         //     statusPanel = new StatusPanel();
@@ -509,6 +529,8 @@ public class GuiController implements Initializable, GameEventListener {
             pauseMenuPanel.setOnOptionsAction(() -> {
                 SettingsDialog settings = new SettingsDialog();
                 settings.show((Stage) gamePanel.getScene().getWindow());
+                // Reload key bindings after settings dialog closes
+                loadKeyBindings();
             });
             pauseMenuPanel.setOnQuitAction(onMainMenuCallback);
 
@@ -738,5 +760,18 @@ public class GuiController implements Initializable, GameEventListener {
 
     public void setOnMainMenuCallback(Runnable callback) {
         this.onMainMenuCallback = callback;
+    }
+
+    /**
+     * Loads the key bindings from preferences.
+     */
+    private void loadKeyBindings() {
+        Preferences prefs = Preferences.userNodeForPackage(GuiController.class);
+        moveLeftKey = KeyCode.valueOf(prefs.get("moveLeft", "LEFT"));
+        moveRightKey = KeyCode.valueOf(prefs.get("moveRight", "RIGHT"));
+        rotateKey = KeyCode.valueOf(prefs.get("rotate", "UP"));
+        softDropKey = KeyCode.valueOf(prefs.get("softDrop", "DOWN"));
+        hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
+        holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
     }
 }
