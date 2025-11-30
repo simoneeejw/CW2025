@@ -22,11 +22,13 @@ public class MainMenu {
     private boolean startGame = false;
     private SettingsDialog settingsDialog;
     private HighScoresDialog highScoresDialog;
+    private HelpDialog helpDialog;
 
     public MainMenu(Stage stage) {
         this.stage = stage;
         this.settingsDialog = new SettingsDialog();
         this.highScoresDialog = new HighScoresDialog();
+        this.helpDialog = new HelpDialog();
     }
 
     /**
@@ -191,7 +193,39 @@ public class MainMenu {
             settingsDialog.show(stage);
         });
 
-        quickActions.getChildren().addAll(scoresBtn, settingsBtn);
+        // Help Button
+        Button helpBtn = new Button("❓ HELP");
+        helpBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        helpBtn.setPrefSize(300, 70);
+        String baseBgH = "linear-gradient(to bottom, #4CAF50, #388E3C)";
+        String hoverBgH = "linear-gradient(to bottom, #C8E6C9, #A5D6A7)";
+        String shadowColorBaseH = "rgba(76,175,80,0.6)";
+        String shadowColorHoverH = "#4CAF50";
+        helpBtn.setStyle(
+                "-fx-background-color: " + baseBgH + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBaseH + ", 15, 0.5, 0, 3);"
+        );
+
+        helpBtn.setOnMouseEntered(e -> helpBtn.setStyle(
+                "-fx-background-color: " + hoverBgH + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorHoverH + ", 25, 0.8, 0, 0); " +
+                        "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"
+        ));
+
+        helpBtn.setOnMouseExited(e -> helpBtn.setStyle(
+                "-fx-background-color: " + baseBgH + "; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(gaussian, " + shadowColorBaseH + ", 15, 0.5, 0, 3);"
+        ));
+
+        helpBtn.setOnAction(e -> helpDialog.show(stage));
+
+        quickActions.getChildren().addAll(scoresBtn, settingsBtn, helpBtn);
 
         return quickActions;
     }
@@ -237,8 +271,8 @@ public class MainMenu {
         exitButton.setAlignment(Pos.CENTER);  // Center text horizontally
         exitButton.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #888888; " +
-                        "-fx-border-color: #888888; " +
+                        "-fx-text-fill: #ffffff; " +
+                        "-fx-border-color: #ffffff; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 5; " +
                         "-fx-background-radius: 5;"
@@ -255,8 +289,8 @@ public class MainMenu {
 
         exitButton.setOnMouseExited(e -> exitButton.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #888888; " +
-                        "-fx-border-color: #888888; " +
+                        "-fx-text-fill: #ffffff; " +
+                        "-fx-border-color: #ffffff; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 5; " +
                         "-fx-background-radius: 5;"
@@ -274,7 +308,7 @@ public class MainMenu {
 
         Label credits = new Label("COMP2042 - Coursework 2025");
         credits.setFont(Font.font("System", FontWeight.NORMAL, 11));
-        credits.setTextFill(Color.web("#666666"));
+        credits.setTextFill(Color.web("#ffffff"));
         credits.setCursor(javafx.scene.Cursor.HAND);
         credits.setOnMouseClicked(e -> showCredits());
 
@@ -291,14 +325,9 @@ public class MainMenu {
         alert.setTitle("Credits");
         alert.setHeaderText("TETRIS - COMP2042 Coursework 2025");
         alert.setContentText(
-                "Developed by: [Your Name]\n" +
-                        "Student ID: [Your ID]\n\n" +
-                        "Features:\n" +
-                        "✓ Progressive Levels\n" +
-                        "✓ Power-Up System\n" +
-                        "✓ Visual Themes\n" +
-                        "✓ High Scores\n" +
-                        "✓ Custom Settings\n\n" +
+                "Developed by: Yau Jia Wei\n" +
+                        "Student ID: 20718629\n\n" +
+                        "University: University of Nottingham Malaysia\n" +
                         "© 2025 All Rights Reserved"
         );
         alert.initOwner(stage);

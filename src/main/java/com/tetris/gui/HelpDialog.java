@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,56 +29,12 @@ public class HelpDialog {
         VBox mainLayout = new VBox(20);
         mainLayout.setPadding(new Insets(25));
         mainLayout.setAlignment(Pos.TOP_CENTER);
-        mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #A0B0D0, #8090B0);");
+        mainLayout.setStyle("-fx-background-color: #2A3A6A;");
 
         // Title
-        Label title = new Label("GAME CONTROLS");
+        Label title = new Label("HOW TO PLAY TETRIS:");
         title.setFont(Font.font("System", FontWeight.BOLD, 28));
-        title.setTextFill(Color.web("#2A3A6A"));
-
-        // Controls grid
-        GridPane controlsGrid = new GridPane();
-        controlsGrid.setHgap(20);
-        controlsGrid.setVgap(15);
-        controlsGrid.setAlignment(Pos.CENTER);
-        controlsGrid.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
-                "-fx-padding: 20; " +
-                "-fx-border-color: #4A5A8A; " +
-                "-fx-border-width: 3; " +
-                "-fx-border-radius: 10; " +
-                "-fx-background-radius: 10;");
-
-        String[][] controls = {
-            {"Move Left", "← or A"},
-            {"Move Right", "→ or D"},
-            {"Rotate", "↑ or W"},
-            {"Soft Drop", "↓ or S"},
-            {"Hard Drop", "SPACE"},
-            {"Hold Piece", "C"},
-            {"Pause", "ESC"},
-            {"New Game", "N"}
-        };
-
-        for (int i = 0; i < controls.length; i++) {
-            Label actionLabel = new Label(controls[i][0] + ":");
-            actionLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
-            actionLabel.setTextFill(Color.web("#2A3A6A"));
-
-            Label keyLabel = new Label(controls[i][1]);
-            keyLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-            keyLabel.setTextFill(Color.web("#4A5A8A"));
-            keyLabel.setStyle(
-                "-fx-background-color: #D0E0FF; " +
-                "-fx-padding: 8 15; " +
-                "-fx-background-radius: 5; " +
-                "-fx-border-color: #4A5A8A; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 5;"
-            );
-
-            controlsGrid.add(actionLabel, 0, i);
-            controlsGrid.add(keyLabel, 1, i);
-        }
+        title.setTextFill(Color.WHITE);
 
         // Game info
         VBox gameInfo = new VBox(10);
@@ -89,32 +46,32 @@ public class HelpDialog {
                 "-fx-border-radius: 8; " +
                 "-fx-background-radius: 8;");
 
-        Label infoTitle = new Label("HOW TO PLAY:");
-        infoTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
-        infoTitle.setTextFill(Color.web("#2A3A6A"));
+        Label intro = new Label("Tetris is a puzzle game where you arrange falling blocks (tetrominoes) to clear lines.");
+        Label objective = new Label("Objective: Clear as many lines as possible to achieve high scores!");
+        Label step1 = new Label("1. Use arrow keys or WASD to move and rotate pieces.");
+        Label step2 = new Label("2. Fill entire rows horizontally to clear them.");
+        Label step3 = new Label("3. Clearing multiple lines at once gives bonus points.");
+        Label step4 = new Label("4. Clear 4 lines in one go for a TETRIS - the highest score!");
+        Label step5 = new Label("5. As you progress, the game speeds up - stay focused!");
+        Label step6 = new Label("6. Use the Hold feature (C key) to save a piece for later.");
+        Label step7 = new Label("7. Power-ups may appear when clearing lines - collect them!");
+        Label step8 = new Label("8. Pause the game with ESC if you need a break.");
+        Label tipsTitle = new Label("TIPS:");
+        Label tip1 = new Label("• Plan ahead: Think about where the next pieces will fit.");
+        Label tip2 = new Label("• Clear lines efficiently to avoid building up too high.");
+        Label tip3 = new Label("• Practice makes perfect - keep playing to improve!");
 
-        Label info1 = new Label("• Clear lines by filling them completely with blocks");
-        Label info2 = new Label("• Clear 4 lines at once for a TETRIS!");
-        Label info3 = new Label("• Progress through levels to increase difficulty");
-        Label info4 = new Label("• Use Hold (C) to save a piece for later");
-        Label info5 = new Label("• Power-ups appear randomly when clearing lines");
+        Label[] labels = {intro, objective, step1, step2, step3, step4, step5, step6, step7, step8, tipsTitle, tip1, tip2, tip3};
+        for (Label label : labels) {
+            label.setFont(Font.font("System", FontWeight.NORMAL, 14));
+            label.setTextFill(Color.RED);
+            label.setWrapText(true);
+        }
 
-        info1.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        info2.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        info3.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        info4.setFont(Font.font("System", FontWeight.NORMAL, 14));
-        info5.setFont(Font.font("System", FontWeight.NORMAL, 14));
-
-        info1.setTextFill(Color.web("#2A3A6A"));
-        info2.setTextFill(Color.web("#2A3A6A"));
-        info3.setTextFill(Color.web("#2A3A6A"));
-        info4.setTextFill(Color.web("#2A3A6A"));
-        info5.setTextFill(Color.web("#2A3A6A"));
-
-        gameInfo.getChildren().addAll(infoTitle, info1, info2, info3, info4, info5);
+        gameInfo.getChildren().addAll(intro, objective, step1, step2, step3, step4, step5, step6, step7, step8, tipsTitle, tip1, tip2, tip3);
 
         // Close button
-        Button closeButton = new Button("GOT IT!");
+        Button closeButton = new Button("I'M READY!");
         closeButton.setFont(Font.font("System", FontWeight.BOLD, 16));
         closeButton.setPrefSize(150, 45);
         closeButton.setStyle(
@@ -147,11 +104,16 @@ public class HelpDialog {
 
         closeButton.setOnAction(e -> dialog.close());
 
-        mainLayout.getChildren().addAll(title, controlsGrid, gameInfo, closeButton);
+        mainLayout.getChildren().addAll(title, gameInfo, closeButton);
 
-        Scene scene = new Scene(mainLayout, 550, 650);
+        // ScrollPane for making the dialog scrollable
+        ScrollPane scrollPane = new ScrollPane(mainLayout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background: transparent;");
+
+        Scene scene = new Scene(scrollPane, 600, 700);
         dialog.setScene(scene);
         dialog.showAndWait();
     }
 }
-
