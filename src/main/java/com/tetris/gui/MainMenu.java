@@ -91,6 +91,9 @@ public class MainMenu {
         stage.setMinHeight(700);  // Match multiplayer minimum height
         stage.centerOnScreen();
         stage.show();
+
+        // Start background music for main menu
+        com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
     }
 
     private VBox createHeader() {

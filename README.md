@@ -562,6 +562,13 @@ The application features comprehensively redesigned dialog interfaces with profe
 - **Consistent Theming**: Matches the overall dark gradient theme with gold accents and cyan highlights
 - **Improved Usability**: Clear visual feedback for active sections and intuitive button-based navigation
 
+#### Tutorial Dialog
+- **Educational Design**: Comprehensive step-by-step instructions with emojis and visual hierarchy
+- **Premium Styling**: Gradient background with gold accents, styled content boxes, and drop shadows
+- **Engaging Content**: Numbered steps with icons, clear objectives, and helpful tips in gold text
+- **User-Friendly**: Scrollable interface with white text on dark backgrounds for optimal readability
+- **Consistent Theming**: Matches the overall application aesthetic with professional polish
+
 #### Main Menu Enhancements
 - **Quick Audio Controls**: Added volume sliders directly in the main menu for convenient access
 - **Persistent Settings**: Audio preferences saved and restored across sessions
