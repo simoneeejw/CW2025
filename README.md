@@ -543,73 +543,41 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Quality Assurance**: Key binding changes tested for persistence and immediate application. Default controls verified to work as specified.
 
-## Game Controls and Settings
+## User Interface Improvements
 
-### Default Controls
-The game comes with intuitive default keyboard controls designed for standard QWERTY keyboards:
+### Enhanced Dialog Designs
+The application features comprehensively redesigned dialog interfaces with professional styling and improved user experience:
 
-- **Move Left**: Left Arrow Key (←)
-- **Move Right**: Right Arrow Key (→)
-- **Rotate Piece**: Up Arrow Key (↑)
-- **Soft Drop**: Down Arrow Key (↓) - Moves piece down faster without locking
-- **Hard Drop**: Spacebar - Instantly drops piece to the bottom
-- **Hold Piece**: R Key - Stores current piece for later use
-- **Pause Game**: ESC Key - Opens pause menu with options to resume, adjust settings, or quit
+#### High Scores Dialog
+- **Premium Visual Design**: Deep blue gradient background with red accent borders and rounded corners
+- **Eye-catching Title**: "🏆 HIGH SCORES 🏆" with trophy emojis, large Arial font, gold text, and drop shadow effects
+- **Styled Table**: Semi-transparent background with gold borders, drop shadows, and enhanced column styling
+- **Interactive Elements**: Hover effects on close button with color transitions and drop shadows
+- **Data Presentation**: Clear ranking, player names, scores, and levels with white text on dark backgrounds for optimal readability
 
-These controls are optimized for right-handed players and follow common Tetris conventions. All controls can be customized to suit individual preferences.
+#### Settings Dialog
+- **Modern Navigation**: Replaced traditional tabs with pressable option buttons above the content area
+- **Visual Hierarchy**: "🔊 Audio" and "🎮 Controls" buttons with gold selection indicators and hover animations
+- **Dynamic Content Switching**: Seamless transitions between audio controls and key binding settings
+- **Consistent Theming**: Matches the overall dark gradient theme with gold accents and cyan highlights
+- **Improved Usability**: Clear visual feedback for active sections and intuitive button-based navigation
 
-### Customizing Controls
-The game features a comprehensive settings system accessible from the pause menu (ESC key during gameplay) or main menu.
+#### Main Menu Enhancements
+- **Quick Audio Controls**: Added volume sliders directly in the main menu for convenient access
+- **Persistent Settings**: Audio preferences saved and restored across sessions
+- **Visual Consistency**: Styled buttons with gradients, hover effects, and professional typography
+- **Background Integration**: Seamless integration with existing background image and layout
 
-#### Accessing Settings
-1. **During Gameplay**: Press ESC to pause, then click "Options" in the pause menu
-2. **From Main Menu**: Click the settings button (⚙) in the quick actions section
+### Styling System Architecture
+- **CSS-Based Theming**: External stylesheet support for maintainable visual properties
+- **Component Reusability**: Consistent button styling and color schemes across all dialogs
+- **Responsive Design**: Adaptive layouts that work across different window sizes
+- **Performance Optimization**: Efficient rendering with drop shadows and gradients
 
-#### Controls Tab
-The "Controls" tab in settings allows full customization of keyboard bindings:
+### Accessibility Features
+- **High Contrast**: White text on dark backgrounds for improved readability
+- **Clear Navigation**: Intuitive button layouts and visual feedback
+- **Keyboard Support**: Full keyboard navigation in settings and game controls
+- **Visual Feedback**: Hover effects and selection indicators for better user interaction
 
-- **Interface**: Each control action has a label showing the current key and a "Change" button
-- **Customization Process**:
-  1. Click "Change" next to the action you want to modify
-  2. The button text changes to "Press key..."
-  3. Press any key on your keyboard (including arrow keys, letters, numbers, or special keys)
-  4. The new key binding is immediately applied and saved
-- **Supported Keys**: All keyboard keys are supported, including:
-  - Arrow keys (Left, Right, Up, Down)
-  - Letter keys (A-Z)
-  - Number keys (0-9)
-  - Function keys (F1-F12)
-  - Special keys (Space, Enter, Tab, etc.)
-  - Modifier keys (Shift, Ctrl, Alt) - though these may conflict with system shortcuts
-
-#### Audio Tab
-The "Audio" tab provides granular control over game sound:
-
-- **Background Music**: Adjustable volume slider (0-100%) with real-time preview
-- **Sound Effects**: Separate volume control for game sounds (piece drops, line clears, etc.)
-- **Default Volumes**: Music 30%, Sound Effects 70%
-- **Persistence**: Volume settings are saved and restored between game sessions
-
-#### Settings Persistence
-All settings (key bindings and audio volumes) are automatically saved using Java Preferences API:
-- Settings persist across game sessions
-- No manual saving required - changes apply immediately
-- Settings are stored locally on the user's system
-
-### Control Recommendations
-For optimal gameplay experience:
-
-- **Arrow Keys**: Recommended for beginners due to intuitive layout
-- **WASD**: Popular alternative for gamers familiar with FPS controls
-- **Custom Layouts**: Players with accessibility needs can remap controls to comfortable keys
-- **Avoid Conflicts**: Don't assign the same key to multiple actions
-- **System Keys**: Avoid overriding system shortcuts (e.g., Alt+Tab, Ctrl+C)
-
-### Troubleshooting Controls
-- **Keys Not Responding**: Ensure the settings dialog has focus (click on it if needed)
-- **Arrow Keys Not Detected**: The system uses event filters to capture all key types
-- **Settings Not Saving**: Check that you have write permissions in your user directory
-- **Reset to Defaults**: Delete the settings file or reinstall the game to restore defaults
-
-This customization system ensures the game is accessible to players with different keyboard layouts, physical abilities, and personal preferences, enhancing the overall user experience.
-
+These UI improvements transform the application from a functional game into a polished, professional experience with modern design principles and enhanced usability.
