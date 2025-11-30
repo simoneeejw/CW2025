@@ -22,11 +22,18 @@
     </top>
     <center>
         <StackPane BorderPane.alignment="CENTER">
-            <HBox spacing="20" alignment="CENTER">
+            <HBox spacing="20" alignment="TOP_CENTER">
                 <StackPane prefWidth="220" prefHeight="460" minWidth="219" maxWidth="210" minHeight="470" maxHeight="460" styleClass="game-board-container">
+                    <HBox.margin>
+                        <Insets top="50" right="20" bottom="20" left="20"/>
+                    </HBox.margin>
                     <GridPane fx:id="gamePanel" hgap="0" vgap="0" />
                 </StackPane>
+
                 <VBox prefWidth="150" spacing="10" styleClass="sidebar-container">
+                    <HBox.margin>
+                        <Insets top="50" right="20" bottom="20" left="20"/>
+                    </HBox.margin>
                     <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
                         <Label fx:id="scoreLabel" text="Score: 0" />
                     </HBox>
@@ -50,11 +57,7 @@
             </HBox>
         </StackPane>
     </center>
-    <bottom>
-        <HBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER" styleClass="bottom-bar">
-            <Text text="♫" styleClass="music-icon" />
-        </HBox>
-    </bottom>
+
     <stylesheets>
         <URL value="@window_style.css"/>
         <URL value="@styles.css"/>
