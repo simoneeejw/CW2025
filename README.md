@@ -543,184 +543,73 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **Quality Assurance**: Key binding changes tested for persistence and immediate application. Default controls verified to work as specified.
 
-## Features Not Implemented
-None. All required refactoring and additional features have been successfully implemented.
+## Game Controls and Settings
 
-## New Java Classes
+### Default Controls
+The game comes with intuitive default keyboard controls designed for standard QWERTY keyboards:
 
-### Refactoring Classes
-The following new Java classes were introduced during the refactoring process:
+- **Move Left**: Left Arrow Key (←)
+- **Move Right**: Right Arrow Key (→)
+- **Rotate Piece**: Up Arrow Key (↑)
+- **Soft Drop**: Down Arrow Key (↓) - Moves piece down faster without locking
+- **Hard Drop**: Spacebar - Instantly drops piece to the bottom
+- **Hold Piece**: R Key - Stores current piece for later use
+- **Pause Game**: ESC Key - Opens pause menu with options to resume, adjust settings, or quit
 
-- **BoardState.java** (com.tetris.game): This class encapsulates the state of the game board, including the matrix representation and current brick position. It provides methods for updating the board state and resetting the matrix, ensuring separation of concerns.
+These controls are optimized for right-handed players and follow common Tetris conventions. All controls can be customized to suit individual preferences.
 
-- **BrickManager.java** (com.tetris.game): Responsible for managing brick-related operations such as generation, rotation, and holding. It uses the factory pattern to create bricks and handles the logic for swapping held bricks.
+### Customizing Controls
+The game features a comprehensive settings system accessible from the pause menu (ESC key during gameplay) or main menu.
 
-- **TetrisBoard.java** (com.tetris.game): The refactored main board class that orchestrates game logic by coordinating between BoardState and BrickManager. It implements the Board interface and handles high-level game operations like line clearing and brick placement.
+#### Accessing Settings
+1. **During Gameplay**: Press ESC to pause, then click "Options" in the pause menu
+2. **From Main Menu**: Click the settings button (⚙) in the quick actions section
 
-- **GameEventListener.java** (com.tetris.game): An interface defining the observer pattern for game events. It specifies methods for handling user inputs and game state changes, allowing for loose coupling between the game logic and UI components.
+#### Controls Tab
+The "Controls" tab in settings allows full customization of keyboard bindings:
 
-- **TetrisBoardTest.java** (src/test/java/com/tetris/game): A unit test class containing JUnit tests for the TetrisBoard functionality. It verifies board initialization, brick placement, and game state transitions to ensure correctness.
+- **Interface**: Each control action has a label showing the current key and a "Change" button
+- **Customization Process**:
+  1. Click "Change" next to the action you want to modify
+  2. The button text changes to "Press key..."
+  3. Press any key on your keyboard (including arrow keys, letters, numbers, or special keys)
+  4. The new key binding is immediately applied and saved
+- **Supported Keys**: All keyboard keys are supported, including:
+  - Arrow keys (Left, Right, Up, Down)
+  - Letter keys (A-Z)
+  - Number keys (0-9)
+  - Function keys (F1-F12)
+  - Special keys (Space, Enter, Tab, etc.)
+  - Modifier keys (Shift, Ctrl, Alt) - though these may conflict with system shortcuts
 
-### Additional Feature Classes
-The following new Java classes were introduced for the additional features:
+#### Audio Tab
+The "Audio" tab provides granular control over game sound:
 
-- **LevelManager.java** (com.tetris.game): Manages automatic level progression based on lines cleared. Tracks total lines, calculates current level (1-4), provides fall speeds (500-200ms), and score multipliers (1x-4x). Includes reset functionality for new games.
+- **Background Music**: Adjustable volume slider (0-100%) with real-time preview
+- **Sound Effects**: Separate volume control for game sounds (piece drops, line clears, etc.)
+- **Default Volumes**: Music 30%, Sound Effects 70%
+- **Persistence**: Volume settings are saved and restored between game sessions
 
-- **PowerUp.java** (com.tetris.game): Enum defining four power-up types (Slow Motion, Clear Bottom, Double Points, Ghost Piece) with names and descriptions for UI display.
+#### Settings Persistence
+All settings (key bindings and audio volumes) are automatically saved using Java Preferences API:
+- Settings persist across game sessions
+- No manual saving required - changes apply immediately
+- Settings are stored locally on the user's system
 
-- **PowerUpManager.java** (com.tetris.game): Manages power-up state including activation, timers, and expiration. Provides methods to trigger random power-ups, calculate speed/score multipliers, and handle timed effects with JavaFX properties for UI binding.
+### Control Recommendations
+For optimal gameplay experience:
 
-- **LevelUpPanel.java** (com.tetris.gui): JavaFX StackPane component for displaying animated notifications. Shows level-up messages, power-up activations, and Tetris (4-line clear) notifications with scale and fade animations.
+- **Arrow Keys**: Recommended for beginners due to intuitive layout
+- **WASD**: Popular alternative for gamers familiar with FPS controls
+- **Custom Layouts**: Players with accessibility needs can remap controls to comfortable keys
+- **Avoid Conflicts**: Don't assign the same key to multiple actions
+- **System Keys**: Avoid overriding system shortcuts (e.g., Alt+Tab, Ctrl+C)
 
-- **StatusPanel.java** (com.tetris.gui): JavaFX VBox component for comprehensive game status display. Shows current level, difficulty, score, lines cleared, active power-ups with timers, and complete control reference.
+### Troubleshooting Controls
+- **Keys Not Responding**: Ensure the settings dialog has focus (click on it if needed)
+- **Arrow Keys Not Detected**: The system uses event filters to capture all key types
+- **Settings Not Saving**: Check that you have write permissions in your user directory
+- **Reset to Defaults**: Delete the settings file or reinstall the game to restore defaults
 
-- **LevelManagerTest.java** (src/test/java/com/tetris/game): Unit test class with 12 tests covering level advancement logic, threshold calculations, speed changes, score multipliers, and reset functionality.
+This customization system ensures the game is accessible to players with different keyboard layouts, physical abilities, and personal preferences, enhancing the overall user experience.
 
-- **PowerUpManagerTest.java** (src/test/java/com/tetris/game): Unit test class with 11 tests covering power-up activation, expiration timing, multiplier calculations, property binding, and enum properties.
-
-- **Theme.java** (com.tetris.gui): Enumeration defining visual themes with color schemes for board gradients, piece glows, and UI accents. Currently implements a light classic theme system with support for extensibility.
-
-- **ThemeManager.java** (com.tetris.gui): Singleton class managing theme persistence and application using Java Preferences API. Handles loading/saving user theme preferences across game sessions.
-
-- **ThemeSelector.java** (com.tetris.gui): JavaFX modal dialog for theme selection with RadioButton previews (currently disabled in favor of fixed light classic theme).
-
-- **ParticleEffect.java** (com.tetris.gui): Animation system for visual effects (currently not active in the light theme design but available for future enhancements).
-
-- **HighScoresDialog.java** (com.tetris.gui): Dialog for displaying and managing high scores with TableView display and score persistence.
-
-- **NotificationPanel.java** (com.tetris.gui): Animated panel for displaying score bonuses and game notifications with fade effects.
-
-- **SettingsDialog.java** (com.tetris.gui): Dialog for adjusting game settings including sound volume.
-
-- **PauseMenuPanel.java** (com.tetris.gui): Overlay panel displayed when game is paused, providing three key options: Resume (larger button with prominent styling), Options (opens settings dialog for volume and key binding adjustments), and Quit (returns to main menu). Features semi-transparent background, visual hierarchy with distinct button sizes, and smooth hover effects.
-
-- **HelpDialog.java** (com.tetris.gui): Modal dialog displaying game controls, scoring system, and gameplay tips for new players.
-
-- **MainMenu.java** (com.tetris.gui): Initial screen shown on application launch with options to start game, view high scores, adjust settings, or exit.
-
-## New Resource Files
-
-### CSS Stylesheets
-- **styles.css** (src/main/resources): Main stylesheet defining the classic light theme with:
-  - Root background gradient with diagonal line pattern
-  - Game board container with light blue tint and cyan border
-  - Piece rectangle styling with rounded corners and inner glow
-  - Sidebar info boxes with semi-transparent white backgrounds
-  - Typography for title, subtitle, and labels (Arial font family)
-  - Button styling with hover and pressed states
-  - Music icon and separator text styling
-  - Multiplayer-specific styles (player labels, winner label, new game button)
-  
-### FXML Layouts
-- **gameLayout.fxml** (src/main/resources): Updated BorderPane layout structure:
-  - Top section with title and subtitle VBox
-  - Center section with game board StackPane and sidebar VBox
-  - Bottom section with music icon (♫)
-  - Pause button positioned in sidebar below "Next Block" panel
-  - CSS stylesheet links for window_style.css and styles.css
-  - Style class assignments for all major components
-  - Proper Insets for padding using JavaFX geometry
-
-## Modified Java Classes
-The following classes from the original codebase were modified to support the refactoring and new features:
-
-- **SimpleBoard.java**: Originally a monolithic class handling multiple responsibilities. It was refactored into the three new classes (BoardState, BrickManager, TetrisBoard) to adhere to the Single Responsibility Principle. This change was necessary to improve code maintainability, testability, and scalability.
-
-- **BrickGenerator.java**: Enhanced to fully implement the factory pattern, allowing for dynamic creation of different brick types. The modifications included adding abstract methods and concrete implementations, which were essential for decoupling brick creation from game logic.
-
-- **GameController.java**: Updated to integrate the new refactored classes and implement the GameEventListener interface. Changes included adding references to LevelManager and modifying event handling methods. These modifications were necessary to support the new architecture and ensure proper event propagation.
-
-- **GuiController.java**: Extensively modified to support the new GUI design and fix critical rendering issues:
-  - **Rendering System Rewrite**: Completely overhauled `refreshBrick()` method to render pieces directly on displayMatrix instead of using separate panels
-  - **Ghost Piece Integration**: Implemented `updateGhostPiece()` to render shadow pieces at 30% opacity on the main board
-  - **CSS Style Application**: Added style class assignments ("piece-rect") to all Rectangle cells during initialization
-  - **Property Binding**: Implemented real-time updates for score, lines, and level labels using JavaFX property binding
-  - **Color Management**: Updated `getFillColor()` and added `getStrokeColor()` methods with proper hex color values for classic Tetris pieces
-  - **Brick Styling**: Enhanced `setRectangleData()` to apply stroke, rounded corners, and fill colors to cells
-  - **Level Display**: Added `showLevelUp()` and `updateStatus()` methods to refresh sidebar information
-  - **Code Cleanup**: Removed obsolete rendering code (separate rectangles arrays, ghost panels) that were causing bugs
-  - **Theme Support**: Integrated theme loading from Java Preferences API with `loadSavedTheme()` and `applyTheme()` methods
-  
-  These changes were critical for fixing the broken game mechanics where pieces were invisible and for implementing the new light classic theme design.
-
-- **SettingsDialog.java** (com.tetris.gui): Enhanced settings dialog with adjustable volume controls. Replaced simple on/off checkboxes with professional volume sliders (0-100%) featuring real-time percentage labels, tick marks, and immediate audio feedback. Integrated with Java Preferences API for persistent volume settings.
-
-- **SoundManager.java** (com.tetris.util): Completely redesigned audio management system. Removed boolean enabled flags in favor of volume-based control (0.0-1.0 range). Added volume setter/getter methods, automatic preference loading, and volume-based audio playback logic.
-
-## Current Game State (November 2025)
-
-### What's Working
-The game is fully functional with the following features:
-- ✅ **Core Gameplay**: All Tetris mechanics working correctly (movement, rotation, line clearing, scoring)
-- ✅ **Visual Display**: Pieces are visible and render properly on a light blue classic-themed board
-- ✅ **Ghost Piece**: Semi-transparent shadow shows landing position in real-time
-- ✅ **Progressive Levels**: 4 difficulty levels with increasing speed (500ms → 200ms fall time)
-- ✅ **Power-Ups**: Random power-ups awarded for Tetris clears (4 lines)
-- ✅ **Hold Mechanic**: Players can store and swap pieces using the 'C' key
-- ✅ **Hard Drop**: Space bar instantly drops pieces to bottom
-- ✅ **Pause/Resume**: ESC key pauses game with proper state management
-- ✅ **Score Tracking**: Real-time score, lines, and level display with property binding
-- ✅ **Sound System**: Background music and sound effects for piece drops, line clears, level-ups with adjustable volume controls
-- ✅ **High Scores**: Persistent high score tracking with dialog display
-- ✅ **Main Menu**: Start screen with game options and settings
-- ✅ **CSS Styling**: Professional light classic theme with gradients, shadows, and rounded corners
-
-### Known Visual Elements
-- Light blue diagonal striped background (subtle repeating pattern)
-- Orange-to-gold gradient "TETRIS" title with drop shadow
-- Cyan "N-BLOCK" subtitle
-- Cyan bordered game board (3px) with light blue tint background
-- Classic Tetris colors: Cyan (I), Yellow (O), Purple (T), Green (S), Red (Z), Orange (L), Blue (J)
-- White semi-transparent sidebar boxes showing Score, Lines, Level
-- Royal blue pause button with hover effects
-
-### Recent Fixes (Critical)
-The game underwent major rendering fixes to resolve critical bugs:
-- **Fixed invisible pieces**: Pieces now render correctly on the board
-- **Fixed ghost piece**: Shadow pieces display at correct position with proper opacity
-- **Fixed display updates**: Board refreshes properly after each move/lock
-- **Fixed coordinate system**: Active pieces overlay correctly on the game board
-- **Removed broken code**: Eliminated obsolete rendering systems causing conflicts
-
-### Testing Status
-- **60 unit tests** passing (100% success rate)
-- All core mechanics verified through automated tests
-- Manual playtesting confirms smooth gameplay experience
-- No known game-breaking bugs
-
-## Unexpected Problems
-During the refactoring and feature implementation, several unexpected challenges were encountered:
-
-- **Dependency Conflicts**: Maven dependency resolution issues arose when updating package structures, causing compilation failures. This was addressed by carefully reviewing and updating the pom.xml file to ensure compatible versions of JavaFX and JUnit dependencies.
-
-- **Event Handling Complexity**: Implementing the observer pattern initially led to redundant event triggers and potential memory leaks. The problem was resolved by refactoring the event listener registration process, ensuring proper cleanup, and adding null checks to prevent exceptions.
-
-- **Rendering System Breakdown**: During GUI redesign, the removal of the old brickPanel system broke piece rendering entirely, making pieces invisible. The root cause was that pieces were being created but never added to the display. This was fixed by completely rewriting the rendering logic to use displayMatrix as the single source of truth, with active pieces overlaid directly on the game board cells.
-
-- **FXML Syntax Errors**: Initial FXML layout had invalid syntax including:
-  - Direct RGBA color values in `fill` attributes (not supported in JavaFX)
-  - Missing proper `xmlns` namespace declarations
-  - Incorrect `padding` attribute format (needed `<Insets>` element)
-  - Invalid gradient syntax for CSS linear-gradient in inline styles
-  
-  These were resolved by using proper JavaFX FXML syntax, moving color definitions to CSS, and using style attributes with correct JavaFX property formats.
-
-- **CSS Linear Gradient Compatibility**: JavaFX CSS gradient syntax differs from standard CSS. The repeating-linear-gradient for diagonal lines required specific JavaFX format with explicit color stops and proper angle specification (45deg vs 45). Multiple iterations were needed to achieve the desired light blue diagonal line effect.
-
-- **Ghost Piece Z-Order Issues**: Initially tried using a separate GridPane for ghost rendering, but this caused z-ordering problems where ghost appeared above active pieces. Solution was to render ghost directly on displayMatrix before active piece, only on transparent cells, ensuring proper layering.
-
-- **Testing Edge Cases**: Certain game logic scenarios, such as simultaneous brick movements and line clears, were difficult to reproduce manually. This was mitigated by expanding the JUnit test suite with parameterized tests and mock objects to simulate complex interactions.
-
-- **Git Branch Management**: Merging branches with extensive changes led to conflicts in file paths and imports. Resolved by using Git's interactive rebase and carefully reviewing merge commits to maintain a clean history.
-
-All issues were systematically identified, documented, and resolved through iterative testing and code reviews, resulting in a robust and well-structured application.
-
-## Summary
-This Tetris game project demonstrates successful application of software engineering principles including:
-- **Clean Architecture**: Package restructuring and SRP implementation
-- **Design Patterns**: Observer and Factory patterns for maintainable code
-- **Test-Driven Development**: 60 comprehensive unit tests ensuring reliability
-- **Enhanced Gameplay**: Progressive levels, power-ups, and improved user experience
-- **Quality Implementation**: Professional UI, responsive controls, and balanced difficulty progression
-
-The project has evolved from a basic Tetris clone to a feature-rich, well-architected game with strategic depth and polished presentation.

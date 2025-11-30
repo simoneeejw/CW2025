@@ -48,13 +48,20 @@ public class HighScoresDialog {
         VBox layout = new VBox(20);
         layout.setPadding(new Insets(25));
         layout.setAlignment(Pos.TOP_CENTER);
-        layout.setStyle("-fx-background-color: linear-gradient(to bottom, #1a0066, #000000);");
+        layout.setStyle("-fx-background-color: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460); " +
+                "-fx-border-color: #e94560; " +
+                "-fx-border-width: 3; " +
+                "-fx-border-radius: 15; " +
+                "-fx-background-radius: 15;");
 
         // Title
-        Label title = new Label("🏆 HIGH SCORES");
-        title.setFont(Font.font("System", FontWeight.BOLD, 32));
+        Label title = new Label("🏆 HIGH SCORES 🏆");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
         title.setTextFill(Color.web("#FFD700"));
-        title.setStyle("-fx-effect: dropshadow(gaussian, #FFA500, 15, 0.7, 0, 0);");
+        title.setStyle("-fx-effect: dropshadow(gaussian, #FFA500, 20, 0.8, 2, 2); " +
+                "-fx-background-color: rgba(0, 0, 0, 0.5); " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-radius: 10;");
 
         // Table
         TableView<ScoreEntry> table = createScoresTable();
@@ -68,6 +75,20 @@ public class HighScoresDialog {
             "-fx-text-fill: white; " +
             "-fx-background-radius: 8;"
         );
+
+        closeButton.setOnMouseEntered(e -> closeButton.setStyle(
+            "-fx-background-color: #66BB6A; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 8; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 0);"
+        ));
+
+        closeButton.setOnMouseExited(e -> closeButton.setStyle(
+            "-fx-background-color: #4CAF50; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 8;"
+        ));
+
         closeButton.setOnAction(e -> dialog.close());
 
         layout.getChildren().addAll(title, table, closeButton);
@@ -80,32 +101,46 @@ public class HighScoresDialog {
     private TableView<ScoreEntry> createScoresTable() {
         TableView<ScoreEntry> table = new TableView<>();
         table.setPrefHeight(400);
-        table.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        table.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); " +
+                "-fx-border-color: #FFD700; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 10; " +
+                "-fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 0); " +
+                "-fx-text-fill: white;");
 
         // Rank column
         TableColumn<ScoreEntry, Integer> rankCol = new TableColumn<>("Rank");
         rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
         rankCol.setPrefWidth(60);
-        rankCol.setStyle("-fx-alignment: CENTER;");
+        rankCol.setStyle("-fx-alignment: CENTER; -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
 
         // Name column
         TableColumn<ScoreEntry, String> nameCol = new TableColumn<>("Player");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setPrefWidth(180);
+        nameCol.setStyle("-fx-font-size: 14px; -fx-text-fill: white;");
 
         // Score column
         TableColumn<ScoreEntry, Integer> scoreCol = new TableColumn<>("Score");
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
         scoreCol.setPrefWidth(100);
-        scoreCol.setStyle("-fx-alignment: CENTER;");
+        scoreCol.setStyle("-fx-alignment: CENTER; -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
 
         // Level column
         TableColumn<ScoreEntry, Integer> levelCol = new TableColumn<>("Level");
         levelCol.setCellValueFactory(new PropertyValueFactory<>("level"));
         levelCol.setPrefWidth(80);
-        levelCol.setStyle("-fx-alignment: CENTER;");
+        levelCol.setStyle("-fx-alignment: CENTER; -fx-font-size: 14px; -fx-text-fill: white;");
 
         table.getColumns().addAll(rankCol, nameCol, scoreCol, levelCol);
+
+        // Style the table rows
+        table.setRowFactory(tv -> {
+            javafx.scene.control.TableRow<ScoreEntry> row = new javafx.scene.control.TableRow<>();
+            row.setStyle("-fx-background-color: rgba(255, 255, 255, 0.05);");
+            return row;
+        });
 
         // Load top 10 scores
         int rank = 1;
@@ -116,9 +151,9 @@ public class HighScoresDialog {
         }
 
         // If no scores, show placeholder
-        if (scores.isEmpty()) {
-            table.setPlaceholder(new Label("No scores yet. Be the first!"));
-        }
+        Label placeholder = new Label("No scores yet. Be the first!");
+        placeholder.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 16px;");
+        table.setPlaceholder(placeholder);
 
         return table;
     }
