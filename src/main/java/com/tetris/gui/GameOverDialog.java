@@ -118,7 +118,7 @@ public class GameOverDialog {
         HBox buttonBox = new HBox(20);
         buttonBox.setAlignment(Pos.CENTER);
 
-        Button restartButton = new Button("🔄 PLAY AGAIN");
+        Button restartButton = new Button("PLAY AGAIN");
         restartButton.setFont(Font.font("System", FontWeight.BOLD, 18));
         restartButton.setPrefSize(150, 50);
         restartButton.setStyle("-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); -fx-text-fill: #000000; -fx-background-radius: 10;");
@@ -128,7 +128,7 @@ public class GameOverDialog {
             onRestart.run();
         });
 
-        Button mainMenuButton = new Button("🏠 MAIN MENU");
+        Button mainMenuButton = new Button("MAIN MENU");
         mainMenuButton.setFont(Font.font("System", FontWeight.BOLD, 18));
         mainMenuButton.setPrefSize(150, 50);
         mainMenuButton.setStyle("-fx-background-color: linear-gradient(to bottom, #2196F3, #1976D2); -fx-text-fill: #FFFFFF; -fx-background-radius: 10;");

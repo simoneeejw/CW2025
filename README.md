@@ -206,12 +206,13 @@ The following features have been successfully implemented and are functioning as
 - **Hard Drop**: SPACE key now properly drops piece to bottom without creating duplicates
 - **Pause/Resume**: ESC key or Pause button toggles game pause with proper Timeline management and overlay menu
 - **Key Debouncing**: Prevents rapid repeated inputs from causing glitches
+- **Customizable Controls**: Players can customize key bindings through the Settings dialog (accessible from Main Menu or Pause Menu)
 - **Control Guide**: Full keyboard layout available in the game interface
 
-**Controls**:
-- ← → (or A/D): Move left/right
-- ↑ (or W): Rotate piece
-- ↓ (or S): Soft drop (move down faster)
+**Default Controls (Single Player)**:
+- A/D: Move left/right
+- W: Rotate piece
+- S: Soft drop (move down faster)
 - SPACE: Hard drop (instant drop to bottom)
 - R: Hold/swap piece
 - ESC or Pause Button: Open pause menu
