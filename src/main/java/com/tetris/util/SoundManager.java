@@ -67,6 +67,11 @@ public class SoundManager {
     public void playBackgroundMusic() {
         if (musicVolume <= 0) return;
 
+        // Stop any existing music to prevent duplication
+        if (backgroundMusicPlayer != null) {
+            backgroundMusicPlayer.stop();
+        }
+
         try {
             URL musicUrl = getClass().getClassLoader().getResource("sounds/background_music.mp3");
             if (musicUrl != null) {

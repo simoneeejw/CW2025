@@ -489,6 +489,9 @@ public class GuiController implements Initializable, GameEventListener {
         timeLine.stop();
         isGameOver.setValue(Boolean.TRUE);
 
+        // Stop background music
+        com.tetris.util.SoundManager.getInstance().stopBackgroundMusic();
+
         // Play game over sound
         com.tetris.util.SoundManager.getInstance().playGameOverSound();
 
@@ -508,6 +511,9 @@ public class GuiController implements Initializable, GameEventListener {
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+
+        // Start background music for new game
+        com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
     }
 
     public void pauseGame(ActionEvent actionEvent) {
