@@ -67,13 +67,13 @@ class LevelManagerTest {
     @Test
     void testMaxLevelReached() {
         // Advance to max level
-        levelManager.addLinesCleared(20);
-        assertEquals(4, levelManager.getCurrentLevel());
+        levelManager.addLinesCleared(100);
+        assertEquals(8, levelManager.getCurrentLevel());
 
-        // Should not advance beyond level 4
+        // Should not advance beyond level 8
         assertFalse(levelManager.addLinesCleared(100));
-        assertEquals(4, levelManager.getCurrentLevel());
-        assertEquals(120, levelManager.getTotalLinesCleared());
+        assertEquals(8, levelManager.getCurrentLevel());
+        assertEquals(200, levelManager.getTotalLinesCleared());
     }
 
     @Test
@@ -95,6 +95,25 @@ class LevelManagerTest {
         long level4Speed = levelManager.getFallSpeed();
         assertEquals(200, level4Speed);
         assertTrue(level4Speed < level3Speed);
+
+        levelManager.addLinesCleared(15);
+        long level5Speed = levelManager.getFallSpeed();
+        assertEquals(150, level5Speed);
+        assertTrue(level5Speed < level4Speed);
+
+        levelManager.addLinesCleared(15);
+        long level6Speed = levelManager.getFallSpeed();
+        assertEquals(120, level6Speed);
+        assertTrue(level6Speed < level5Speed);
+
+        levelManager.addLinesCleared(20);
+        long level7Speed = levelManager.getFallSpeed();
+        assertEquals(100, level7Speed);
+        assertTrue(level7Speed < level6Speed);
+
+        levelManager.addLinesCleared(30);
+        long level8Speed = levelManager.getFallSpeed();
+        assertEquals(80, level8Speed); // Level 8 has 80ms speed
     }
 
     @Test
@@ -109,6 +128,18 @@ class LevelManagerTest {
 
         levelManager.addLinesCleared(10);
         assertEquals(4, levelManager.getScoreMultiplier());
+
+        levelManager.addLinesCleared(15);
+        assertEquals(5, levelManager.getScoreMultiplier());
+
+        levelManager.addLinesCleared(15);
+        assertEquals(6, levelManager.getScoreMultiplier());
+
+        levelManager.addLinesCleared(20);
+        assertEquals(7, levelManager.getScoreMultiplier());
+
+        levelManager.addLinesCleared(30);
+        assertEquals(8, levelManager.getScoreMultiplier());
     }
 
     @Test
@@ -125,7 +156,19 @@ class LevelManagerTest {
         assertEquals(10, levelManager.getLinesNeededForNextLevel());
 
         levelManager.addLinesCleared(10);
-        assertEquals(0, levelManager.getLinesNeededForNextLevel());
+        assertEquals(15, levelManager.getLinesNeededForNextLevel()); // Level 4 to 5
+
+        levelManager.addLinesCleared(15);
+        assertEquals(15, levelManager.getLinesNeededForNextLevel()); // Level 5 to 6
+
+        levelManager.addLinesCleared(15);
+        assertEquals(20, levelManager.getLinesNeededForNextLevel()); // Level 6 to 7
+
+        levelManager.addLinesCleared(20);
+        assertEquals(30, levelManager.getLinesNeededForNextLevel()); // Level 7 to 8
+
+        levelManager.addLinesCleared(30);
+        assertEquals(0, levelManager.getLinesNeededForNextLevel()); // At max level
     }
 
     @Test
@@ -139,7 +182,19 @@ class LevelManagerTest {
         assertEquals(20, levelManager.getNextLevelThreshold());
 
         levelManager.addLinesCleared(10);
-        assertEquals(0, levelManager.getNextLevelThreshold());
+        assertEquals(35, levelManager.getNextLevelThreshold()); // Level 4 to 5
+
+        levelManager.addLinesCleared(15);
+        assertEquals(50, levelManager.getNextLevelThreshold()); // Level 5 to 6
+
+        levelManager.addLinesCleared(15);
+        assertEquals(70, levelManager.getNextLevelThreshold()); // Level 6 to 7
+
+        levelManager.addLinesCleared(20);
+        assertEquals(100, levelManager.getNextLevelThreshold()); // Level 7 to 8
+
+        levelManager.addLinesCleared(30);
+        assertEquals(0, levelManager.getNextLevelThreshold()); // At max level
     }
 
     @Test
@@ -178,4 +233,3 @@ class LevelManagerTest {
         assertEquals(5, levelManager.getTotalLinesCleared());
     }
 }
-

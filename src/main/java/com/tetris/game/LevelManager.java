@@ -6,23 +6,24 @@ import javafx.beans.property.SimpleIntegerProperty;
 /**
  * Manages automatic level progression based on lines cleared.
  * Players start at Level 1 and automatically advance when reaching line thresholds.
- * Implements four difficulty levels with increasing speed.
+ * Implements eight difficulty levels with increasing speed and challenges.
  */
 public class LevelManager {
 
     private final IntegerProperty currentLevel = new SimpleIntegerProperty(1);
     private int totalLinesCleared = 0;
 
-    // Line thresholds to advance to next level (Level 1: 0-4, Level 2: 5-9, Level 3: 10-19, Level 4: 20+)
-    private static final int[] LINE_THRESHOLDS = {0, 5, 10, 20};
+    // Line thresholds to advance to next level
+    // Level 1: 0-4, Level 2: 5-9, Level 3: 10-19, Level 4: 20-34, Level 5: 35-49, Level 6: 50-69, Level 7: 70-99, Level 8: 100+
+    private static final int[] LINE_THRESHOLDS = {0, 5, 10, 20, 35, 50, 70, 100};
 
-    // Fall speed for each level (milliseconds) - starts at 500ms, reduces by 100ms per level
-    private static final long[] FALL_SPEEDS = {500, 400, 300, 200};
+    // Fall speed for each level (milliseconds) - progressively faster
+    private static final long[] FALL_SPEEDS = {500, 400, 300, 200, 150, 120, 100, 80};
 
     // Score multiplier for each level
-    private static final int[] SCORE_MULTIPLIERS = {1, 2, 3, 4};
+    private static final int[] SCORE_MULTIPLIERS = {1, 2, 3, 4, 5, 6, 7, 8};
 
-    private static final int MAX_LEVEL = 4;
+    private static final int MAX_LEVEL = 8;
 
     public LevelManager() {
         this.currentLevel.set(1);
@@ -54,7 +55,7 @@ public class LevelManager {
 
     /**
      * Calculates the current level based on total lines cleared.
-     * @return Current level (1-4)
+     * @return Current level (1-8)
      */
     private int calculateLevel() {
         for (int i = MAX_LEVEL - 1; i >= 0; i--) {
@@ -147,6 +148,10 @@ public class LevelManager {
             case 2: return "Level 2";
             case 3: return "Level 3";
             case 4: return "Level 4";
+            case 5: return "Level 5";
+            case 6: return "Level 6";
+            case 7: return "Level 7";
+            case 8: return "Level 8";
             default: return "Unknown";
         }
     }
@@ -161,8 +166,11 @@ public class LevelManager {
             case 2: return "Intermediate";
             case 3: return "Advanced";
             case 4: return "Expert";
+            case 5: return "Master";
+            case 6: return "Grandmaster";
+            case 7: return "Legend";
+            case 8: return "Mythic";
             default: return "Unknown";
         }
     }
 }
-
