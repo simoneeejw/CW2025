@@ -382,13 +382,10 @@ public class GuiController implements Initializable, GameEventListener {
                         boardX >= 0 && boardX < displayMatrix[0].length) {
                         // Only draw if the cell is empty (don't overwrite locked pieces or active piece)
                         if (displayMatrix[boardY][boardX].getFill() == Color.TRANSPARENT) {
-                            Color color = (Color) getFillColor(brickData[i][j]);
-                            displayMatrix[boardY][boardX].setFill(Color.rgb(
-                                (int)(color.getRed() * 255),
-                                (int)(color.getGreen() * 255),
-                                (int)(color.getBlue() * 255),
-                                0.3 // 30% opacity for ghost
-                            ));
+                            // Use gray color for ghost piece instead of brick color
+                            Color ghostColor = Color.rgb(200, 200, 200, 0.3); // Light gray with 30% opacity
+                            displayMatrix[boardY][boardX].setFill(ghostColor);
+                            displayMatrix[boardY][boardX].setEffect(null); // Remove any glow effect from ghost piece
                         }
                     }
                 }

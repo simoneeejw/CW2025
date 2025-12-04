@@ -73,9 +73,11 @@ public class GameController {
                                                  tetrisBoard.getLevelManager().getLevelDifficulty());
 
                     // Add ghost row on Level 4 (randomly, 30% chance)
-                    if (tetrisBoard.getLevelManager().getCurrentLevel() == 4) {
+                    int currentLevel = tetrisBoard.getLevelManager().getCurrentLevel();
+                    if (currentLevel >= 4) {
                         java.util.Random random = new java.util.Random();
-                        if (random.nextDouble() < 0.3) {
+                        double ghostChance = 0.3 + (currentLevel - 4) * 0.1; // 30% at level 4, +10% per level
+                        if (random.nextDouble() < ghostChance) {
                             tetrisBoard.addGhostRow();
                             guiListener.scheduleGhostRowRemoval(3000); // Remove after 3 seconds
                         }
