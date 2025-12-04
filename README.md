@@ -609,11 +609,16 @@ All tests pass successfully, ensuring reliability and preventing regressions.
 
 **User Benefit**: The custom font personalizes the game's appearance and improves visual branding.
 
-## Conclusion
+### Game Board Movement Fix
+**Description**: Resolved critical UI issue where the game board would shift left and right during gameplay.
 
-This Tetris implementation represents a comprehensive, feature-rich game with professional-quality UI, robust testing, and innovative gameplay enhancements. The codebase follows SOLID principles, utilizes design patterns, and provides an excellent foundation for further development. All features are fully functional and tested, delivering a complete Tetris experience that rivals commercial implementations.
+**Implementation Details**:
+- **Root Cause**: GridPane was auto-sizing based on content, causing layout recalculations during piece placement
+- **Solution**: Added fixed `ColumnConstraints` and `RowConstraints` to the game board GridPane
+  - Set 10 columns with fixed width of 30px each (BRICK_SIZE)
+  - Set 20 rows with fixed height of 30px each
+  - Prevents dynamic resizing and repositioning during gameplay
+- **Code Changes**: Modified `GuiController.initGameView()` to apply constraints after creating display matrix
+- **Impact**: Game board now remains stable and centered throughout gameplay
 
-**Total Features Implemented**: 16 major enhancements plus core game functionality
-**Test Coverage**: 60 passing unit tests
-**Code Quality**: Refactored architecture with proper separation of concerns
-**User Experience**: Polished interface with smooth gameplay and comprehensive controls
+**User Benefit**: Eliminates distracting board movement, providing a smooth and professional gaming experience.

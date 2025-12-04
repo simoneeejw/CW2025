@@ -25,7 +25,9 @@ import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.LinearGradient;
@@ -217,6 +219,16 @@ public class GuiController implements Initializable, GameEventListener {
                 displayMatrix[i][j] = rectangle;
                 gamePanel.add(rectangle, j, i - 2);
             }
+        }
+
+        // Set fixed column and row constraints to prevent the game board from resizing and moving
+        for (int i = 0; i < 10; i++) { // 10 columns
+            ColumnConstraints col = new ColumnConstraints(BRICK_SIZE);
+            gamePanel.getColumnConstraints().add(col);
+        }
+        for (int i = 0; i < 20; i++) { // 20 rows
+            RowConstraints row = new RowConstraints(BRICK_SIZE);
+            gamePanel.getRowConstraints().add(row);
         }
 
         heldRectangles = new Rectangle[4][4];
