@@ -56,18 +56,21 @@ public class PauseMenuPanel extends VBox {
         // Resume button
         resumeButton = createMenuButton("resume", true);
         resumeButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             if (onResumeAction != null) onResumeAction.run();
         });
 
         // Options button
         optionsButton = createMenuButton("options", false);
         optionsButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             if (onOptionsAction != null) onOptionsAction.run();
         });
 
         // Quit button
         quitButton = createMenuButton("quit", false);
         quitButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             if (onQuitAction != null) onQuitAction.run();
         });
 

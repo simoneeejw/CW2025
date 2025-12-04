@@ -125,12 +125,15 @@ public class GuiController implements Initializable, GameEventListener {
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == moveLeftKey) {
                         refreshBrick(gameController.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+                        com.tetris.util.SoundManager.getInstance().playMoveSound();
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == moveRightKey) {
                         refreshBrick(gameController.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+                        com.tetris.util.SoundManager.getInstance().playMoveSound();
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == rotateKey) {
                         refreshBrick(gameController.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+                        com.tetris.util.SoundManager.getInstance().playRotateSound();
                         keyEvent.consume();
                     } else if (keyEvent.getCode() == softDropKey) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
@@ -165,7 +168,10 @@ public class GuiController implements Initializable, GameEventListener {
         levelNameLabel.setText("Beginner");
 
         // Set pause button action
-        pauseButton.setOnAction(e -> togglePause());
+        pauseButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            togglePause();
+        });
 
         // Load and apply saved theme
         loadSavedTheme();

@@ -109,12 +109,14 @@ public class SettingsDialog {
 
         // Button actions
         audioButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             contentArea.getChildren().setAll(createAudioPanelContent());
             audioButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;");
             controlsButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;");
         });
 
         controlsButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             contentArea.getChildren().setAll(createControlsPanelContent());
             controlsButton.setStyle("-fx-background-color: #FFD700; -fx-text-fill: #000000; -fx-background-radius: 10; -fx-border-color: #FFA500; -fx-border-width: 2; -fx-border-radius: 10;");
             audioButton.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-text-fill: #FFD700; -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;");
@@ -128,12 +130,16 @@ public class SettingsDialog {
         Button saveButton = new Button("SAVE");
         styleButton(saveButton, "#4CAF50", "#66BB6A");
         saveButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             dialog.close();
         });
 
         Button cancelButton = new Button("CANCEL");
         styleButton(cancelButton, "#F44336", "#EF5350");
-        cancelButton.setOnAction(e -> dialog.close());
+        cancelButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            dialog.close();
+        });
 
         buttons.getChildren().addAll(saveButton, cancelButton);
 
@@ -317,6 +323,7 @@ public class SettingsDialog {
         changeBtn.setOnMouseEntered(e -> changeBtn.setStyle("-fx-background-color: #42A5F5; -fx-text-fill: white; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0.5, 0, 0);"));
         changeBtn.setOnMouseExited(e -> changeBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 5;"));
         changeBtn.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             changingAction = action;
             currentButton = changeBtn;
             changeBtn.setText("Press key...");

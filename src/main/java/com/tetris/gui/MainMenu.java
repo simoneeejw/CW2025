@@ -42,11 +42,19 @@ public class MainMenu {
         try {
             Image bgImage = new Image(getClass().getResourceAsStream("/background_image.png"));
             BackgroundImage bgImg = new BackgroundImage(bgImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(820, 700, false, false, false, false));
-            Background bg = new Background(bgImg);
+            BackgroundFill overlay = new BackgroundFill(Color.rgb(0, 0, 0, 0.4), new CornerRadii(0), new Insets(0));
+            Background bg = new Background(new BackgroundFill[]{overlay}, new BackgroundImage[]{bgImg});
             mainLayout.setBackground(bg);
         } catch (Exception e) {
             // Fallback to gradient if image not found
-            mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0a0033, #000000);");
+            mainLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);");
+        }
+
+        // Load custom font
+        try {
+            Font.loadFont(getClass().getClassLoader().getResource("BungeeSpice-Regular.ttf").toExternalForm(), 12); // Load the font once
+        } catch (Exception e) {
+            System.out.println("Custom font not found, using system fonts.");
         }
 
         // === HEADER SECTION ===
@@ -116,7 +124,7 @@ public class MainMenu {
         } else {
             // Fallback text logo
             Label titleLabel = new Label("T E T R I S");
-            titleLabel.setFont(Font.font("System", FontWeight.BOLD, 48));
+            titleLabel.setFont(Font.font("Bungee Spice", FontWeight.BOLD, 48));
             titleLabel.setTextFill(Color.web("#00FFFF"));
             titleLabel.setStyle("-fx-effect: dropshadow(gaussian, #FF00FF, 20, 0.8, 0, 0);");
             header.getChildren().add(titleLabel);
@@ -132,7 +140,7 @@ public class MainMenu {
 
         // High Scores Button
         Button scoresBtn = new Button("🏆 HIGH SCORES");
-        scoresBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        scoresBtn.setFont(Font.font("Bungee Spice", FontWeight.BOLD, 24));
         scoresBtn.setPrefSize(300, 70);
         String baseBg = "linear-gradient(to bottom, #FFC107, #FFB300)";
         String hoverBg = "linear-gradient(to bottom, #FFECB3, #FFE082)";
@@ -160,11 +168,14 @@ public class MainMenu {
                         "-fx-effect: dropshadow(gaussian, " + shadowColorBase + ", 15, 0.5, 0, 3);"
         ));
 
-        scoresBtn.setOnAction(e -> highScoresDialog.show(stage));
+        scoresBtn.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            highScoresDialog.show(stage);
+        });
 
         // Settings Button
         Button settingsBtn = new Button("⚙ SETTINGS");
-        settingsBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        settingsBtn.setFont(Font.font("Bungee Spice", FontWeight.BOLD, 24));
         settingsBtn.setPrefSize(300, 70);
         String baseBgS = "linear-gradient(to bottom, #2196F3, #1976D2)";
         String hoverBgS = "linear-gradient(to bottom, #BBDEFB, #90CAF9)";
@@ -193,12 +204,13 @@ public class MainMenu {
         ));
 
         settingsBtn.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             settingsDialog.show(stage);
         });
 
         // Help Button
         Button helpBtn = new Button("❓ HELP");
-        helpBtn.setFont(Font.font("System", FontWeight.BOLD, 24));
+        helpBtn.setFont(Font.font("Bungee Spice", FontWeight.BOLD, 24));
         helpBtn.setPrefSize(300, 70);
         String baseBgH = "linear-gradient(to bottom, #4CAF50, #388E3C)";
         String hoverBgH = "linear-gradient(to bottom, #C8E6C9, #A5D6A7)";
@@ -226,7 +238,10 @@ public class MainMenu {
                         "-fx-effect: dropshadow(gaussian, " + shadowColorBaseH + ", 15, 0.5, 0, 3);"
         ));
 
-        helpBtn.setOnAction(e -> helpDialog.show(stage));
+        helpBtn.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            helpDialog.show(stage);
+        });
 
         quickActions.getChildren().addAll(scoresBtn, settingsBtn, helpBtn);
 
@@ -235,7 +250,7 @@ public class MainMenu {
 
     private Button createPlayButton() {
         Button playButton = new Button("▶ PLAY GAME");
-        playButton.setFont(Font.font("System", FontWeight.BOLD, 24));
+        playButton.setFont(Font.font("Bungee Spice", FontWeight.BOLD, 24));
         playButton.setPrefSize(300, 70);
         playButton.setStyle(
                 "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); " +
@@ -260,6 +275,7 @@ public class MainMenu {
         ));
 
         playButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             startGame = true;
             loadGame();
         });
@@ -269,7 +285,7 @@ public class MainMenu {
 
     private Button createExitButton() {
         Button exitButton = new Button("EXIT");
-        exitButton.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        exitButton.setFont(Font.font("Bungee Spice", FontWeight.NORMAL, 14));
         exitButton.setPrefSize(300, 35);  // Match width of other buttons for consistent centering
         exitButton.setAlignment(Pos.CENTER);  // Center text horizontally
         exitButton.setStyle(
@@ -299,7 +315,10 @@ public class MainMenu {
                         "-fx-background-radius: 5;"
         ));
 
-        exitButton.setOnAction(e -> System.exit(0));
+        exitButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            System.exit(0);
+        });
 
         return exitButton;
     }
@@ -310,7 +329,7 @@ public class MainMenu {
         footer.setPadding(new Insets(10, 0, 10, 0));
 
         Label credits = new Label("COMP2042 - Coursework 2025");
-        credits.setFont(Font.font("System", FontWeight.NORMAL, 11));
+        credits.setFont(Font.font("Bungee Spice", FontWeight.NORMAL, 11));
         credits.setTextFill(Color.web("#ffffff"));
         credits.setCursor(javafx.scene.Cursor.HAND);
         credits.setOnMouseClicked(e -> showCredits());
@@ -369,6 +388,8 @@ public class MainMenu {
             stage.setMinHeight(740);
             stage.centerOnScreen();
 
+            // Stop any playing music before starting game music
+            com.tetris.util.SoundManager.getInstance().stopBackgroundMusic();
             // Start background music
             com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
 
@@ -384,3 +405,4 @@ public class MainMenu {
         }
     }
 }
+

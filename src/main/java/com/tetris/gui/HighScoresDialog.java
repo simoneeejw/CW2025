@@ -89,7 +89,10 @@ public class HighScoresDialog {
             "-fx-background-radius: 8;"
         ));
 
-        closeButton.setOnAction(e -> dialog.close());
+        closeButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            dialog.close();
+        });
 
         layout.getChildren().addAll(title, table, closeButton);
 
@@ -247,4 +250,3 @@ public class HighScoresDialog {
         public int getLevel() { return level; }
     }
 }
-

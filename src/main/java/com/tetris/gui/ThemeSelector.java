@@ -79,7 +79,10 @@ public class ThemeSelector {
         startButton.setFont(Font.font("System", FontWeight.BOLD, 18));
         startButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 15 40; " +
                            "-fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 2);");
-        startButton.setOnAction(e -> dialog.close());
+        startButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            dialog.close();
+        });
 
         // Add hover effect
         startButton.setOnMouseEntered(e -> startButton.setStyle(
@@ -105,6 +108,7 @@ public class ThemeSelector {
         button.setStyle(getUnselectedStyle(theme));
 
         button.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             selectedTheme = theme;
             // Update button styles to show selection
             updateButtonStyles(button, theme);
@@ -155,4 +159,3 @@ public class ThemeSelector {
                                "-fx-scale-x: 1.05; -fx-scale-y: 1.05;");
     }
 }
-

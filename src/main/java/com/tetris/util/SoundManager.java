@@ -163,4 +163,28 @@ public class SoundManager {
         System.out.println("Attempting to play piece drop sound...");
         playSoundEffect("piece_drop.wav");
     }
+
+    /**
+     * Plays the move sound effect (left/right).
+     */
+    public void playMoveSound() {
+        System.out.println("Attempting to play move sound...");
+        playSoundEffect("move.wav");
+    }
+
+    /**
+     * Plays the rotate sound effect.
+     */
+    public void playRotateSound() {
+        System.out.println("Attempting to play rotate sound...");
+        playSoundEffect("rotate.wav");
+    }
+
+    /**
+     * Plays the button click sound effect.
+     */
+    public void playButtonClickSound() {
+        System.out.println("Attempting to play button click sound...");
+        playSoundEffect("button_click.wav");
+    }
 }

@@ -123,6 +123,7 @@ public class GameOverDialog {
         restartButton.setPrefSize(150, 50);
         restartButton.setStyle("-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); -fx-text-fill: #000000; -fx-background-radius: 10;");
         restartButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             dialog.close();
             onRestart.run();
         });
@@ -132,6 +133,7 @@ public class GameOverDialog {
         mainMenuButton.setPrefSize(150, 50);
         mainMenuButton.setStyle("-fx-background-color: linear-gradient(to bottom, #2196F3, #1976D2); -fx-text-fill: #FFFFFF; -fx-background-radius: 10;");
         mainMenuButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
             dialog.close();
             onMainMenu.run();
         });

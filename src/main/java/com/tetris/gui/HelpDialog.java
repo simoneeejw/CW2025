@@ -116,7 +116,10 @@ public class HelpDialog {
                         "-fx-border-radius: 8;"
         ));
 
-        closeButton.setOnAction(e -> dialog.close());
+        closeButton.setOnAction(e -> {
+            com.tetris.util.SoundManager.getInstance().playButtonClickSound();
+            dialog.close();
+        });
 
         mainLayout.getChildren().addAll(title, gameInfo, closeButton);
 
