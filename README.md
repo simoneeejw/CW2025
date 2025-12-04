@@ -2,7 +2,7 @@
 
 A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
 
-**🎮 Play Features**: 4 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
+**🎮 Play Features**: 8 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
 **🎨 Visual Design**: Light classic theme with gradient backgrounds, rounded corners, drop shadows, and vibrant Tetris colors  
 **🏗️ Architecture**: Refactored from monolithic design to SRP-compliant classes with Observer and Factory patterns  
 **✅ Quality**: 60 passing unit tests, comprehensive error handling, persistent high scores and settings  
@@ -67,7 +67,7 @@ The following features have been successfully implemented and are functioning as
   - Scoring system that increases with cleared lines and level multipliers.
   - Hold feature allowing players to store and swap bricks.
   - Ghost piece (shadow) showing where the active piece will land.
-  - Progressive level system with increasing speed (4 levels).
+  - Progressive level system with increasing speed (8 levels).
   - Power-up system triggered by Tetris clears (4 lines).
 
 - **Classic Light Theme GUI**: The game features a professionally redesigned interface with:
@@ -85,17 +85,21 @@ The following features have been successfully implemented and are functioning as
 ## Additional Features (25 Marks)
 
 ### 1. Progressive Levels with Speed Ramps (New Playable Levels + Gameplay Enhancement)
-**Description**: Implemented a 4-level progression system based on lines cleared, with adaptive speed and ghost rows.
+**Description**: Implemented an 8-level progression system based on lines cleared, with adaptive speed and ghost rows.
 
 **Implementation Details**:
 - **LevelManager.java**: Added a new class that tracks total lines cleared and automatically advances levels at thresholds:
   - Level 1 (Beginner): 0-4 lines cleared, 500ms fall speed
   - Level 2 (Intermediate): 5-9 lines cleared, 400ms fall speed
   - Level 3 (Advanced): 10-19 lines cleared, 300ms fall speed
-  - Level 4 (Expert): 20+ lines cleared, 200ms fall speed
-- **Dynamic Speed Adjustment**: Fall speed reduces by 100ms per level, integrated into the Timeline loop via `updateGameSpeed()` method in GuiController
-- **Ghost Rows**: At Level 4, occasional semi-transparent ghost rows appear randomly (30% chance on level-up) and vanish after 3 seconds using JavaFX PauseTransition
-- **Score Multipliers**: Each level multiplies score by 1x, 2x, 3x, 4x respectively
+  - Level 4 (Expert): 20-34 lines cleared, 200ms fall speed
+  - Level 5 (Master): 35-49 lines cleared, 150ms fall speed
+  - Level 6 (Grandmaster): 50-69 lines cleared, 120ms fall speed
+  - Level 7 (Legend): 70-99 lines cleared, 100ms fall speed
+  - Level 8 (Mythic): 100+ lines cleared, 80ms fall speed
+- **Dynamic Speed Adjustment**: Fall speed reduces progressively per level, integrated into the Timeline loop via `updateGameSpeed()` method in GuiController
+- **Ghost Rows**: At levels 4+, occasional semi-transparent ghost rows appear randomly (increasing probability with level) and vanish after 3 seconds using JavaFX PauseTransition
+- **Score Multipliers**: Each level multiplies score by 1x through 8x respectively
 - **UI Integration**: Level and lines cleared displayed in StatusPanel on the right sidebar
 - **Unit Tests**: Comprehensive LevelManagerTest with 12 tests covering level advancement logic, threshold calculations, and edge cases
 
@@ -124,7 +128,7 @@ The following features have been successfully implemented and are functioning as
 **Implementation Details**:
 - **Direct Board Rendering**: Ghost piece is rendered directly on the game board's displayMatrix at 30% opacity
 - **Position Calculation**: `getGhostYPosition()` method in GameController simulates piece drop using collision detection to find landing position
-- **Visual Design**: Shadow rendered at 30% opacity in the same color as the active piece, only on empty cells
+- **Visual Design**: Shadow rendered as a neutral light gray color (rgb(200, 200, 200, 0.3)) without any highlight effects, only on empty cells
 - **Real-time Updates**: Ghost position updates on every brick movement via `updateGhostPiece()` method in GuiController
 - **Smart Overlay**: Ghost only draws on transparent cells to avoid overwriting locked pieces or the active piece
 - **Performance**: Integrated rendering eliminates need for separate panels, improving performance
