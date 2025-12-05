@@ -53,6 +53,7 @@ public class MainMenu {
         // Load custom font
         try {
             Font.loadFont(getClass().getClassLoader().getResource("BungeeSpice-Regular.ttf").toExternalForm(), 12); // Load the font once
+            Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38); // Load digital font once
         } catch (Exception e) {
             System.out.println("Custom font not found, using system fonts.");
         }
@@ -375,11 +376,6 @@ public class MainMenu {
             javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
             javafx.scene.Parent root = fxmlLoader.load();
             GuiController c = fxmlLoader.getController();
-            c.setGameController(new com.tetris.game.GameController(c));
-
-            // Set callbacks for game over dialog
-            c.setOnRestartCallback(() -> c.newGame(null));
-            c.setOnMainMenuCallback(() -> show());
 
             stage.setTitle("TETRIS - COMP2042");
             javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
@@ -388,13 +384,19 @@ public class MainMenu {
             stage.setMinHeight(740);
             stage.centerOnScreen();
 
+            c.setGameController(new com.tetris.game.GameController(c));
+
+            // Set callbacks for game over dialog
+            c.setOnRestartCallback(() -> c.newGame(null));
+            c.setOnMainMenuCallback(() -> show());
+
             // Stop any playing music before starting game music
             com.tetris.util.SoundManager.getInstance().stopBackgroundMusic();
             // Start background music
             com.tetris.util.SoundManager.getInstance().playBackgroundMusic();
 
-            // Apply theme to GUI
-            ThemeManager.getInstance().applyTheme(c);
+            // Apply theme to GUI after scene is set
+            javafx.application.Platform.runLater(() -> ThemeManager.getInstance().applyTheme(c));
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);

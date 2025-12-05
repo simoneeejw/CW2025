@@ -11,6 +11,8 @@ import com.tetris.game.TetrisBoard;
 import com.tetris.util.BrickColorMapper;
 import com.tetris.util.GameConstants;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -22,7 +24,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
@@ -78,6 +83,9 @@ public class GuiController implements Initializable, GameEventListener {
     @FXML
     private GridPane heldBlockPanel;
 
+    @FXML
+    private ImageView tetrisLogo;
+
     private Rectangle[][] displayMatrix;
 
     private GameController gameController;
@@ -118,7 +126,6 @@ public class GuiController implements Initializable, GameEventListener {
         // Load custom key bindings at initialization
         loadKeyBindings();
 
-        Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -185,6 +192,13 @@ public class GuiController implements Initializable, GameEventListener {
 
         // Initialize game over dialog
         gameOverDialog = new GameOverDialog();
+
+        // Load the TETRIS logo image
+        try {
+            tetrisLogo.setImage(new Image(getClass().getResourceAsStream("/tetris_topic.png")));
+        } catch (Exception e) {
+            System.out.println("Failed to load tetris_topic.png");
+        }
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -740,21 +754,42 @@ public class GuiController implements Initializable, GameEventListener {
     public void showLevelUp(int level, String difficulty) {
         levelProp.set(level);
         levelNameLabel.setText(difficulty);
+        // Play level up sound
+        com.tetris.util.SoundManager.getInstance().playLevelUpSound();
+        // Shake the screen for effect
+        shakeScreen();
+        // Special effect: make the level label pop out bigger
+        animateLevelPop();
     }
 
     /**
-     * Shows power-up notification.
-     * @param powerUpName Name of the power-up
+     * Animates the level label to pop out bigger for level 3.
      */
-    public void showPowerUpNotification(String powerUpName) {
-        // No notification in classic layout
+    private void animateLevelPop() {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), levelLabel);
+        scaleTransition.setFromX(1.0);
+        scaleTransition.setFromY(1.0);
+        scaleTransition.setToX(2.0);
+        scaleTransition.setToY(2.0);
+        scaleTransition.setAutoReverse(true);
+        scaleTransition.setCycleCount(2);
+        scaleTransition.play();
     }
 
     /**
-     * Shows Tetris (4-line clear) notification.
+     * Shakes the screen to indicate level up.
      */
-    public void showTetrisNotification() {
-        // No notification in classic layout
+    private void shakeScreen() {
+        Node root = gamePanel.getScene().getRoot();
+        Timeline timeline = new Timeline();
+        // Create shake effect by alternating left and right
+        for (int i = 0; i < 10; i++) {
+            double offset = (i % 2 == 0) ? 5 : -5;
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 50), new KeyValue(root.translateXProperty(), offset)));
+        }
+        // Return to original position
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(root.translateXProperty(), 0)));
+        timeline.play();
     }
 
     /**
@@ -794,5 +829,20 @@ public class GuiController implements Initializable, GameEventListener {
         softDropKey = KeyCode.valueOf(prefs.get("softDrop", "DOWN"));
         hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
         holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
+    }
+
+    /**
+     * Shows power-up notification.
+     * @param powerUpName Name of the power-up
+     */
+    public void showPowerUpNotification(String powerUpName) {
+        // No notification in classic layout
+    }
+
+    /**
+     * Shows Tetris (4-line clear) notification.
+     */
+    public void showTetrisNotification() {
+        // No notification in classic layout
     }
 }
