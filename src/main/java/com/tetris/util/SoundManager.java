@@ -14,6 +14,7 @@ public class SoundManager {
 
     private static SoundManager instance;
     private MediaPlayer backgroundMusicPlayer;
+    private static Media backgroundMedia;
     private double musicVolume = 0.3;
     private double soundEffectsVolume = 0.7;
 
@@ -21,6 +22,18 @@ public class SoundManager {
         Preferences prefs = Preferences.userNodeForPackage(SoundManager.class);
         musicVolume = prefs.getDouble("music_volume", 0.3);
         soundEffectsVolume = prefs.getDouble("sound_effects_volume", 0.7);
+        preloadBackgroundMusic();
+    }
+
+    private void preloadBackgroundMusic() {
+        try {
+            URL musicUrl = getClass().getClassLoader().getResource("sounds/background_music.mp3");
+            if (musicUrl != null) {
+                backgroundMedia = new Media(musicUrl.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error preloading background music: " + e.getMessage());
+        }
     }
 
     public static SoundManager getInstance() {
@@ -73,16 +86,19 @@ public class SoundManager {
         }
 
         try {
-            URL musicUrl = getClass().getClassLoader().getResource("sounds/background_music.mp3");
-            if (musicUrl != null) {
-                Media media = new Media(musicUrl.toString());
-                backgroundMusicPlayer = new MediaPlayer(media);
-                backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                backgroundMusicPlayer.setVolume(musicVolume); // Set volume to 30%
-                backgroundMusicPlayer.play();
-            } else {
-                System.out.println("Background music file not found.");
+            if (backgroundMedia == null) {
+                URL musicUrl = getClass().getClassLoader().getResource("sounds/background_music.mp3");
+                if (musicUrl != null) {
+                    backgroundMedia = new Media(musicUrl.toString());
+                } else {
+                    System.out.println("Background music file not found.");
+                    return;
+                }
             }
+            backgroundMusicPlayer = new MediaPlayer(backgroundMedia);
+            backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            backgroundMusicPlayer.setVolume(musicVolume); // Set volume to 30%
+            backgroundMusicPlayer.play();
         } catch (Exception e) {
             System.out.println("Error playing background music: " + e.getMessage());
         }
