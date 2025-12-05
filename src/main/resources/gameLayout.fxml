@@ -40,10 +40,10 @@
                     <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
                         <Label fx:id="linesLabel" text="Lines: 0" />
                     </HBox>
-                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-box">
+                    <VBox alignment="CENTER_LEFT" spacing="5" styleClass="info-box">
                         <Label fx:id="levelLabel" text="Level: 1" />
                         <Label fx:id="levelNameLabel" text="Beginner" />
-                    </HBox>
+                    </VBox>
                     <VBox alignment="CENTER" spacing="5" styleClass="info-box">
                         <Label text="Held Block" styleClass="held-label" />
                         <GridPane fx:id="heldBlockPanel" hgap="1" vgap="1" alignment="CENTER" />
