@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane fx:controller="com.tetris.gui.GuiController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
     <padding>
@@ -16,8 +17,7 @@
     </padding>
     <top>
         <VBox alignment="CENTER" BorderPane.alignment="CENTER" spacing="5">
-            <Text text="TETRIS" styleClass="title-text" />
-            <Text text="N-BLOCK" styleClass="subtitle-text" />
+            <ImageView fx:id="tetrisLogo" fitWidth="200" preserveRatio="true" />
         </VBox>
     </top>
     <center>
