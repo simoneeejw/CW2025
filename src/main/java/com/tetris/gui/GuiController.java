@@ -211,19 +211,6 @@ public class GuiController implements Initializable, GameEventListener {
         hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
         holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
 
-        // Initialize status panel and add to root Pane
-        // if (statusPanel == null) {
-        //     statusPanel = new StatusPanel();
-        //     statusPanel.setLayoutX(420);
-        //     statusPanel.setLayoutY(30);
-        //     statusPanel.setPrefSize(220, 350);
-        //     statusPanel.setVisible(true);
-
-        //     // Add to root pane
-        //     javafx.scene.layout.Pane rootPane = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
-        //     rootPane.getChildren().add(statusPanel);
-        //     statusPanel.toFront(); // Bring to front
-        // }
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
