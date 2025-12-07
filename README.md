@@ -77,8 +77,6 @@ The following features have been successfully implemented and are functioning as
 
 - **Improved Controls and Input Handling**: Fixed key handling issues, added hard drop, pause functionality, and customizable key bindings.
 
-- **Multiplayer Mode**: Local split-screen competitive mode with independent controls, game states, and winner detection.
-
 - **CSS-Based Styling System**: External stylesheet for centralized styling, enabling easy theme modifications.
 
 - **Consistent Window Sizing**: Standardized dimensions across all application states for seamless transitions.
@@ -146,7 +144,7 @@ The following Java classes were modified from the provided codebase:
 
 - **GameController.java**: Modified to integrate level progression, power-up system, and improved event handling. Location: `src/main/java/com/tetris/game/GameController.java`. Changes: Added level management, power-up triggers, and enhanced collision detection. Rationale: To support progressive difficulty and strategic power-ups, enhancing gameplay depth.
 
-- **Main.java**: Modified to support multiplayer mode and consistent window sizing. Location: `src/main/java/com/tetris/game/Main.java`. Changes: Added mode selection logic and window dimension standardization. Rationale: To enable the new multiplayer feature and improve UI consistency.
+- **Main.java**: Modified to support consistent window sizing. Location: `src/main/java/com/tetris/game/Main.java`. Changes: Added window dimension standardization. Rationale: To improve UI consistency.
 
 - **ViewData.java**: Modified to include held brick and next brick data. Location: `src/main/java/com/tetris/model/ViewData.java`. Changes: Added fields and methods for hold mechanic and next block preview. Rationale: To support the hold feature and next block preview for better player planning.
 
@@ -154,13 +152,11 @@ The following Java classes were modified from the provided codebase:
 
 - **SettingsDialog.java**: Modified to include volume sliders instead of checkboxes. Location: `src/main/java/com/tetris/gui/SettingsDialog.java`. Changes: Replaced boolean toggles with 0-100% sliders for music and sound effects. Rationale: To provide granular audio control and improve user experience.
 
-- **MainMenu.java**: Modified to add multiplayer toggle and help button. Location: `src/main/java/com/tetris/gui/MainMenu.java`. Changes: Added mode selection buttons and tutorial access. Rationale: To support the new multiplayer mode and provide user guidance.
+- **MainMenu.java**: Modified to add help button. Location: `src/main/java/com/tetris/gui/MainMenu.java`. Changes: Added tutorial access. Rationale: To provide user guidance.
 
-- **GameLayout.fxml**: Modified to include new UI elements like pause menu, multiplayer layout, and custom logo. Location: `src/main/resources/GameLayout.fxml`. Changes: Added ImageView for logo, StackPane for pause overlay, and multiplayer-specific panes. Rationale: To implement the redesigned GUI with new features.
+- **GameLayout.fxml**: Modified to include new UI elements like pause menu and custom logo. Location: `src/main/resources/GameLayout.fxml`. Changes: Added ImageView for logo and StackPane for pause overlay. Rationale: To implement the redesigned GUI with new features.
 
-- **MultiplayerLayout.fxml**: New FXML file for multiplayer mode. Location: `src/main/resources/MultiplayerLayout.fxml`. Changes: Created dedicated layout with side-by-side boards and dual sidebars. Rationale: To support local competitive multiplayer.
-
-- **Styles.css**: Modified to include comprehensive styling for all new UI elements. Location: `src/main/resources/Styles.css`. Changes: Added classes for pause menu, multiplayer elements, and theme support. Rationale: To centralize styling and enable easy theme modifications.
+- **Styles.css**: Modified to include comprehensive styling for all new UI elements. Location: `src/main/resources/Styles.css`. Changes: Added classes for pause menu and theme support. Rationale: To centralize styling and enable easy theme modifications.
 
 ## Unexpected Problems
 Several unexpected challenges were encountered during development:
@@ -171,9 +167,7 @@ Several unexpected challenges were encountered during development:
 
 - **Spawn Position Errors**: Pieces appeared in the middle of the board instead of the top due to incorrect offset initialization. Corrected by setting spawn position to row 0, column 4, restoring proper Tetris mechanics.
 
-- **Property Binding Failures**: "Bound value cannot be set" errors in multiplayer mode due to improper JavaFX property usage. Resolved by using Bindings.concat() and separate IntegerProperty instances for each player's stats.
-
-- **Window Sizing Inconsistencies**: Jarring transitions between menu and game due to varying window dimensions. Standardized all windows to consistent sizes (820x700px for main/multiplayer, 450x720px for single player) with proper constraints.
+- **Window Sizing Inconsistencies**: Jarring transitions between menu and game due to varying window dimensions. Standardized all windows to consistent sizes (450x720px for single player) with proper constraints.
 
 - **Audio Loading Delays**: Background music caused startup delays due to repeated Media instantiation. Optimized by preloading Media objects once and reusing them.
 
@@ -188,7 +182,7 @@ This coursework project successfully transformed a basic Tetris implementation i
 
 ### Overall Changes
 - **System Maintenance**: Restructured the entire codebase from `com.comp2042.tetris` to `com.tetris` package, improving organization and removing course-specific dependencies. Refactored the monolithic `SimpleBoard` class into three SRP-compliant components (`BoardState`, `BrickManager`, `TetrisBoard`) for better modularity and testability.
-- **Feature Extensions**: Added 8-level progressive difficulty system with speed ramps and ghost rows, strategic power-up system triggered by Tetris clears, ghost piece shadows for better planning, local split-screen multiplayer mode, comprehensive pause menu, tutorial system, adjustable audio controls, and professional light theme GUI redesign.
+- **Feature Extensions**: Added 8-level progressive difficulty system with speed ramps and ghost rows, strategic power-up system triggered by Tetris clears, ghost piece shadows for better planning, comprehensive pause menu, tutorial system, adjustable audio controls, and professional light theme GUI redesign.
 - **Quality Improvements**: Expanded test suite from 37 to 60 unit tests, implemented unified rendering system to fix critical display bugs, standardized window sizing for seamless transitions, and optimized audio loading for better performance.
 - **Code Enhancements**: Introduced design patterns (Observer and Factory), improved controls with customizable key bindings, added visual effects like level-up animations, and centralized styling through external CSS.
 
@@ -201,7 +195,6 @@ Throughout development, several critical issues emerged that required immediate 
 - **Rendering Failures**: Pieces became invisible after refactoring due to disconnected display systems; resolved by implementing a unified rendering approach using the displayMatrix as the single source of truth.
 - **Collision Detection Errors**: Incorrect matrix indexing prevented proper piece movement; fixed by correcting array access patterns and coordinate calculations.
 - **Spawn Position Bugs**: Pieces appeared mid-board instead of top; corrected by resetting initialization offsets to standard Tetris positions.
-- **UI Binding Issues**: Property binding errors in multiplayer mode; resolved using proper JavaFX property management with separate IntegerProperty instances.
 - **Window Transition Problems**: Inconsistent sizing caused jarring effects; standardized dimensions across all application states.
 - **Audio Performance**: Startup delays from repeated media loading; optimized through preloading and reuse of Media objects.
 - **Input Handling Conflicts**: Simultaneous key presses caused erratic behavior; fixed with debounced else-if chains.
@@ -210,4 +203,4 @@ Throughout development, several critical issues emerged that required immediate 
 All problems were systematically addressed through debugging, code reviews, and comprehensive testing, resulting in a stable, fully functional application that exceeds the original requirements.
 
 ### Additional Notes on Processing
-The development followed an iterative approach, starting with core maintenance tasks (package restructuring, SRP refactoring) before progressing to feature extensions. Each new feature was implemented with corresponding unit tests to ensure reliability. The project demonstrates effective application of software engineering principles, including SOLID design, design patterns, and thorough testing. The final product provides both single-player and multiplayer experiences with professional polish, comprehensive documentation, and robust error handling.
+The development followed an iterative approach, starting with core maintenance tasks (package restructuring, SRP refactoring) before progressing to feature extensions. Each new feature was implemented with corresponding unit tests to ensure reliability. The project demonstrates effective application of software engineering principles, including SOLID design, design patterns, and thorough testing. The final product provides a single-player experience with professional polish, comprehensive documentation, and robust error handling.
