@@ -6,7 +6,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-`/**
+/**
  * Generates random Tetris bricks using a queue to provide preview functionality.
  */
 public class RandomBrickGenerator implements BrickGenerator {

@@ -17,6 +17,9 @@
     </padding>
     <top>
         <VBox alignment="CENTER" BorderPane.alignment="CENTER" spacing="5">
+            <padding>
+                <Insets top="20" right="0" bottom="10" left="0"/>
+            </padding>
             <ImageView fx:id="tetrisLogo" fitWidth="200" preserveRatio="true" />
         </VBox>
     </top>

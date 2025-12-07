@@ -91,11 +91,42 @@ public class BrickManager {
     public boolean rotateLeftBrick(int[][] currentGameMatrix, Point currentOffset) {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         NextShapeInfo nextShape = brickRotator.getNextShape();
-        boolean conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
-        if (!conflict) {
+
+        // Try rotation at current position
+        if (!MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX(), (int) currentOffset.getY())) {
             brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
         }
-        return !conflict;
+
+        // Try wall kicks: shift left by 1
+        if (!MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX() - 1, (int) currentOffset.getY())) {
+            currentOffset.x -= 1;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Try wall kicks: shift right by 1
+        if (!MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX() + 1, (int) currentOffset.getY())) {
+            currentOffset.x += 1;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Try wall kicks: shift left by 2 (for larger pieces)
+        if (!MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX() - 2, (int) currentOffset.getY())) {
+            currentOffset.x -= 2;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        // Try wall kicks: shift right by 2
+        if (!MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX() + 2, (int) currentOffset.getY())) {
+            currentOffset.x += 2;
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        return false; // Rotation blocked
     }
 
     /**
