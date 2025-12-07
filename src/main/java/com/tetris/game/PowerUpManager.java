@@ -10,15 +10,23 @@ import java.util.Random;
  */
 public class PowerUpManager {
 
+    /** Random number generator for power-up selection. */
     private final Random random = new Random();
+    /** Currently active power-up. */
     private PowerUp activePowerUp = null;
+    /** End time for the current power-up. */
     private long powerUpEndTime = 0;
 
+    /** Property indicating if slow motion is active. */
     private final BooleanProperty slowMotionActive = new SimpleBooleanProperty(false);
+    /** Property indicating if double points is active. */
     private final BooleanProperty doublePointsActive = new SimpleBooleanProperty(false);
+    /** Property indicating if ghost piece is active. */
     private final BooleanProperty ghostPieceActive = new SimpleBooleanProperty(false);
 
+    /** Duration of slow motion power-up in milliseconds. */
     private static final long SLOW_MOTION_DURATION = 5000; // 5 seconds
+    /** Duration of double points power-up in milliseconds. */
     private static final long DOUBLE_POINTS_DURATION = 10000; // 10 seconds
 
     /**
@@ -169,4 +177,3 @@ public class PowerUpManager {
         return ghostPieceActive;
     }
 }
-

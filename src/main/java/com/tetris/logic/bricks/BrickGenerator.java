@@ -1,11 +1,19 @@
 package com.tetris.logic.bricks;
 
-// Strategy interface for brick generation
+/**
+ * Strategy interface for generating Tetris bricks.
+ */
 public interface BrickGenerator {
 
-    // Get and consume next brick
+    /**
+     * Retrieves and removes the next brick from the queue.
+     * @return the next Brick
+     */
     Brick getBrick();
 
-    // Preview next brick without consuming
+    /**
+     * Previews the next brick without removing it from the queue.
+     * @return the next Brick
+     */
     Brick getNextBrick();
 }

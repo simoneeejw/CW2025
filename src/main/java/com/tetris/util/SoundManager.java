@@ -12,10 +12,15 @@ import java.util.prefs.Preferences;
  */
 public class SoundManager {
 
+    /** Singleton instance. */
     private static SoundManager instance;
+    /** Media player for background music. */
     private MediaPlayer backgroundMusicPlayer;
+    /** Background music media. */
     private static Media backgroundMedia;
+    /** Music volume level. */
     private double musicVolume = 0.3;
+    /** Sound effects volume level. */
     private double soundEffectsVolume = 0.7;
 
     private SoundManager() {

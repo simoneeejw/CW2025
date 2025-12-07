@@ -3,12 +3,19 @@ package com.tetris.util;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-// Maps brick type numbers to display colors
+/**
+ * Maps brick type numbers to display colors.
+ */
 public class BrickColorMapper {
 
-    private BrickColorMapper() {} // Prevent instantiation
+    /** Private constructor to prevent instantiation. */
+    private BrickColorMapper() {}
 
-    // Returns color for brick type (0-7)
+    /**
+     * Returns color for brick type (0-7).
+     * @param brickType the brick type number
+     * @return the corresponding Paint color
+     */
     public static Paint getColor(int brickType) {
         return switch (brickType) {
             case 0 -> Color.TRANSPARENT;  // Empty cell
@@ -23,4 +30,3 @@ public class BrickColorMapper {
         };
     }
 }
-

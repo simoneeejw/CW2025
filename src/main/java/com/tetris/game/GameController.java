@@ -8,12 +8,21 @@ import com.tetris.model.ViewData;
 import com.tetris.util.GameConstants;
 import com.tetris.util.SoundManager;
 
+/**
+ * Controls the game logic and coordinates between the board and GUI.
+ */
 public class GameController {
 
+    /** The game board instance. */
     private final Board board = new TetrisBoard(GameConstants.BOARD_HEIGHT, GameConstants.BOARD_WIDTH);
 
+    /** Listener for GUI events. */
     private final GameEventListener guiListener;
 
+    /**
+     * Constructs a GameController with the given GUI listener.
+     * @param guiListener the GUI event listener
+     */
     public GameController(GameEventListener guiListener) {
         this.guiListener = guiListener;
         board.createNewBrick();
@@ -36,6 +45,11 @@ public class GameController {
         );
     }
 
+    /**
+     * Handles the down event, moving the brick down or locking it if can't move.
+     * @param event the move event
+     * @return DownData with clear row info and view data
+     */
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
@@ -123,27 +137,50 @@ public class GameController {
         return new DownData(clearRow, board.getViewData());
     }
 
+    /**
+     * Handles the left move event.
+     * @param event the move event
+     * @return updated view data
+     */
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
         return board.getViewData();
     }
 
+    /**
+     * Handles the right move event.
+     * @param event the move event
+     * @return updated view data
+     */
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
         return board.getViewData();
     }
 
+    /**
+     * Handles the rotate event.
+     * @param event the move event
+     * @return updated view data
+     */
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
         return board.getViewData();
     }
 
+    /**
+     * Handles the hold event.
+     * @param event the move event
+     * @return updated view data
+     */
     public ViewData onHoldEvent(MoveEvent event) {
         board.holdBrick();
         guiListener.refreshGameBackground(board.getBoardMatrix());
         return board.getViewData();
     }
 
+    /**
+     * Starts a new game.
+     */
     public void createNewGame() {
         board.newGame();
         guiListener.refreshGameBackground(board.getBoardMatrix());

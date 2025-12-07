@@ -47,57 +47,82 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the Tetris GUI, handling user input, display updates, and game logic integration.
+ */
 public class GuiController implements Initializable, GameEventListener {
 
+    /** Size of each brick in pixels. */
     private static final int BRICK_SIZE = GameConstants.BRICK_SIZE_PIXELS;
 
-    // Customizable key bindings
+    /** Key for moving left. */
     private KeyCode moveLeftKey = KeyCode.LEFT;
+    /** Key for moving right. */
     private KeyCode moveRightKey = KeyCode.RIGHT;
+    /** Key for rotating. */
     private KeyCode rotateKey = KeyCode.UP;
+    /** Key for soft drop. */
     private KeyCode softDropKey = KeyCode.DOWN;
+    /** Key for hard drop. */
     private KeyCode hardDropKey = KeyCode.SPACE;
+    /** Key for holding brick. */
     private KeyCode holdKey = KeyCode.R;
 
     @FXML
+    /** Grid pane for the game board. */
     private GridPane gamePanel;
 
     @FXML
+    /** Label for displaying score. */
     private javafx.scene.control.Label scoreLabel;
 
     @FXML
+    /** Label for displaying lines cleared. */
     private javafx.scene.control.Label linesLabel;
 
     @FXML
+    /** Label for displaying level. */
     private javafx.scene.control.Label levelLabel;
 
     @FXML
+    /** Label for displaying level name. */
     private javafx.scene.control.Label levelNameLabel;
 
     @FXML
+    /** Button for pausing the game. */
     private javafx.scene.control.Button pauseButton;
 
     @FXML
+    /** Grid pane for next block preview. */
     private GridPane nextBlockPanel;
 
     @FXML
+    /** Grid pane for held block display. */
     private GridPane heldBlockPanel;
 
     @FXML
+    /** Image view for Tetris logo. */
     private ImageView tetrisLogo;
 
+    /** Matrix of rectangles for the game display. */
     private Rectangle[][] displayMatrix;
 
+    /** The game controller. */
     private GameController gameController;
 
+    /** Rectangles for held block display. */
     private Rectangle[][] heldRectangles;
 
+    /** Rectangles for next block display. */
     private Rectangle[][] nextRectangles;
 
+    /** Timeline for game loop. */
     private Timeline timeLine;
 
+    /** Property indicating if the game is paused. */
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
+    /** Property indicating if the game is over. */
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
     private final IntegerProperty scoreProp = new SimpleIntegerProperty(0);

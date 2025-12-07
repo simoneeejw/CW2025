@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for LevelManager functionality.
+ */
 class LevelManagerTest {
 
     private LevelManager levelManager;
@@ -14,6 +17,9 @@ class LevelManagerTest {
         levelManager = new LevelManager();
     }
 
+    /**
+     * Tests initial level setup.
+     */
     @Test
     void testInitialLevel() {
         assertEquals(1, levelManager.getCurrentLevel());
@@ -21,6 +27,9 @@ class LevelManagerTest {
         assertEquals("Beginner", levelManager.getLevelDifficulty());
     }
 
+    /**
+     * Tests advancement to level 2.
+     */
     @Test
     void testLevelAdvancementToLevel2() {
         // Level 1 -> Level 2 at 5 lines
@@ -35,6 +44,9 @@ class LevelManagerTest {
         assertEquals("Intermediate", levelManager.getLevelDifficulty());
     }
 
+    /**
+     * Tests advancement to level 3.
+     */
     @Test
     void testLevelAdvancementToLevel3() {
         // Level 1 -> Level 2 at 5 lines
@@ -53,6 +65,9 @@ class LevelManagerTest {
         assertEquals("Advanced", levelManager.getLevelDifficulty());
     }
 
+    /**
+     * Tests advancement to level 4.
+     */
     @Test
     void testLevelAdvancementToLevel4() {
         // Advance to Level 4 at 20 lines
@@ -64,6 +79,9 @@ class LevelManagerTest {
         assertEquals(20, levelManager.getTotalLinesCleared());
     }
 
+    /**
+     * Tests that max level is not exceeded.
+     */
     @Test
     void testMaxLevelReached() {
         // Advance to max level
@@ -76,6 +94,9 @@ class LevelManagerTest {
         assertEquals(200, levelManager.getTotalLinesCleared());
     }
 
+    /**
+     * Tests that fall speed decreases with levels.
+     */
     @Test
     void testFallSpeedDecreases() {
         long level1Speed = levelManager.getFallSpeed();
@@ -116,6 +137,9 @@ class LevelManagerTest {
         assertEquals(80, level8Speed); // Level 8 has 80ms speed
     }
 
+    /**
+     * Tests that score multiplier increases with levels.
+     */
     @Test
     void testScoreMultiplierIncreases() {
         assertEquals(1, levelManager.getScoreMultiplier());
@@ -142,6 +166,9 @@ class LevelManagerTest {
         assertEquals(8, levelManager.getScoreMultiplier());
     }
 
+    /**
+     * Tests calculation of lines needed for next level.
+     */
     @Test
     void testLinesNeededForNextLevel() {
         assertEquals(5, levelManager.getLinesNeededForNextLevel());
@@ -171,6 +198,9 @@ class LevelManagerTest {
         assertEquals(0, levelManager.getLinesNeededForNextLevel()); // At max level
     }
 
+    /**
+     * Tests next level threshold calculation.
+     */
     @Test
     void testNextLevelThreshold() {
         assertEquals(5, levelManager.getNextLevelThreshold());
@@ -197,6 +227,9 @@ class LevelManagerTest {
         assertEquals(0, levelManager.getNextLevelThreshold()); // At max level
     }
 
+    /**
+     * Tests reset functionality.
+     */
     @Test
     void testReset() {
         // Advance to level 4
@@ -211,6 +244,9 @@ class LevelManagerTest {
         assertEquals(1, levelManager.getScoreMultiplier());
     }
 
+    /**
+     * Tests level property binding.
+     */
     @Test
     void testLevelPropertyBinding() {
         assertNotNull(levelManager.currentLevelProperty());
@@ -220,6 +256,9 @@ class LevelManagerTest {
         assertEquals(2, levelManager.currentLevelProperty().get());
     }
 
+    /**
+     * Tests multiple line clears.
+     */
     @Test
     void testMultipleLineClears() {
         // Test clearing 4 lines at once (Tetris) - doesn't level up yet

@@ -7,17 +7,33 @@ import com.tetris.model.ViewData;
 
 import java.awt.*;
 
+/**
+ * Main implementation of the Tetris game board, managing the game state, brick movements, scoring, and special features like power-ups and ghost rows.
+ */
 public class TetrisBoard implements Board {
 
+    /** The width of the game board. */
     private final int width;
+    /** The height of the game board. */
     private final int height;
+    /** The current state of the board. */
     private final BoardState boardState;
+    /** Manager for brick operations. */
     private final BrickManager brickManager;
+    /** The current score. */
     private final Score score;
+    /** Manager for game levels. */
     private final LevelManager levelManager;
+    /** Manager for power-ups. */
     private final PowerUpManager powerUpManager;
-    private int ghostRow = -1; // Track which row is a ghost row (-1 = none)
+    /** Track which row is a ghost row (-1 = none). */
+    private int ghostRow = -1;
 
+    /**
+     * Constructs a new TetrisBoard with the specified dimensions.
+     * @param width the width of the board
+     * @param height the height of the board
+     */
     public TetrisBoard(int width, int height) {
         this.width = width;
         this.height = height;
@@ -44,6 +60,12 @@ public class TetrisBoard implements Board {
         return tryMove(1, 0);
     }
 
+    /**
+     * Attempts to move the current brick by the given delta.
+     * @param dx delta x
+     * @param dy delta y
+     * @return true if the move was successful, false if blocked
+     */
     private boolean tryMove(int dx, int dy) {
         Point p = new Point(boardState.getCurrentOffset());
         p.translate(dx, dy);

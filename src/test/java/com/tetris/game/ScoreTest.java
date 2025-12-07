@@ -19,12 +19,18 @@ class ScoreTest {
         score = new Score();
     }
 
+    /**
+     * Tests that new score starts at zero.
+     */
     @Test
     @DisplayName("New score should start at zero")
     void testInitialScore() {
         assertEquals(0, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that add increases score by specified amount.
+     */
     @Test
     @DisplayName("Add should increase score by specified amount")
     void testAdd() {
@@ -35,6 +41,9 @@ class ScoreTest {
         assertEquals(15, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that add handles large numbers.
+     */
     @Test
     @DisplayName("Add should handle large numbers")
     void testAddLargeNumber() {
@@ -42,6 +51,9 @@ class ScoreTest {
         assertEquals(1000, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that add accumulates multiple additions.
+     */
     @Test
     @DisplayName("Add should accumulate multiple additions")
     void testMultipleAdditions() {
@@ -51,6 +63,9 @@ class ScoreTest {
         assertEquals(350, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that reset sets score back to zero.
+     */
     @Test
     @DisplayName("Reset should set score back to zero")
     void testReset() {
@@ -61,6 +76,9 @@ class ScoreTest {
         assertEquals(0, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that reset works when score is already zero.
+     */
     @Test
     @DisplayName("Reset should work when score is already zero")
     void testResetAtZero() {
@@ -68,6 +86,9 @@ class ScoreTest {
         assertEquals(0, score.scoreProperty().get());
     }
 
+    /**
+     * Tests that score property is observable.
+     */
     @Test
     @DisplayName("Score property should be observable")
     void testScorePropertyIsObservable() {
@@ -82,4 +103,3 @@ class ScoreTest {
         assertEquals(42, observedValue[0]);
     }
 }
-

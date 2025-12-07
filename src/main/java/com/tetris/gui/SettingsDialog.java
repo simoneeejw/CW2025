@@ -199,6 +199,10 @@ public class SettingsDialog {
         dialog.showAndWait();
     }
 
+    /**
+     * Creates the content for the audio settings panel, including volume sliders.
+     * @return VBox containing the audio panel UI elements
+     */
     private VBox createAudioPanelContent() {
         VBox audioPanel = new VBox(20);
         audioPanel.setPadding(new Insets(20));
@@ -264,6 +268,10 @@ public class SettingsDialog {
         return audioPanel;
     }
 
+    /**
+     * Creates the content for the controls settings panel, including key binding options.
+     * @return VBox containing the controls panel UI elements
+     */
     private VBox createControlsPanelContent() {
         VBox controlsPanel = new VBox(15);
         controlsPanel.setPadding(new Insets(20));
@@ -308,6 +316,13 @@ public class SettingsDialog {
         return controlsPanel;
     }
 
+    /**
+     * Creates a row for key binding configuration.
+     * @param labelText The text for the label
+     * @param currentKey The current key code
+     * @param action The action string for changing the key
+     * @return HBox containing the label and change button
+     */
     private HBox createKeyBindingRow(String labelText, KeyCode currentKey, String action) {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -334,6 +349,12 @@ public class SettingsDialog {
         return row;
     }
 
+    /**
+     * Applies styling to a button with base and hover colors.
+     * @param button The button to style
+     * @param baseColor The base background color
+     * @param hoverColor The hover background color
+     */
     private void styleButton(Button button, String baseColor, String hoverColor) {
         button.setFont(Font.font("System", FontWeight.BOLD, 14));
         button.setPrefSize(120, 40);

@@ -2,9 +2,14 @@ package com.tetris.logic.bricks;
 
 import java.util.List;
 
-// Represents a Tetris brick with rotation states
+/**
+ * Interface representing a Tetris brick with its shape matrices for different rotations.
+ */
 public interface Brick {
 
-    // Returns list of rotation state matrices
+    /**
+     * Returns a list of 2D integer arrays representing the brick's shape in each rotation state.
+     * @return list of shape matrices
+     */
     List<int[][]> getShapeMatrix();
 }

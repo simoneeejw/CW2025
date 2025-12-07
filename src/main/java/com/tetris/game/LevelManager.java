@@ -10,19 +10,22 @@ import javafx.beans.property.SimpleIntegerProperty;
  */
 public class LevelManager {
 
+    /** Current level as a JavaFX property for UI binding. */
     private final IntegerProperty currentLevel = new SimpleIntegerProperty(1);
+    /** Total number of lines cleared across the game. */
     private int totalLinesCleared = 0;
 
-    // Line thresholds to advance to next level
+    /** Line thresholds to advance to next level. */
     // Level 1: 0-4, Level 2: 5-9, Level 3: 10-19, Level 4: 20-34, Level 5: 35-49, Level 6: 50-69, Level 7: 70-99, Level 8: 100+
     private static final int[] LINE_THRESHOLDS = {0, 5, 10, 20, 35, 50, 70, 100};
 
-    // Fall speed for each level (milliseconds) - progressively faster
+    /** Fall speed for each level in milliseconds, progressively faster. */
     private static final long[] FALL_SPEEDS = {500, 400, 300, 200, 150, 120, 100, 80};
 
-    // Score multiplier for each level
+    /** Score multiplier for each level. */
     private static final int[] SCORE_MULTIPLIERS = {1, 2, 3, 4, 5, 6, 7, 8};
 
+    /** Maximum level achievable. */
     private static final int MAX_LEVEL = 8;
 
     public LevelManager() {
