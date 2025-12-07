@@ -1,0 +1,57 @@
+
+
+
+
+Main "1" --> "1" MainMenu : shows
+class ZBrick {
+    -brickMatrix : List<int[][]>
+    +ZBrick()
+    +getShapeMatrix() : List<int[][]>
+}
+
+interface GameEventListener {
+    +initGameView(int[][], ViewData)
+    +bindScore(IntegerProperty)
+    +bindLevel(IntegerProperty)
+    +updateGameSpeed(long, double)
+    +updateStatus(int, String, int, int)
+    +refreshBrick(ViewData)
+    +gameOver()
+    +levelUp(int)
+    +powerUpActivated(PowerUp)
+    +powerUpDeactivated(PowerUp)
+}
+
+GameController "1" --> "1" GameEventListener : has
+GuiController "1" --> "1" ViewData : <<uses>>
+GameController "1" --> "1" ViewData : <<uses>>
+TetrisBoard "1" --> "1" ViewData : <<uses>>
+BrickManager "1" --> "1" ViewData : <<uses>>
+ViewData "1" --> "1" MatrixOperations : <<uses>>
+BrickManager "1" --> "1" MatrixOperations : <<uses>>
+TetrisBoard "1" --> "1" MatrixOperations : <<uses>>
+GuiController "1" --> "1" BrickColorMapper : <<uses>>
+GuiController "1" --> "1" SoundManager : <<uses>>
+GameController "1" --> "1" SoundManager : <<uses>>
+MainMenu "1" --> "1" SoundManager : <<uses>>
+SoundManager "1" --> "1" SoundManager : singleton
+GuiController "1" --> "1" ThemeManager : <<uses>>
+ThemeManager "1" --> "1" Theme : <<uses>>
+MainMenu "1" --> "1" ThemeManager : <<uses>>
+GuiController "1" --> "1" GameOverDialog : <<uses>>
+GuiController "1" --> "1" PauseMenuPanel : <<uses>>
+MainMenu "1" --> "1" SettingsDialog : <<uses>>
+MainMenu "1" --> "1" HighScoresDialog : <<uses>>
+MainMenu "1" --> "1" HelpDialog : <<uses>>
+GameController "1" --> "1" ClearRow : <<uses>>
+GameController "1" --> "1" DownData : <<uses>>
+GameController "1" --> "1" MoveEvent : <<uses>>
+MoveEvent "1" --> "1" EventType : <<uses>>
+MoveEvent "1" --> "1" EventSource : <<uses>>
+GuiController "1" --> "1" MoveEvent : <<uses>>
+GuiController "1" --> "1" EventType : <<uses>>
+GuiController "1" --> "1" EventSource : <<uses>>
+BrickManager "1" --> "1" NextShapeInfo : <<uses>>
+ViewData "1" --> "1" NextShapeInfo : <<uses>>
+
+@enduml
