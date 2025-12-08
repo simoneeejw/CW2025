@@ -41,7 +41,7 @@ public class MainMenu {
         // Set background image
         try {
             Image bgImage = new Image(getClass().getResourceAsStream("/background_image.png"));
-            BackgroundImage bgImg = new BackgroundImage(bgImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(820, 700, false, false, false, false));
+            BackgroundImage bgImg = new BackgroundImage(bgImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(100, 100, true, true, false, true));
             BackgroundFill overlay = new BackgroundFill(Color.rgb(0, 0, 0, 0.4), new CornerRadii(0), new Insets(0));
             Background bg = new Background(new BackgroundFill[]{overlay}, new BackgroundImage[]{bgImg});
             mainLayout.setBackground(bg);
