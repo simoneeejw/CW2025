@@ -67,12 +67,6 @@ public interface GameEventListener {
     void showTetrisNotification();
 
     /**
-     * Shows a power-up notification.
-     * @param powerUpName the name of the power-up
-     */
-    void showPowerUpNotification(String powerUpName);
-
-    /**
      * Handles game over event.
      */
     void gameOver();

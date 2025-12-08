@@ -511,6 +511,16 @@ public class GuiController implements Initializable, GameEventListener {
         }
     }
 
+    /**
+     * Shows Tetris (4-line clear) notification.
+     */
+    public void showTetrisNotification() {
+        // No notification in classic layout
+    }
+
+    /**
+     * Handles game over event.
+     */
     public void gameOver() {
         timeLine.stop();
         isGameOver.setValue(Boolean.TRUE);
@@ -606,7 +616,7 @@ public class GuiController implements Initializable, GameEventListener {
 
     /**
      * Schedules ghost row removal after a delay.
-     * @param delayMs Delay in milliseconds
+     * @param delayMs the delay in milliseconds
      */
     public void scheduleGhostRowRemoval(int delayMs) {
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
@@ -841,20 +851,5 @@ public class GuiController implements Initializable, GameEventListener {
         softDropKey = KeyCode.valueOf(prefs.get("softDrop", "DOWN"));
         hardDropKey = KeyCode.valueOf(prefs.get("hardDrop", "SPACE"));
         holdKey = KeyCode.valueOf(prefs.get("hold", "R"));
-    }
-
-    /**
-     * Shows power-up notification.
-     * @param powerUpName Name of the power-up
-     */
-    public void showPowerUpNotification(String powerUpName) {
-        // No notification in classic layout
-    }
-
-    /**
-     * Shows Tetris (4-line clear) notification.
-     */
-    public void showTetrisNotification() {
-        // No notification in classic layout
     }
 }

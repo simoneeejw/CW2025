@@ -72,8 +72,7 @@ public class GameController {
                 TetrisBoard tetrisBoard = (TetrisBoard) board;
                 int baseScore = clearRow.getScoreBonus();
                 int levelMultiplier = tetrisBoard.getLevelManager().getScoreMultiplier();
-                int powerUpMultiplier = tetrisBoard.getPowerUpManager().getScoreMultiplier();
-                int finalScore = baseScore * levelMultiplier * powerUpMultiplier;
+                int finalScore = baseScore * levelMultiplier;
 
                 board.getScore().add(finalScore);
 
@@ -81,8 +80,7 @@ public class GameController {
                 boolean leveledUp = tetrisBoard.getLevelManager().addLinesCleared(clearRow.getLinesRemoved());
                 if (leveledUp) {
                     SoundManager.getInstance().playLevelUpSound();
-                    guiListener.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(),
-                                                     tetrisBoard.getPowerUpManager().getSpeedMultiplier());
+                    guiListener.updateGameSpeed(tetrisBoard.getLevelManager().getFallSpeed(), 1.0);
                     guiListener.showLevelUp(tetrisBoard.getLevelManager().getCurrentLevel(),
                                                  tetrisBoard.getLevelManager().getLevelDifficulty());
 
@@ -103,11 +101,6 @@ public class GameController {
                     guiListener.showTetrisNotification();
                 }
 
-                // Show power-up notification if one was triggered
-                if (clearRow.getPowerUp() != null) {
-                    guiListener.showPowerUpNotification(clearRow.getPowerUp().getName());
-                }
-
                 // Update status display
                 guiListener.updateStatus(tetrisBoard.getLevelManager().getCurrentLevel(),
                                               tetrisBoard.getLevelManager().getLevelDifficulty(),
@@ -126,13 +119,9 @@ public class GameController {
                 TetrisBoard tetrisBoard = (TetrisBoard) board;
                 int dropScore = GameConstants.SCORE_PER_DROP;
                 int levelMultiplier = tetrisBoard.getLevelManager().getScoreMultiplier();
-                int powerUpMultiplier = tetrisBoard.getPowerUpManager().getScoreMultiplier();
-                board.getScore().add(dropScore * levelMultiplier * powerUpMultiplier);
+                board.getScore().add(dropScore * levelMultiplier);
             }
         }
-
-        // Update power-up timers
-        ((TetrisBoard) board).getPowerUpManager().update();
 
         return new DownData(clearRow, board.getViewData());
     }

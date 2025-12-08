@@ -1,8 +1,8 @@
 # Tetris Game Project
 
-A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, power-up system, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
+A fully-featured JavaFX Tetris implementation with classic light theme styling, progressive difficulty levels, and comprehensive testing. Built with clean architecture using design patterns and refactored code following SOLID principles.
 
-**🎮 Play Features**: 8 difficulty levels, ghost piece shadows, power-ups, hold mechanic, hard drop, progressive speed ramps  
+**🎮 Play Features**: 8 difficulty levels, ghost piece shadows, hold mechanic, hard drop, progressive speed ramps  
 **🎨 Visual Design**: Light classic theme with gradient backgrounds, rounded corners, drop shadows, and vibrant Tetris colors  
 **🏗️ Architecture**: Refactored from monolithic design to SRP-compliant classes with Observer and Factory patterns  
 **✅ Quality**: 60 passing unit tests, comprehensive error handling, persistent high scores and settings  
@@ -61,13 +61,11 @@ The following features have been successfully implemented and are functioning as
   - **Observer Pattern**: Implemented through `GameEventListener` interface for decoupling UI updates from game logic.
   - **Factory Pattern**: Used in `BrickGenerator` for dynamic brick creation.
 
-- **Comprehensive JUnit Test Suite**: Developed 60 unit tests (increased from 37), covering core mechanics, matrix operations, brick generation, level progression, and power-up systems.
+- **Comprehensive JUnit Test Suite**: Developed 60 unit tests (increased from 37), covering core mechanics, matrix operations, brick generation, and level progression.
 
 - **Core Game Functionality**: Complete Tetris experience with brick movement, rotation, collision detection, line clearing, scoring, hold mechanic, ghost piece, and progressive levels.
 
 - **Progressive Levels System**: 8-level progression with adaptive speed ramps, ghost rows, and score multipliers based on lines cleared.
-
-- **Power-Up System**: Strategic power-ups triggered by Tetris clears, including slow motion, clear bottom row, double points, and permanent ghost piece.
 
 - **Ghost Piece (Shadow)**: Semi-transparent shadow showing where the active piece will land, improving planning and reducing mistakes.
 
@@ -75,7 +73,7 @@ The following features have been successfully implemented and are functioning as
 
 - **Unified Rendering System**: Fixed rendering bugs by using displayMatrix directly, ensuring pieces are always visible and properly positioned.
 
-- **Improved Controls and Input Handling**: Fixed key handling issues, added hard drop, pause functionality, and customizable key bindings.
+- **Improved Controls and Input Handling**: Fixed key handling issues, added hard drop for faster gameplay, pause functionality, and customizable key bindings, enhancing the user experience and responsiveness.
 
 - **CSS-Based Styling System**: External stylesheet for centralized styling, enabling easy theme modifications.
 
@@ -119,30 +117,12 @@ The following new Java classes were introduced for the assignment:
 
 - **LevelManager.java**: Manages level progression based on lines cleared. Location: `src/main/java/com/tetris/game/LevelManager.java`. Purpose: Implements progressive difficulty system with speed ramps and ghost rows.
 
-- **PowerUp.java**: Enum defining available power-up types. Location: `src/main/java/com/tetris/game/PowerUp.java`. Purpose: Defines power-up types and their properties.
-
-- **PowerUpManager.java**: Manages active power-ups with timers and effects. Location: `src/main/java/com/tetris/game/PowerUpManager.java`. Purpose: Handles power-up activation, expiration, and application to game mechanics.
-
-- **Level.java**: Enum defining level thresholds and properties. Location: `src/main/java/com/tetris/game/Level.java`. Purpose: Encapsulates level data for the progressive system.
-
-- **HelpDialog.java**: Modal dialog providing tutorial content. Location: `src/main/java/com/tetris/gui/HelpDialog.java`. Purpose: Guides new players through game mechanics and controls.
-
-- **PauseMenuPanel.java**: Custom overlay component for pause menu. Location: `src/main/java/com/tetris/gui/PauseMenuPanel.java`. Purpose: Provides pause functionality with resume, options, and quit options.
-
-- **ThemeManager.java**: Manages application themes. Location: `src/main/java/com/tetris/gui/ThemeManager.java`. Purpose: Enables theme switching and customization.
-
-- **ThemeSelector.java**: UI component for theme selection. Location: `src/main/java/com/tetris/gui/ThemeSelector.java`. Purpose: Allows users to choose between available themes.
-
-- **Theme.java**: Enum defining available themes. Location: `src/main/java/com/tetris/gui/Theme.java`. Purpose: Defines theme properties and styling.
-
-- **SoundManager.java**: Enhanced audio management system. Location: `src/main/java/com/tetris/util/SoundManager.java`. Purpose: Handles background music and sound effects with volume control.
-
 ## Modified Java Classes
 The following Java classes were modified from the provided codebase:
 
 - **GuiController.java**: Modified to implement unified rendering system, integrate ghost piece, add pause menu, level up effects, and custom logo. Location: `src/main/java/com/tetris/gui/GuiController.java`. Changes: Added methods for refreshBrick(), ghost piece calculation, pause menu management, and UI enhancements. Rationale: To fix critical rendering bugs where pieces weren't visible and to add new gameplay features like ghost piece and pause functionality.
 
-- **GameController.java**: Modified to integrate level progression, power-up system, and improved event handling. Location: `src/main/java/com/tetris/game/GameController.java`. Changes: Added level management, power-up triggers, and enhanced collision detection. Rationale: To support progressive difficulty and strategic power-ups, enhancing gameplay depth.
+- **GameController.java**: Modified to integrate level progression and improved event handling. Location: `src/main/java/com/tetris/game/GameController.java`. Changes: Added level management and enhanced collision detection. Rationale: To support progressive difficulty, enhancing gameplay depth.
 
 - **Main.java**: Modified to support consistent window sizing. Location: `src/main/java/com/tetris/game/Main.java`. Changes: Added window dimension standardization. Rationale: To improve UI consistency.
 
@@ -182,7 +162,7 @@ This coursework project successfully transformed a basic Tetris implementation i
 
 ### Overall Changes
 - **System Maintenance**: Restructured the entire codebase from `com.comp2042.tetris` to `com.tetris` package, improving organization and removing course-specific dependencies. Refactored the monolithic `SimpleBoard` class into three SRP-compliant components (`BoardState`, `BrickManager`, `TetrisBoard`) for better modularity and testability.
-- **Feature Extensions**: Added 8-level progressive difficulty system with speed ramps and ghost rows, strategic power-up system triggered by Tetris clears, ghost piece shadows for better planning, comprehensive pause menu, tutorial system, adjustable audio controls, and professional light theme GUI redesign.
+- **Feature Extensions**: Added 8-level progressive difficulty system with speed ramps and ghost rows, ghost piece shadows for better planning, comprehensive pause menu, tutorial system, adjustable audio controls, and professional light theme GUI redesign.
 - **Quality Improvements**: Expanded test suite from 37 to 60 unit tests, implemented unified rendering system to fix critical display bugs, standardized window sizing for seamless transitions, and optimized audio loading for better performance.
 - **Code Enhancements**: Introduced design patterns (Observer and Factory), improved controls with customizable key bindings, added visual effects like level-up animations, and centralized styling through external CSS.
 

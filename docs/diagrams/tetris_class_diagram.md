@@ -15,7 +15,6 @@ classDiagram
     TetrisBoard --> BrickManager : has
     TetrisBoard --> Score : has
     TetrisBoard --> LevelManager : has
-    TetrisBoard --> PowerUpManager : has
     BrickManager --> BrickGenerator : has
     BrickManager --> BrickRotator : has
     BrickGenerator <|-- RandomBrickGenerator : implements
@@ -31,8 +30,6 @@ classDiagram
     GameController --> GameEventListener : has
     Score --> IntegerProperty : has
     LevelManager --> IntegerProperty : has
-    PowerUpManager --> BooleanProperty : has
-    PowerUpManager --> PowerUp : uses
     GuiController --> ViewData : uses
     GameController --> ViewData : uses
     TetrisBoard --> ViewData : uses
@@ -64,4 +61,3 @@ classDiagram
     BrickManager --> NextShapeInfo : uses
     ViewData --> NextShapeInfo : uses
 ```
-

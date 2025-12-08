@@ -8,7 +8,7 @@ import com.tetris.model.ViewData;
 import java.awt.*;
 
 /**
- * Main implementation of the Tetris game board, managing the game state, brick movements, scoring, and special features like power-ups and ghost rows.
+ * Main implementation of the Tetris game board, managing the game state, brick movements, scoring, and special features like ghost rows.
  */
 public class TetrisBoard implements Board {
 
@@ -24,8 +24,6 @@ public class TetrisBoard implements Board {
     private final Score score;
     /** Manager for game levels. */
     private final LevelManager levelManager;
-    /** Manager for power-ups. */
-    private final PowerUpManager powerUpManager;
     /** Track which row is a ghost row (-1 = none). */
     private int ghostRow = -1;
 
@@ -41,7 +39,6 @@ public class TetrisBoard implements Board {
         this.brickManager = new BrickManager();
         this.score = new Score();
         this.levelManager = new LevelManager();
-        this.powerUpManager = new PowerUpManager();
         this.ghostRow = -1;
     }
 
@@ -108,19 +105,7 @@ public class TetrisBoard implements Board {
         ClearRow clearRow = MatrixOperations.checkRemoving(boardState.getCurrentGameMatrix());
         boardState.setCurrentGameMatrix(clearRow.getNewMatrix());
 
-        PowerUp triggeredPowerUp = null;
-        // Trigger power-up if 4 lines cleared (Tetris)
-        if (clearRow.getLinesRemoved() == 4) {
-            triggeredPowerUp = powerUpManager.triggerRandomPowerUp();
-            // Handle CLEAR_BOTTOM power-up immediately
-            if (triggeredPowerUp == PowerUp.CLEAR_BOTTOM) {
-                clearBottomRow();
-            }
-        }
-
-        // Return new ClearRow with power-up information
-        return new ClearRow(clearRow.getLinesRemoved(), clearRow.getNewMatrix(),
-                           clearRow.getScoreBonus(), triggeredPowerUp);
+        return new ClearRow(clearRow.getLinesRemoved(), clearRow.getNewMatrix(), clearRow.getScoreBonus());
     }
 
     @Override
@@ -154,23 +139,7 @@ public class TetrisBoard implements Board {
         score.reset();
         brickManager.resetHeldBrick();
         levelManager.reset();
-        powerUpManager.reset();
         createNewBrick();
-    }
-
-    /**
-     * Clears the bottom row of the board (power-up effect).
-     */
-    private void clearBottomRow() {
-        int[][] matrix = boardState.getCurrentGameMatrix();
-        int bottomRow = matrix.length - 1;
-
-        // Clear the bottom row
-        for (int j = 0; j < matrix[bottomRow].length; j++) {
-            matrix[bottomRow][j] = 0;
-        }
-
-        boardState.setCurrentGameMatrix(matrix);
     }
 
     /**
@@ -179,14 +148,6 @@ public class TetrisBoard implements Board {
      */
     public LevelManager getLevelManager() {
         return levelManager;
-    }
-
-    /**
-     * Gets the power-up manager.
-     * @return PowerUpManager instance
-     */
-    public PowerUpManager getPowerUpManager() {
-        return powerUpManager;
     }
 
     /**
