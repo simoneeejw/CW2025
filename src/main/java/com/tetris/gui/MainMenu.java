@@ -371,6 +371,12 @@ public class MainMenu {
      */
     private void loadGame() {
         try {
+            // Check current window state and size
+            boolean wasFullScreen = stage.isFullScreen();
+            boolean wasMaximized = stage.isMaximized();
+            double currentWidth = stage.getWidth();
+            double currentHeight = stage.getHeight();
+
             // Load single player game
             java.net.URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
             javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(location, null);
@@ -378,11 +384,18 @@ public class MainMenu {
             GuiController c = fxmlLoader.getController();
 
             stage.setTitle("TETRIS - COMP2042");
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 450, 740);  // Fit content: 220px board + 150px sidebar + 20px spacing + 40px padding + title/footer
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, currentWidth, currentHeight);
             stage.setScene(scene);
             stage.setMinWidth(450);
             stage.setMinHeight(740);
-            stage.centerOnScreen();
+
+            // Restore window state
+            if (wasFullScreen) {
+                stage.setFullScreen(true);
+            } else if (wasMaximized) {
+                stage.setMaximized(true);
+            }
+            // For custom sizes, the scene is already set to current size, no need to center
 
             c.setGameController(new com.tetris.game.GameController(c));
 
